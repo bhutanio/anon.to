@@ -9,7 +9,7 @@
 - [Composer](https://getcomposer.org).
 
 ### Installation
-* clone the repository `git clone git@github.com:bhutanio/anonto.git example.com`
+* clone the repository `git clone https://github.com/bhutanio/anon.to.git anon.to`
 * create a database
 * Create configuration env file `.env` refer to `.env.example`
 * install `composer install --no-dev`
