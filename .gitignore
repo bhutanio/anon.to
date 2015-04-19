@@ -1,0 +1,25 @@
+# Lumen Ignore files #
+########################
+/vendor
+/bower_components
+/node_modules
+composer.phar
+composer.lock
+.env
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.TMP
+
+# IDE generated files #
+#######################
+/.idea
+/_ide_helper.php
+/_ide_helper_models.php
