@@ -22,6 +22,10 @@ class HomeController extends Controller
         return view('home');
     }
 
+    /**
+     * @param $hash
+     * @return \Illuminate\View\View
+     */
     public function hash($hash)
     {
         $link = Link::where('hash', $hash)->first();
@@ -32,15 +36,6 @@ class HomeController extends Controller
         }
 
         abort(404);
-    }
-    
-    private function validateURL($url)
-    {
-        if (!filter_var($url, FILTER_VALIDATE_URL) === false) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
