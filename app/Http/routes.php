@@ -11,8 +11,12 @@
 |
 */
 
+$app->post('shorten', [
+    'as' => 'shorten', 'uses' => 'App\Http\Controllers\HomeController@shorten'
+]);
+
 $app->get('/{hash:[A-Za-z0-9]{6}}', [
-    'as' => 'home', 'uses' => 'App\Http\Controllers\HomeController@index'
+    'as' => 'hash', 'uses' => 'App\Http\Controllers\HomeController@hash'
 ]);
 
 $app->get('/', [
