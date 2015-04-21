@@ -45,7 +45,13 @@
                     <hr class="star-light">
                     <span class="skills">Paste a link to shorten it</span>
 
-                    <form method="post" class="form-inline">
+                    @if(session('hash'))
+                    <div class="alert alert-warning">
+                        <p>Here is you short URL: <a href="{{ route('home') }}/{{ session('hash') }}">{{ route('home') }}/{{ session('hash') }}</a></p>
+                    </div>
+                    @endif
+                    {!! $errors->first('url', '<div class="alert alert-danger">:message</div>') !!}
+                    <form action="{{ route('shorten') }}" method="POST" class="form-inline">
                         <div class="form-group">
                             <label class="sr-only" for="exampleInputEmail3">URL</label>
                             <input type="url" name="url" class="form-control col-sm-6" id="url" placeholder="Enter URL">
