@@ -15,7 +15,7 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         if ($request->getQueryString()) {
-            $redirect = urldecode($request->getQueryString());
+            $redirect = urldecode($request->server('QUERY_STRING'));
             return view('redirect', compact('redirect'));
         }
 
