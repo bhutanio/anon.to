@@ -1,4 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
 
 use App\Models\Link;
 use Illuminate\Http\Request;
@@ -6,7 +8,6 @@ use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -16,6 +17,7 @@ class HomeController extends Controller
     {
         if ($request->getQueryString()) {
             $redirect = urldecode($request->server('QUERY_STRING'));
+
             return view('redirect', compact('redirect'));
         }
 
@@ -24,14 +26,16 @@ class HomeController extends Controller
 
     /**
      * @param $hash
+     *
      * @return \Illuminate\View\View
      */
     public function hash($hash)
     {
         $link = Link::where('hash', $hash)->first();
 
-        if($link) {
+        if ($link) {
             $redirect = urldecode($link->url);
+
             return view('redirect', compact('redirect'));
         }
 
@@ -40,6 +44,7 @@ class HomeController extends Controller
 
     /**
      * @param Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function shorten(Request $request)
@@ -52,7 +57,7 @@ class HomeController extends Controller
 
         // If URL exists, redirect immediately
         $link = Link::where('url', $url)->first();
-        if($link) {
+        if ($link) {
             return redirect(route('home'))
                     ->with('hash', $link->hash);
         }
@@ -65,6 +70,7 @@ class HomeController extends Controller
 
     /**
      * @param Request $request
+     *
      * @return mixed|string
      */
     private function cleanUpUrl(Request $request)
@@ -73,11 +79,13 @@ class HomeController extends Controller
 
         $url = trim(rtrim($url, '?'));
         $url = rtrim($url, '/');
+
         return $url;
     }
 
     /**
      * @param $url
+     *
      * @return static
      */
     private function createUrlHash($url)
@@ -97,5 +105,4 @@ class HomeController extends Controller
 
         return $link;
     }
-
 }
