@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Link;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -18,7 +19,9 @@ class HomeController extends Controller
         if ($request->getQueryString()) {
             $redirect = urldecode($request->server('QUERY_STRING'));
 
-            return view('redirect', compact('redirect'));
+            //return view('redirect', compact('redirect'));
+            return response(view('redirect'))->setExpires(Carbon::now()->addDays(30))
+            ->header('Cache-Control', 'public,max-age='.(1800).',s-maxage='.(1800));
         }
 
         return view('home');
