@@ -20,7 +20,7 @@ class HomeController extends Controller
             $redirect = urldecode($request->server('QUERY_STRING'));
 
             //return view('redirect', compact('redirect'));
-            return response(view('redirect'))->setExpires(Carbon::now()->addDays(30))
+            return response(view('redirect', compact('redirect')))->setExpires(Carbon::now()->addDays(30))
             ->header('Cache-Control', 'public,max-age='.(1800).',s-maxage='.(1800));
         }
 
