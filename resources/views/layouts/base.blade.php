@@ -1,125 +1,40 @@
 <!doctype html>
-<html lang="en">
+<html class="no-js" lang="">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{{ meta()->metaTitle() }}</title>
+    <meta name="description" content="{{ meta()->description() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Anon.to - Anonymous URL Shortener</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}"/>
+    <meta name="_token" content="">
+    <meta name="_token" content="{{ csrf_token() }}">
+    <meta name="_base_url" content="{{ url('/') }}">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,500,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Raleway:300,500,700' rel='stylesheet' type='text/css'>
+    <link href="{{ url('css/style.css?v='.asset_version()) }}" rel="stylesheet">
+    @yield('header_css')
+
+<!--[if lte IE 8]>
+    <script src="{{ url('js/html5shiv.respond.min.js') }}"></script><![endif]-->
 </head>
-<body id="page-top">
+<body>
+<div class="page-wrapper">
+    <header>
+        @include('layouts.section.header')
+    </header>
 
-<nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#page-top">{{ config('settings.site_name') }}</a>
-        </div>
+    @section('page_title')
+        <h1>Title</h1>
+    @show
 
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-                <li class="hidden">
-                    <a href="#page-top"></a>
-                </li>
-                <li class="page-scroll">
-                    <a href="#redirect">Redirect</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+    @yield('content')
 
-<header>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="intro-text">
-                    <h1 class="name">Anonymous URL Shortener</h1>
-                    <hr class="star-light">
-                    <span class="skills">Paste a link to shorten it</span>
+    @include('layouts.section.footer')
 
-                    @if(session('hash'))
-                    <div class="alert alert-warning">
-                        <p>Here is you short URL: <a href="{{ route('home') }}/{{ session('hash') }}">{{ route('home') }}/{{ session('hash') }}</a></p>
-                    </div>
-                    @endif
-                    {!! $errors->first('url', '<div class="alert alert-danger">:message</div>') !!}
-                    <form action="{{ route('shorten') }}" method="POST" class="form-inline">
-                        <div class="form-group">
-                            <label class="sr-only" for="exampleInputEmail3">URL</label>
-                            <input type="url" name="url" class="form-control" id="url" placeholder="Enter URL">
-                        </div>
-                        <button type="submit" class="btn btn-info">Shorten</button>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
-
-<section id="redirect">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12 text-center">
-                <h2>Anonymous Redirect</h2>
-                <hr class="star-primary">
-            </div>
-            <div class="col-sm-12">
-                <p>Do you want to link anonymously to other web sites without sending any referrer?</p>
-                <p>Then use <strong>anon.to</strong></p>
-                <p>Just put <strong>https://anon.to/?</strong> in front of your links.</p>
-                <p>Example link: <strong>https://anon.to/?http://www.google.com</strong></p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<footer class="text-center">
-    <div class="footer-above">
-        <div class="container">
-            <div class="row">
-                <div class="footer-col col-md-6">
-                    <h3>Contribute</h3>
-                    <ul class="list-inline">
-                        <li>
-                            <a href="https://github.com/bhutanio/anon.to" class="btn-social btn-outline"><i class="fa fa-fw fa-github"></i></a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="footer-col col-md-6">
-                    <h3>About Anon.to</h3>
-                    <p>Anon.to is a free to use, open source URL Shortener and Redirector, created by <a href="http://bhutan.io">bhutan.io</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="footer-below">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    Copyright &copy; Anon.to
-                </div>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<script src="{{ asset('assets/js/app.js') }}"></script>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', '{{ env('GOOGLE_ANALYTICS') }}', 'auto');
-  ga('send', 'pageview');
-</script>
+</div>
+<script async defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+<script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+<script src="{{ url('js/app.js?v='.asset_version()) }}"></script>
+@yield('footer_js')
 </body>
 </html>

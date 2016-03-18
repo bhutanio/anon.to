@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
-    "jquery": "~2.1.3",
+    "jquery": "latest",
     "bootstrap-sass": "latest",
+    "bootswatch": "latest",
     "fontawesome": "latest",
-    "bootswatch": "https://github.com/thomaspark/bootswatch.git#latest"
+    "sweetalert": "latest",
+    "Respond": "latest",
+    "html5shiv": "latest"
   }
 }

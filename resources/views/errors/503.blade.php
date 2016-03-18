@@ -1,41 +1,14 @@
-<html>
-	<head>
-		<link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
+@extends('errors.error')
 
-		<style>
-			body {
-				margin: 0;
-				padding: 0;
-				width: 100%;
-				height: 100%;
-				color: #B0BEC5;
-				display: table;
-				font-weight: 100;
-				font-family: 'Lato';
-			}
+@section('page_title')
+@endsection
 
-			.container {
-				text-align: center;
-				display: table-cell;
-				vertical-align: middle;
-			}
-
-			.content {
-				text-align: center;
-				display: inline-block;
-			}
-
-			.title {
-				font-size: 72px;
-				margin-bottom: 40px;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container">
-			<div class="content">
-				<div class="title">Be right back.</div>
-			</div>
-		</div>
-	</body>
-</html>
+@section('content')
+    <section class="container">
+        <div class="jumbotron text-center">
+            <h1 class="mt-5">Temporarily down for maintenance!</h1>
+            <hr>
+            <p>The hamsters powering our server are taking a break. They should be back in couple of minutes.</p>
+        </div>
+    </section>
+@endsection

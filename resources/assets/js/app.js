@@ -1,72 +1,53 @@
-/*
- * Start Bootstrap - Freelancer Bootstrap Theme (http://startbootstrap.com)
- * Code licensed under the Apache License v2.0.
- * For details, see http://www.apache.org/licenses/LICENSE-2.0.
- */
+var CSRFTOKEN = $('meta[name=_token]').attr('content');
+var BASEURL = $('meta[name=_base_url]').attr('content');
 
-var cbpAnimatedHeader = (function () {
+var shortenUrl = function () {
+    $('input[name="short_url"]').on('click', function () {
+        $(this).select();
+    });
 
-    var docElem = document.documentElement,
-        header = document.querySelector('.navbar-fixed-top'),
-        didScroll = false,
-        changeHeaderOn = 300;
+    $('#form_shortener').on('submit', function (e) {
+        var form = $(this);
 
-    function init() {
-        window.addEventListener('scroll', function (event) {
-            if (!didScroll) {
-                didScroll = true;
-                setTimeout(scrollPage, 250);
+        form.find('.form-error').remove();
+        form.find(':submit').addClass('disabled').attr('disabled', 'disabled');
+        form.find('.shorten-output').append('<i class="save-spinner glyphicon glyphicon-refresh glyphicon-spin"></i>');
+
+        $.ajax({
+            url: form.attr("action"),
+            type: 'POST',
+            data: form.serializeArray(),
+            dataType: 'json'
+        }).done(function (data) {
+            form.find('.input-group').removeClass('has-error');
+            if (data && data.url) {
+                form.find('.short-url-group').removeClass('hidden');
+                form.find('input[name="short_url"]').val(data.url);
             }
-        }, false);
-    }
-
-    function scrollPage() {
-        var sy = scrollY();
-        if (sy >= changeHeaderOn) {
-            classie.add(header, 'navbar-shrink');
-        }
-        else {
-            classie.remove(header, 'navbar-shrink');
-        }
-        didScroll = false;
-    }
-
-    function scrollY() {
-        return window.pageYOffset || docElem.scrollTop;
-    }
-
-    init();
-
-})();
-
-// jQuery for page scrolling feature - requires jQuery Easing plugin
-$(function () {
-    $('body').on('click', '.page-scroll a', function (event) {
-        var $anchor = $(this);
-        $('html, body').stop().animate({
-            scrollTop: $($anchor.attr('href')).offset().top
-        }, 1500, 'easeInOutExpo');
-        event.preventDefault();
+        }).fail(function (jqXHR) {
+            form.find('.short-url-group').addClass('hidden');
+            form.find('.input-group').addClass('has-error');
+            if ($.type(jqXHR.responseJSON) == 'string') {
+                form.find('.shorten-output').append('<span class="help-block form-error text-danger">' + jqXHR.responseJSON + '</span>');
+            } else if ($.type(jqXHR.responseJSON) == 'object') {
+                $.each(jqXHR.responseJSON, function (index, value) {
+                    if (value.length != 0) {
+                        form.find('.shorten-output').append('<span class="help-block form-error text-danger">' + value + '</span>');
+                    }
+                });
+            } else {
+                form.find('.shorten-output').append('<span class="help-block form-error text-danger">' + jqXHR.statusText + '</span>');
+            }
+        }).always(function () {
+            form.find('.save-spinner').remove();
+            form.find(':submit').removeClass('disabled').removeAttr('disabled');
+        });
+        e.preventDefault();
     });
-});
-
-// Floating label headings for the contact form
-$(function () {
-    $("body").on("input propertychange", ".floating-label-form-group", function (e) {
-        $(this).toggleClass("floating-label-form-group-with-value", !!$(e.target).val());
-    }).on("focus", ".floating-label-form-group", function () {
-        $(this).addClass("floating-label-form-group-with-focus");
-    }).on("blur", ".floating-label-form-group", function () {
-        $(this).removeClass("floating-label-form-group-with-focus");
+    $.ajax({
+        url: BASEURL + '/csrf',
+        type: 'GET'
+    }).done(function (data) {
+        $('input[name="_token"]').val(data);
     });
-});
-
-// Highlight the top nav as scrolling occurs
-$('body').scrollspy({
-    target: '.navbar-fixed-top'
-});
-
-// Closes the Responsive Menu on Menu Item Click
-$('.navbar-collapse ul li a').click(function () {
-    $('.navbar-toggle:visible').click();
-});
+};

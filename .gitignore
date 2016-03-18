@@ -1,14 +1,16 @@
-# Lumen Ignore files #
-########################
+# Ignore files #
 /vendor
-/bower_components
 /node_modules
+/bower_components
+Homestead.yaml
+Homestead.json
+schema.sql
 composer.phar
 composer.lock
 .env
+*.map
 
 # OS generated files #
-######################
 .DS_Store
 .DS_Store?
 ._*
@@ -19,7 +21,7 @@ Thumbs.db
 *.TMP
 
 # IDE generated files #
-#######################
 /.idea
+/.phpstorm.meta.php
 /_ide_helper.php
 /_ide_helper_models.php
