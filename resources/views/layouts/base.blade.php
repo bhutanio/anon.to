@@ -32,8 +32,8 @@
     @include('layouts.section.footer')
 
 </div>
-<script async defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
-<script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+<script id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
 <script src="{{ url('js/app.js?v='.asset_version()) }}"></script>
 @yield('footer_js')
 </body>
