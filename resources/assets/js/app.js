@@ -1,4 +1,3 @@
-var CSRFTOKEN = $('meta[name=_token]').attr('content');
 var BASEURL = $('meta[name=_base_url]').attr('content');
 
 var shortenUrl = function () {
