@@ -25,6 +25,7 @@ class RedirectController extends Controller
             $link = Link::where('hash', $key)->firstOrFail();
             if ($link) {
                 $url = $url_services->unParseUrlFromDb($link);
+                $this->cache->put($key, $url, 60 * 24);
             }
         } catch (ModelNotFoundException $e) {
             abort(404, 'Link not found!');
