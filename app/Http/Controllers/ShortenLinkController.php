@@ -25,7 +25,7 @@ class ShortenLinkController extends Controller
             'url' => 'required|url',
         ], [
             'url.required' => 'Please paste a link to shorten',
-            'url.url' => 'Link must be a valid url starting with http:// or https://',
+            'url.url'      => 'Link must be a valid url starting with http:// or https://',
         ]);
 
         $url = $this->request->get('url');
@@ -66,11 +66,11 @@ class ShortenLinkController extends Controller
 
     private function createUrlHash($parsed_url)
     {
-        $hash = Str::random(6);
-        $link = Link::where('hash', $hash)->first();
+        $hash = $this->generateHash();
 
+        $link = Link::where('hash', $hash)->first();
         while ($link) {
-            $hash = Str::random(6);
+            $hash = $this->generateHash();
             $link = Link::where('hash', $hash)->first();
         }
 
@@ -95,5 +95,15 @@ class ShortenLinkController extends Controller
         $this->cache->put($link->hash, $this->url_service->unParseUrlFromDb($link), 60 * 24);
 
         return $link;
+    }
+
+    private function generateHash()
+    {
+        $hash = Str::random(6);
+        while (in_array(strtolower($hash), excluded_words())) {
+            $hash = Str::random(6);
+        }
+
+        return $hash;
     }
 }
