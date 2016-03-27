@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -46,8 +47,26 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        $meta = app(MetaDataService::class);
+        if ($e instanceof TokenMismatchException) {
+            return $this->handleTokenMismatch($request);
+        }
+
         meta()->setMeta('Error'.(($e instanceof HttpException) ? ' '.$e->getStatusCode() : ''));
         return parent::render($request, $e);
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return mixed
+     */
+    private function handleTokenMismatch($request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            return response(json_encode('Your session has expired. Please refresh the page and try again.'), 401);
+        }
+
+        flash()->warning('Your session has expired. Please try again.');
+
+        return redirect()->back()->withInput($request->except('_token'));
     }
 }
