@@ -47,15 +47,31 @@ class ShortenLinkController extends Controller
     private function urlExists(array $url)
     {
         $link = Link::where('url_scheme', $url['scheme'])->where('url_host', $url['host']);
+
+        if (!empty($url['port'])) {
+            $link = $link->where('url_port', $url['port']);
+        } else {
+            $link = $link->whereNull('url_port');
+        }
+
         if (!empty($url['path'])) {
             $link = $link->where('url_path', $url['path']);
+        } else {
+            $link = $link->whereNull('url_path');
         }
+
         if (!empty($url['query'])) {
             $link = $link->where('url_query', $url['query']);
+        } else {
+            $link = $link->whereNull('url_query');
         }
+
         if (!empty($url['fragment'])) {
             $link = $link->where('url_fragment', $url['fragment']);
+        } else {
+            $link = $link->whereNull('url_fragment');
         }
+
         $link = $link->first();
         if ($link) {
             return $link->hash;
