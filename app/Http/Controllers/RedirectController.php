@@ -36,6 +36,7 @@ class RedirectController extends Controller
 
     public function anonymousRedirect($url)
     {
+        $url = urldecode($url);
         return response()->view('anonymous', compact('url'))
             ->setExpires(Carbon::now()->addDays(30))
             ->header('Cache-Control', 'public,max-age=' . (3600 * 24 * 30) . ',s-maxage=' . (3600 * 24 * 30));
