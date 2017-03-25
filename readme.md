@@ -2,7 +2,7 @@
 [anon.to](https://anon.to) is an anonymous URL redirector and shortener built using [Laravel](https://laravel.com/).
 
 ### Requirement
-- [**PHP**](https://php.net) 5.6.4+
+- [**PHP**](https://php.net) 5.6.4+ (**7.0** preferred)
 - PHP Extensions: openssl, mcrypt and mbstring, phpredis
 - Database server: [MySQL](https://www.mysql.com) or [**MariaDB**](https://mariadb.org)
 - [Redis](http://redis.io) Server
