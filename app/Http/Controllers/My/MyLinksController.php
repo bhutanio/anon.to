@@ -23,7 +23,7 @@ class MyLinksController extends Controller
 
     public function index()
     {
-        $links = Link::orderBy('created_at', 'asc');
+        $links = Link::latest();
 
         if(Auth::id()==2 && $this->request->is('admin')) {
             meta()->setMeta('Links Admin');
