@@ -10,7 +10,7 @@
                 <tr>
                     <th style="width: 80px;">Hash</th>
                     <th>URL</th>
-                    <th style="width: 110px;">Added</th>
+                    <th style="width: 120px;">Added</th>
                     @if(auth()->id()==2)
                         <th style="width: 120px;">By</th>
                         <th style="width: 48px;"></th>
