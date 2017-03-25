@@ -62,6 +62,6 @@ class CreateNewLinksTable extends Migration
      */
     public function down()
     {
-        Schema::drop('links');
+        Schema::dropIfExists('links');
     }
 }

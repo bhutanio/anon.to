@@ -4,9 +4,9 @@
 @endsection
 
 @section('error_title')
-    Error 403: {{ $exception->getMessage() }}
+    <i class="glyphicon glyphicon-exclamation-sign text-danger"></i> Error 403: Access Denied!
 @endsection
 
-@section('message')
-    <p><strong>You shall not pass!</strong> Unauthorized access to this page is prohibited.</p>
+@section('error_message')
+    <p class="text-center">You are not authorized to access this page.</p>
 @endsection

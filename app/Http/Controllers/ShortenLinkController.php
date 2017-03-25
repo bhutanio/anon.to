@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Link;
 use App\Services\UrlServices;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class ShortenLinkController extends Controller
@@ -98,7 +100,7 @@ class ShortenLinkController extends Controller
             'url_path'     => $parsed_url['path'],
             'url_query'    => $parsed_url['query'],
             'url_fragment' => $parsed_url['fragment'],
-            'created_by'   => 1,
+            'created_by'   => Auth::check() ? Auth::id() : 1,
         ]);
 
         $this->cacheLink($link);
@@ -108,7 +110,7 @@ class ShortenLinkController extends Controller
 
     private function cacheLink($link)
     {
-        $this->cache->put($link->hash, $this->url_service->unParseUrlFromDb($link), 60 * 24);
+        Cache::put($link->hash, $this->url_service->unParseUrlFromDb($link), 60 * 24);
 
         return $link;
     }

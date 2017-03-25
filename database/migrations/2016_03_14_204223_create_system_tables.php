@@ -47,8 +47,8 @@ class CreateSystemTables extends Migration
      */
     public function down()
     {
-        Schema::drop('_sessions');
-        Schema::drop('_jobs_failed');
-        Schema::drop('_jobs');
+        Schema::dropIfExists('_sessions');
+        Schema::dropIfExists('_jobs_failed');
+        Schema::dropIfExists('_jobs');
     }
 }

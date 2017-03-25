@@ -18,4 +18,9 @@ class Link extends Model
         'url_fragment',
         'created_by',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
 }

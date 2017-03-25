@@ -12,7 +12,7 @@
 <body>
 <div class="container">
     <div class="content">
-        <h1>Redirecting to <a href="{{ $url }}" title="{{ $url }}" rel="noreferrer nofollow">{{ \Illuminate\Support\Str::limit($url,32) }}</a>
+        <h1>Redirecting to <a href="{{ $url }}" title="{{ $url }}" rel="noreferrer nofollow">{{ str_limit($url,32) }}</a>
         </h1>
     </div>
 </div>

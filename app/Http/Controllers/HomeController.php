@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 class HomeController extends Controller
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -12,12 +13,12 @@ class HomeController extends Controller
     public function index()
     {
         $url = $this->request->server('QUERY_STRING');
-        if (!empty($url)) {
+        if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
             return app(RedirectController::class)->anonymousRedirect($url);
         }
 
-        $this->meta->setMeta(env('SITE_META_TITLE'));
+        meta()->setMeta(env('SITE_META_TITLE'));
 
-        return response(view('home'));
+        return view('home');
     }
 }

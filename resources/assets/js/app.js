@@ -1,6 +1,15 @@
-var BASEURL = $('meta[name=_base_url]').attr('content');
+// window._ = require('lodash');
+window.$ = window.jQuery = require('jquery');
+// window.axios = require('axios');
+// window.axios.defaults.headers.common = {
+//     'X-CSRF-TOKEN': window.Laravel.csrfToken,
+//     'X-Requested-With': 'XMLHttpRequest'
+// };
+require('bootstrap-sass');
 
-var shortenUrl = function () {
+const BASEURL = $('meta[name=_base_url]').attr('content');
+
+const shortenUrl = function () {
     $('input[name="short_url"]').on('click', function () {
         $(this).select();
     });
@@ -43,10 +52,20 @@ var shortenUrl = function () {
         });
         e.preventDefault();
     });
-    $.ajax({
-        url: BASEURL + '/csrf',
-        type: 'GET'
-    }).done(function (data) {
-        $('input[name="_token"]').val(data);
-    });
 };
+
++(function ($) {
+    'use strict';
+
+    $(window).on('load resize', function () {
+        $('#content-area').css('min-height', $(window).height() - ($('header').height() + $('footer').height() + 80) + 'px');
+    });
+
+    // Tooltip
+    $('[data-toggle="tooltip"]').tooltip({'container': 'body'});
+
+    // Popover
+    $('[data-toggle="popover"]').popover();
+
+    shortenUrl();
+})(jQuery);

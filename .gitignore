@@ -1,27 +1,9 @@
-# Ignore files #
-/vendor
 /node_modules
-/bower_components
-Homestead.yaml
-Homestead.json
-schema.sql
-composer.phar
-composer.lock
-.env
-*.map
-
-# OS generated files #
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-*.TMP
-
-# IDE generated files #
+/public/storage
+/public/hot
+/storage/*.key
+/vendor
 /.idea
-/.phpstorm.meta.php
-/_ide_helper.php
-/_ide_helper_models.php
+Homestead.json
+Homestead.yaml
+.env

@@ -6,17 +6,24 @@ use App\Models\Link;
 use App\Services\UrlServices;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Cache;
 
 class RedirectController extends Controller
 {
-    public function __construct()
+    /**
+     * @var UrlServices
+     */
+    private $url_services;
+
+    public function __construct(UrlServices $url_services)
     {
         parent::__construct();
+        $this->url_services = $url_services;
     }
 
-    public function redirect(UrlServices $url_services, $key)
+    public function redirect($key)
     {
-        if ($url = $this->cache->get($key)) {
+        if ($url = Cache::get($key)) {
             return $this->anonymousRedirect(url($url));
         }
 
@@ -24,8 +31,8 @@ class RedirectController extends Controller
         try {
             $link = Link::where('hash', $key)->firstOrFail();
             if ($link) {
-                $url = $url_services->unParseUrlFromDb($link);
-                $this->cache->put($key, $url, 60 * 24);
+                $url = $this->url_services->unParseUrlFromDb($link);
+                Cache::put($key, $url, 60 * 24);
             }
         } catch (ModelNotFoundException $e) {
             abort(404, 'Link not found!');
@@ -37,6 +44,7 @@ class RedirectController extends Controller
     public function anonymousRedirect($url)
     {
         $url = urldecode($url);
+
         return response()->view('anonymous', compact('url'))
             ->setExpires(Carbon::now()->addDays(30))
             ->header('Cache-Control', 'public,max-age=' . (3600 * 24 * 30) . ',s-maxage=' . (3600 * 24 * 30));
