@@ -52,3 +52,9 @@
         </div>
     </div>
 @endsection
+
+@section('footer_js')
+    <script>
+        shortenUrl();
+    </script>
+@endsection

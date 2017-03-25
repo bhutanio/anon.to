@@ -14,14 +14,14 @@
 
             <ul class="nav navbar-nav pull-right">
                 @if(auth()->check())
-                    <li class="dropdown{{ (request()->is('my*')) ? ' active' : ''  }}">
+                    <li class="dropdown{{ (request()->is('my', 'admin')) ? ' active' : ''  }}">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ auth()->user()->username }}
                             <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="{{ url('my') }}" title="My Links"><i class="glyphicon glyphicon-link"></i> My Links</a></li>
+                            <li class="{{ request()->is('my') ? 'active' : ''  }}"><a href="{{ url('my') }}" title="My Links"><i class="glyphicon glyphicon-link"></i> My Links</a></li>
                             @if(auth()->id() == 2)
                                 <li role="separator" class="divider"></li>
-                                <li><a href="{{ url('admin') }}"><i class="glyphicon glyphicon-briefcase"></i> Admin Panel</a></li>
+                                <li class="{{ request()->is('admin') ? 'active' : ''  }}"><a href="{{ url('admin') }}"><i class="glyphicon glyphicon-briefcase"></i> Admin Panel</a></li>
                             @endif
                             <li role="separator" class="divider"></li>
                             <li>
@@ -33,12 +33,18 @@
                         </ul>
                     </li>
                 @else
-                    <li class="{{ request()->is('login') ? 'active' : ''  }}">
-                        <a href="{{ url('login') }}" title="Register">Login</a>
-                    </li>
-                    <li class="{{ request()->is('register') ? 'active' : ''  }}">
-                        <a href="{{ url('register') }}" title="Register">Register</a>
-                    </li>
+                    @if(request()->is('login', 'register'))
+                        <li class="{{ request()->is('login') ? 'active' : ''  }}">
+                            <a href="{{ url('login') }}" title="Register">Login</a>
+                        </li>
+                        <li class="{{ request()->is('register') ? 'active' : ''  }}">
+                            <a href="{{ url('register') }}" title="Register">Register</a>
+                        </li>
+                    @else
+                        <li class="{{ request()->is('my') ? 'active' : ''  }}">
+                            <a href="{{ url('my') }}" title="My Links">My Links</a>
+                        </li>
+                    @endif
                 @endif
 
             </ul>

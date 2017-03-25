@@ -9,9 +9,16 @@ require('bootstrap-sass');
 
 const BASEURL = $('meta[name=_base_url]').attr('content');
 
-const shortenUrl = function () {
+window.shortenUrl = function () {
     $('input[name="short_url"]').on('click', function () {
         $(this).select();
+    });
+
+    $.ajax({
+        url: BASEURL + '/csrf',
+        type: 'GET'
+    }).done(function (data) {
+        $('input[name="_token"]').val(data);
     });
 
     $('#form_shortener').on('submit', function (e) {
@@ -66,6 +73,4 @@ const shortenUrl = function () {
 
     // Popover
     $('[data-toggle="popover"]').popover();
-
-    shortenUrl();
 })(jQuery);

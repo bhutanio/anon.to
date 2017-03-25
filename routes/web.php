@@ -15,4 +15,8 @@ Route::get('activate/{token}', 'Auth\ActivationController@activate');
 
 Route::post('shorten', 'ShortenLinkController@shorten')->middleware(['ajax', 'throttle:20,1']);
 
+Route::get('csrf', function () {
+    return response()->json(csrf_token());
+})->middleware(['ajax']);
+
 Route::get('/', 'HomeController@index');

@@ -12,7 +12,7 @@ class ResetPasswordController extends Controller
 
     use ResetsPasswords;
 
-    protected $redirectTo = '/';
+    protected $redirectTo = '/my';
 
     public function __construct()
     {
