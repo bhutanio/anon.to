@@ -10,6 +10,7 @@
         "laravel/tinker": "~1.0",
         "doctrine/dbal": "2.5.*",
         "laravelcollective/html": "5.4.*",
+        "guzzlehttp/guzzle": "6.2.*",
         "predis/predis": "1.1.*",
         "geoip2/geoip2": "2.4.*",
         "google/recaptcha": "1.1.*"
