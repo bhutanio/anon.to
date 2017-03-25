@@ -30,6 +30,7 @@ php artisan tinker
 ```php
 DB::table('users')->where('id', 2)->update(['email'=>'myemail@example.com']);
 ```
+Click on **forgot password** link on the **login page** and reset password for your admin user.
 
 #### Setup Cron Job
 ```bash
