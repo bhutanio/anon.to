@@ -2,7 +2,7 @@
 
 @section('content')
     <h1 class="page-title">{{ meta()->pageTitle() }}</h1>
-    @include('my.blocks.search', ['search_url'=>'my'])
+    @include('my.blocks.search', ['search_url'=>(auth()->id()==2 ? 'admin' : 'my')])
     <div class="block block-data">
         <table class="table table-condensed table-striped table-bordered">
             <thead>
