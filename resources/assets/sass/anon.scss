@@ -38,6 +38,16 @@ body {
   }
 }
 
+.block-box {
+  text-align: center;
+  min-height: 200px;
+  padding: 60px 0;
+  .glyphicon {
+    font-size: 48px;
+    padding: 10px;
+  }
+}
+
 .footer-top {
   padding: 10px 0;
   color: dynamic-text-color($navbar-default-bg);
