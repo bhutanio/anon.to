@@ -9,7 +9,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', 'My\MyLinksController@index');
     });
 
-    Route::delete('delete/link', 'My\MyLinksController@delete');
+    Route::delete('delete/link', 'My\MyLinksController@delete')->middleware(['admin']);
 });
 
 Auth::routes();

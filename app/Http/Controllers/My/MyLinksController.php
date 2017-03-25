@@ -63,13 +63,14 @@ class MyLinksController extends Controller
         }
 
         $link = Link::findOrFail($id);
-        if ($link->created_by == Auth::id() || Auth::id() == 2) {
+
+        if (Auth::id() == 2) {
             Cache::forget($link->hash);
             $link->delete();
 
             return response()->json('Link Deleted Successfully!', 200);
+        } else {
+            return response()->json('Access Denied!', 403);
         }
-
-        return response()->json('System Error!', 422);
     }
 }

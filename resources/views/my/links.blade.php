@@ -13,8 +13,8 @@
                     <th style="width: 110px;">Added</th>
                     @if(auth()->id()==2)
                         <th style="width: 120px;">By</th>
+                        <th style="width: 48px;"></th>
                     @endif
-                    <th style="width: 48px;"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -25,8 +25,8 @@
                         <td>{{ carbon($link->created_at)->diffForHumans() }}</td>
                         @if(auth()->id()==2)
                             <td>{{ $link->user->username }}</td>
+                            <td><button type="button" data-id="{{ $link->id }}" class="btn btn-sm btn-danger btn_delete_link"><i class="glyphicon glyphicon-trash"></i></button></td>
                         @endif
-                        <td><button type="button" data-id="{{ $link->id }}" class="btn btn-sm btn-danger btn_delete_link"><i class="glyphicon glyphicon-trash"></i></button></td>
                     </tr>
                 @endforeach
                 </tbody>
