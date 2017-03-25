@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Link;
 use App\Services\UrlServices;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class MyLinksController extends Controller
 {
@@ -25,7 +26,7 @@ class MyLinksController extends Controller
     {
         $links = Link::latest();
 
-        if(Auth::id()==2 && $this->request->is('admin')) {
+        if (Auth::id() == 2 && $this->request->is('admin')) {
             meta()->setMeta('Links Admin');
             $links->with('user');
         } else {
@@ -38,7 +39,7 @@ class MyLinksController extends Controller
         }
 
         if ($domain = $this->request->get('domain')) {
-            $links->where('url_host', 'LIKE', '%'.$domain.'%');
+            $links->where('url_host', 'LIKE', '%' . $domain . '%');
         }
 
         $links = $links->paginate(50);
@@ -48,5 +49,27 @@ class MyLinksController extends Controller
         });
 
         return view('my.links', compact('links'));
+    }
+
+    public function delete()
+    {
+        if (!Auth::check() || Auth::id() == 1) {
+            return response()->json('Access Denied!', 403);
+        }
+
+        $id = (int)$this->request->get('id');
+        if (empty($id)) {
+            return response()->json('Invalid ID!', 422);
+        }
+
+        $link = Link::findOrFail($id);
+        if ($link->created_by == Auth::id() || Auth::id() == 2) {
+            Cache::forget($link->hash);
+            $link->delete();
+
+            return response()->json('Link Deleted Successfully!', 200);
+        }
+
+        return response()->json('System Error!', 422);
     }
 }

@@ -46,7 +46,7 @@ class RedirectController extends Controller
         $url = urldecode($url);
 
         return response()->view('anonymous', compact('url'))
-            ->setExpires(Carbon::now()->addDays(30))
-            ->header('Cache-Control', 'public,max-age=' . (3600 * 24 * 30) . ',s-maxage=' . (3600 * 24 * 30));
+            ->setExpires(Carbon::now()->addHours(1))
+            ->header('Cache-Control', 'public,max-age=' . (3600) . ',s-maxage=' . (3600));
     }
 }

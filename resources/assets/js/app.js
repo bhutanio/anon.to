@@ -8,6 +8,7 @@ window.$ = window.jQuery = require('jquery');
 require('bootstrap-sass');
 
 const BASEURL = $('meta[name=_base_url]').attr('content');
+const CSRFTOKEN = $('meta[name=_token]').attr('content');
 
 window.shortenUrl = function () {
     $('input[name="short_url"]').on('click', function () {
@@ -22,7 +23,7 @@ window.shortenUrl = function () {
     });
 
     $('#form_shortener').on('submit', function (e) {
-        var form = $(this);
+        let form = $(this);
 
         form.find('.form-error').remove();
         form.find(':submit').addClass('disabled').attr('disabled', 'disabled');
@@ -58,6 +59,44 @@ window.shortenUrl = function () {
             form.find(':submit').removeClass('disabled').removeAttr('disabled');
         });
         e.preventDefault();
+    });
+};
+
+import swal from "sweetalert2";
+
+window.deleteLink = function () {
+    $('.btn_delete_link').click(function () {
+        let data_id = $(this).data('id');
+        swal({
+            title: 'Delete this Link?',
+            text: 'Are you sure, you want to delete this Link?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            allowOutsideClick: false,
+            showLoaderOnConfirm: true,
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    return $.ajax({
+                        url: BASEURL + '/delete/link',
+                        type: 'DELETE',
+                        data: {'_token': CSRFTOKEN, 'action': 'link', 'id': data_id},
+                        dataType: 'json'
+                    }).done(function (msg) {
+                        resolve();
+                    }).fail(function (jqXHR) {
+                        reject('Error: ' + ((jqXHR.responseJSON) ? jqXHR.responseJSON : jqXHR.statusText));
+                    });
+                });
+            }
+        }).then(function () {
+            swal("Link Deleted!", "Link deleted successfully.", "success");
+        }, function () {
+            swal.resetDefaults()
+        });
     });
 };
 

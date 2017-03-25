@@ -4,35 +4,40 @@
     <h1 class="page-title">{{ meta()->pageTitle() }}</h1>
     @include('my.blocks.search', ['search_url'=>(auth()->id()==2 ? 'admin' : 'my')])
     <div class="block block-data">
-        <table class="table table-condensed table-striped table-bordered">
-            <thead>
-            <tr>
-                <th>Hash</th>
-                <th>URL</th>
-                <th>Added</th>
-                @if(auth()->id()==2)
-                    <th>By</th>
-                @endif
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($links as $link)
+        <div class="table-responsive">
+            <table class="table table-condensed table-striped table-bordered text-wrap">
+                <thead>
                 <tr>
-                    <td><a href="{{ url($link->hash) }}" target="_blank">{{ $link->hash }}</a></td>
-                    <td><a href="{{ $link->full_url }}" target="_blank">{{ $link->full_url }}</a></td>
-                    <td>{{ carbon($link->created_at)->diffForHumans() }}</td>
+                    <th style="width: 80px;">Hash</th>
+                    <th>URL</th>
+                    <th style="width: 110px;">Added</th>
                     @if(auth()->id()==2)
-                        <td>{{ $link->user->username }}</td>
+                        <th style="width: 120px;">By</th>
                     @endif
-                    <td>
-                        <button type="button" data-id="{{ $link->id }}" class="btn btn-sm btn-danger btn_delete_link">
-                            <i class="glyphicon glyphicon-trash"></i></button>
-                    </td>
+                    <th style="width: 48px;"></th>
                 </tr>
-            @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                @foreach($links as $link)
+                    <tr>
+                        <td><a href="{{ url($link->hash) }}" target="_blank">{{ $link->hash }}</a></td>
+                        <td><a href="{{ $link->full_url }}" target="_blank">{{ $link->full_url }}</a></td>
+                        <td>{{ carbon($link->created_at)->diffForHumans() }}</td>
+                        @if(auth()->id()==2)
+                            <td>{{ $link->user->username }}</td>
+                        @endif
+                        <td><button type="button" data-id="{{ $link->id }}" class="btn btn-sm btn-danger btn_delete_link"><i class="glyphicon glyphicon-trash"></i></button></td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="pull-left" style="">{!! $links->render() !!}</div>
+@endsection
+
+@section('footer_js')
+    <script>
+        deleteLink();
+    </script>
 @endsection

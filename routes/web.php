@@ -8,6 +8,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
         Route::get('/', 'My\MyLinksController@index');
     });
+
+    Route::delete('delete/link', 'My\MyLinksController@delete');
 });
 
 Auth::routes();
