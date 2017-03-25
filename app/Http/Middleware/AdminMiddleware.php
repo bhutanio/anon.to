@@ -21,6 +21,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return response('Access Denied.', 403);
+        return abort(403, 'Access Denied.');
     }
 }
