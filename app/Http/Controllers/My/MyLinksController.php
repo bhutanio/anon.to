@@ -25,7 +25,7 @@ class MyLinksController extends Controller
     {
         $links = Links::latest();
 
-        if (Auth::id() == 2 && $this->request->is('admin')) {
+        if (Auth::id() == 2 && $this->request->is('admin/*')) {
             meta()->setMeta('Links Admin');
             $links->with('user');
         } else {

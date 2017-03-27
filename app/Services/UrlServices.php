@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Link;
+use App\Models\Links;
 
 class UrlServices
 {
@@ -49,7 +49,7 @@ class UrlServices
         return $unparsed;
     }
 
-    public function unParseUrlFromDb(Link $link)
+    public function unParseUrlFromDb(Links $link)
     {
         $segments = [
             "scheme"   => $link->url_scheme,
