@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\My;
 
 use App\Http\Controllers\Controller;
-use App\Models\Link;
+use App\Models\Links;
 use App\Services\UrlServices;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class MyLinksController extends Controller
 {
-
     /**
      * @var UrlServices
      */
@@ -24,7 +23,7 @@ class MyLinksController extends Controller
 
     public function index()
     {
-        $links = Link::latest();
+        $links = Links::latest();
 
         if (Auth::id() == 2 && $this->request->is('admin')) {
             meta()->setMeta('Links Admin');
@@ -40,6 +39,10 @@ class MyLinksController extends Controller
 
         if ($domain = $this->request->get('domain')) {
             $links->where('url_host', 'LIKE', '%' . $domain . '%');
+        }
+
+        if ($path = $this->request->get('path')) {
+            $links->where('url_path', 'LIKE', '%' . $path . '%');
         }
 
         $links = $links->paginate(50);
@@ -62,7 +65,7 @@ class MyLinksController extends Controller
             return response()->json('Invalid ID!', 422);
         }
 
-        $link = Link::findOrFail($id);
+        $link = Links::findOrFail($id);
 
         if (Auth::id() == 2) {
             Cache::forget($link->hash);

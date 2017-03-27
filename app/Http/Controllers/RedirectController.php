@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Link;
+use App\Models\Links;
 use App\Services\UrlServices;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -29,7 +29,7 @@ class RedirectController extends Controller
 
         $url = '/';
         try {
-            $link = Link::where('hash', $key)->firstOrFail();
+            $link = Links::where('hash', $key)->firstOrFail();
             if ($link) {
                 $url = $this->url_services->unParseUrlFromDb($link);
                 Cache::put($key, $url, 60 * 24);

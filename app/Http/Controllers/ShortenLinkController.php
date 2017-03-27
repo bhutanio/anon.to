@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Link;
+use App\Models\Links;
 use App\Services\UrlServices;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -48,7 +48,7 @@ class ShortenLinkController extends Controller
 
     private function urlExists(array $url)
     {
-        $link = Link::where('url_scheme', $url['scheme'])->where('url_host', $url['host']);
+        $link = Links::where('url_scheme', $url['scheme'])->where('url_host', $url['host']);
 
         if (!empty($url['port'])) {
             $link = $link->where('url_port', $url['port']);
@@ -86,13 +86,13 @@ class ShortenLinkController extends Controller
     {
         $hash = $this->generateHash();
 
-        $link = Link::where('hash', $hash)->first();
+        $link = Links::where('hash', $hash)->first();
         while ($link) {
             $hash = $this->generateHash();
-            $link = Link::where('hash', $hash)->first();
+            $link = Links::where('hash', $hash)->first();
         }
 
-        $link = Link::create([
+        $link = Links::create([
             'hash'         => $hash,
             'url_scheme'   => $parsed_url['scheme'],
             'url_host'     => $parsed_url['host'],
