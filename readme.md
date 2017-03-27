@@ -55,5 +55,19 @@ user=www-data
 numprocs=2
 ```
 
+#### Setup Google ReCaptcha
+Visit https://www.google.com/recaptcha/admin and register your site
+
+Get **Site key** and **Secret key**, add them in your .env file
+```$xslt
+...
+## Secret Key
+API_GOOGLE_RECAPTCHA='SECRET KEY'
+
+## Site Key
+API_GOOGLE_RECAPTCHA_CLIENT='SITE KEY'
+...
+```
+
 ### License
 anon.to is open source software licensed under the [MIT license](http://opensource.org/licenses/MIT).
