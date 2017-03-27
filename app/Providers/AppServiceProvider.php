@@ -25,6 +25,16 @@ class AppServiceProvider extends ServiceProvider
             return false;
         });
 
+        Validator::extend('recaptcha', function ($attribute, $value, $parameters, $validator) {
+            $recaptcha = new \ReCaptcha\ReCaptcha(env('API_GOOGLE_RECAPTCHA'));
+            $resp = $recaptcha->verify($value, get_ip());
+            if ($resp->isSuccess()) {
+                return true;
+            }
+
+            return false;
+        });
+
         /**
          * Singletons
          */

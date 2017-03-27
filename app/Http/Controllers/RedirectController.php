@@ -2,23 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Links;
-use App\Services\UrlServices;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Cache;
 
-class RedirectController extends Controller
+class RedirectController extends LinksController
 {
-    /**
-     * @var UrlServices
-     */
-    private $url_services;
-
-    public function __construct(UrlServices $url_services)
+    public function __construct()
     {
         parent::__construct();
-        $this->url_services = $url_services;
     }
 
     public function redirect($key)
@@ -27,18 +18,14 @@ class RedirectController extends Controller
             return $this->anonymousRedirect(url($url));
         }
 
-        $url = '/';
-        try {
-            $link = Links::where('hash', $key)->firstOrFail();
-            if ($link) {
-                $url = $this->url_services->unParseUrlFromDb($link);
-                Cache::put($key, $url, 60 * 24);
-            }
-        } catch (ModelNotFoundException $e) {
-            abort(404, 'Link not found!');
+        if ($link = $this->hashExists($key)) {
+            $this->cacheLink($link);
+            $url = $this->url_service->unParseUrlFromDb($link);
+
+            return $this->anonymousRedirect(url($url));
         }
 
-        return $this->anonymousRedirect(url($url));
+        return abort(404, 'Link not found!');
     }
 
     public function anonymousRedirect($url)

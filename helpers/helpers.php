@@ -26,9 +26,62 @@ function flash($message, $type = 'info')
     ]);
 }
 
-function asset_cdn($path)
+/**
+ * Get IP Address, checks for cloudflare headers.
+ *
+ * @return string
+ */
+function get_ip()
 {
-    return asset($path);
+    if (getenv('HTTP_CF_CONNECTING_IP') && is_valid_ip(getenv('HTTP_CF_CONNECTING_IP'))) {
+        return getenv('HTTP_CF_CONNECTING_IP');
+    }
+
+    return request()->getClientIp();
+}
+
+/**
+ * Validate IP Address.
+ *
+ * @param string $ip    IP address
+ * @param string $which IP protocol: 'ipv4' or 'ipv6'
+ *
+ * @return bool
+ */
+function is_valid_ip($ip, $which = 'ipv4')
+{
+    if ($ip == '0.0.0.0' || $ip == '127.0.0.1') {
+        return false;
+    }
+    switch (strtolower($which)) {
+        case 'ipv4':
+            $which = FILTER_FLAG_IPV4;
+            break;
+        case 'ipv6':
+            $which = FILTER_FLAG_IPV6;
+            break;
+        default:
+            $which = null;
+            break;
+    }
+
+    return (bool) filter_var($ip, FILTER_VALIDATE_IP, $which);
+}
+
+/**
+ * Validate IPv4 Address (Check if it is a public IP).
+ *
+ * @param string $ip IP address
+ *
+ * @return bool
+ */
+function is_public_ip($ip)
+{
+    if (!is_valid_ip($ip)) {
+        return false;
+    }
+
+    return (bool) filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
 }
 
 function excluded_words()

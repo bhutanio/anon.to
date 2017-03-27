@@ -12,8 +12,9 @@ class HomeController extends Controller
 
     public function index()
     {
-        $url = urldecode($this->request->server('QUERY_STRING'));
-        if (!empty($url) && filter_var($url, FILTER_VALIDATE_URL)) {
+        $url = $this->request->server('QUERY_STRING');
+
+        if (!empty($url) && filter_var(urldecode($url), FILTER_VALIDATE_URL)) {
             return app(RedirectController::class)->anonymousRedirect($url);
         }
 

@@ -5,6 +5,11 @@
                 <div class="col-md-6 footer-col text-center">
                     <h4 class="text-danger">GitHub <a href="https://github.com/bhutanio/anon.to" title="Anon.to GitHub Repo" target="_blank">Repo</a></h4>
                     <p>Copyright &copy; {{ env('SITE_NAME') }}</p>
+                    <ul class="list-inline">
+                        <li><a href="{{ url('about') }}" title="About">About</a></li>
+                        <li><a href="{{ url('about/terms') }}" title="Terms of Service">Terms</a></li>
+                        <li><a href="{{ url('about/privacy-policy') }}" title="Privacy Policy">Privacy</a></li>
+                    </ul>
                 </div>
                 <div class="col-md-6 footer-col text-center">
                     <h4 class="text-danger"><a href="{{ url('about') }}">About</a> {{ env('SITE_NAME') }}</h4>

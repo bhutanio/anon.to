@@ -21,7 +21,8 @@
                             <li class="{{ request()->is('my') ? 'active' : ''  }}"><a href="{{ url('my') }}" title="My Links"><i class="glyphicon glyphicon-link"></i> My Links</a></li>
                             @if(auth()->id() == 2)
                                 <li role="separator" class="divider"></li>
-                                <li class="{{ request()->is('admin') ? 'active' : ''  }}"><a href="{{ url('admin') }}"><i class="glyphicon glyphicon-briefcase"></i> Admin Panel</a></li>
+                                <li class="{{ request()->is('admin/links') ? 'active' : ''  }}"><a href="{{ url('admin/links') }}" title="Links Admin"><i class="glyphicon glyphicon-briefcase"></i> Links Admin</a></li>
+                                <li class="{{ request()->is('admin/reports') ? 'active' : ''  }}"><a href="{{ url('admin/reports') }}" title="Reports Admin"><i class="glyphicon glyphicon-list-alt"></i> Reports</a></li>
                             @endif
                             <li role="separator" class="divider"></li>
                             <li>
