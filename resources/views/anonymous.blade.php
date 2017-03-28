@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="1; url={{ $url }}" name="url">
+    <meta http-equiv="refresh" content="1; url={{ $url }}" id="url">
     <title>Redirecting to {{ $url }}</title>
     <link rel="shortcut icon" href="{{ asset('favicon.png') }}">
     <style>
@@ -20,7 +20,7 @@
 <script>
 (function(){
     if(window.location.hash) {
-        document.getElementsByName('url')[0].setAttribute('content', '0; url={{ $url }}' + window.location.hash);
+        document.getElementById('url').setAttribute('content', '0; url={{ $url }}' + window.location.hash);
     }
 })();
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
