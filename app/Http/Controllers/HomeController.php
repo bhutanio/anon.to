@@ -14,7 +14,7 @@ class HomeController extends Controller
     {
         $url = $this->request->server('QUERY_STRING');
 
-        if (!empty($url) && filter_var(urldecode($url), FILTER_VALIDATE_URL)) {
+        if (is_valid_url($url)) {
             return app(RedirectController::class)->anonymousRedirect($url);
         }
 

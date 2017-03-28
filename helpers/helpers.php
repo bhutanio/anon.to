@@ -43,7 +43,7 @@ function get_ip()
 /**
  * Validate IP Address.
  *
- * @param string $ip    IP address
+ * @param string $ip IP address
  * @param string $which IP protocol: 'ipv4' or 'ipv6'
  *
  * @return bool
@@ -65,7 +65,7 @@ function is_valid_ip($ip, $which = 'ipv4')
             break;
     }
 
-    return (bool) filter_var($ip, FILTER_VALIDATE_IP, $which);
+    return (bool)filter_var($ip, FILTER_VALIDATE_IP, $which);
 }
 
 /**
@@ -81,7 +81,25 @@ function is_public_ip($ip)
         return false;
     }
 
-    return (bool) filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+    return (bool)filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+}
+
+function is_valid_url($url)
+{
+    if (empty($url)) {
+        return false;
+    }
+
+    $url = urldecode($url);
+
+    // Weird Bug, Laravel fails to validate Decoded URL with space in it.
+    $url = str_replace(' ', '%20', $url);
+
+    $valid = app('validator')->make(['url' => $url], [
+        'url' => 'url'
+    ]);
+
+    return $valid->passes();
 }
 
 function excluded_words()
