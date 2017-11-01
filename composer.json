@@ -12,7 +12,7 @@
         "laravelcollective/html": "5.4.*",
         "guzzlehttp/guzzle": "6.3.*",
         "predis/predis": "1.1.*",
-        "geoip2/geoip2": "2.4.*",
+        "geoip2/geoip2": "2.7.*",
         "google/recaptcha": "1.1.*"
     },
     "require-dev": {
