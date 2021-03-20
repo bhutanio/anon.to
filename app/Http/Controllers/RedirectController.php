@@ -31,6 +31,7 @@ class RedirectController extends LinksController
     public function anonymousRedirect($url)
     {
         $url = urldecode($url);
+        $url = html_entity_decode($url);
 
         return response()->view('anonymous', compact('url'))
             ->setExpires(Carbon::now()->addHours(1))
