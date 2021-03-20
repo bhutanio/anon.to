@@ -141,6 +141,7 @@ class AnonServices
         $hash = null;
         if (is_valid_url($url)) {
             $url = urldecode($url);
+            $url = html_entity_decode($url);
         } else {
             $hash = $url;
             $url = $this->getUrl($url);
