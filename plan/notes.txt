@@ -1,0 +1,2 @@
+- Find out what is slug used in links
+- Remove IP Address
