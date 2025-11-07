@@ -5,17 +5,21 @@ declare(strict_types=1);
 use App\Livewire\Home;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // Clear all rate limiters before each test
+    // Clear all cache to ensure rate limiters are reset
+    Cache::flush();
+
+    // Explicitly clear rate limiters as well
     RateLimiter::clear('create-link:ip:127.0.0.1');
 
     // Also clear user-specific rate limiters (in case tests create users)
-    for ($i = 1; $i <= 10; $i++) {
+    for ($i = 1; $i <= 200; $i++) {
         RateLimiter::clear("create-link:user:{$i}");
     }
 });

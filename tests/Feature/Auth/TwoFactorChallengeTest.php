@@ -25,8 +25,10 @@ test('two factor challenge can be rendered', function () {
 
     $user = User::factory()->create();
 
-    $this->post(route('login.store'), [
-        'email' => $user->email,
-        'password' => 'password',
-    ])->assertRedirect(route('two-factor.login'));
+    $this->withSession(['_token' => 'test-token'])
+        ->post(route('login.store'), [
+            '_token' => 'test-token',
+            'email' => $user->email,
+            'password' => 'password',
+        ])->assertRedirect(route('two-factor.login'));
 });
