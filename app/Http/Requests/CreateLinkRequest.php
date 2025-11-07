@@ -34,14 +34,6 @@ class CreateLinkRequest extends FormRequest
                 "max:{$maxUrlLength}",
                 'regex:/^https?:\/\//', // Must start with http:// or https://
             ],
-            'custom_slug' => [
-                'nullable',
-                'string',
-                'min:3',
-                'max:50',
-                'regex:/^[a-zA-Z0-9\-]+$/', // Alphanumeric and dashes only
-                'unique:links,slug',
-            ],
             'expires_at' => [
                 'nullable',
                 'date',
@@ -62,10 +54,6 @@ class CreateLinkRequest extends FormRequest
             'url.url' => 'Please enter a valid URL.',
             'url.max' => 'The URL is too long. Maximum length is :max characters.',
             'url.regex' => 'Only HTTP and HTTPS URLs are supported.',
-            'custom_slug.min' => 'Custom slug must be at least 3 characters.',
-            'custom_slug.max' => 'Custom slug cannot exceed 50 characters.',
-            'custom_slug.regex' => 'Custom slug can only contain letters, numbers, and dashes.',
-            'custom_slug.unique' => 'This custom slug is already taken. Please choose another.',
             'expires_at.date' => 'Please enter a valid expiration date.',
             'expires_at.after' => 'Expiration date must be in the future.',
         ];
@@ -80,7 +68,6 @@ class CreateLinkRequest extends FormRequest
     {
         return [
             'url' => 'URL',
-            'custom_slug' => 'custom slug',
             'expires_at' => 'expiration date',
         ];
     }

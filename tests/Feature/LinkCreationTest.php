@@ -17,14 +17,12 @@ describe('Anonymous Link Creation', function () {
         $link = $action->execute([
             'url' => 'https://example.com/page',
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
 
         expect($link)->toBeInstanceOf(Link::class)
             ->full_url->toBe('https://example.com/page')
             ->hash->toHaveLength(6)
-            ->slug->toBeNull()
             ->user_id->toBeNull()
             ->is_active->toBeTrue();
 
@@ -32,20 +30,6 @@ describe('Anonymous Link Creation', function () {
             'full_url' => 'https://example.com/page',
             'is_active' => true,
         ]);
-    });
-
-    test('anonymous user cannot use custom slug', function () {
-        $action = app(CreateLink::class);
-
-        $link = $action->execute([
-            'url' => 'https://example.com/test',
-            'user_id' => null,
-            'custom_slug' => 'my-slug',
-            'expires_at' => null,
-        ]);
-
-        // Custom slug should be accepted (validation happens at request level)
-        expect($link->slug)->toBe('my-slug');
     });
 
     test('creates link with complex URL', function () {
@@ -56,7 +40,6 @@ describe('Anonymous Link Creation', function () {
         $link = $action->execute([
             'url' => $complexUrl,
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
 
@@ -75,7 +58,6 @@ describe('Anonymous Link Creation', function () {
         $link = $action->execute([
             'url' => 'https://example.com/cached-link',
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
 
@@ -95,7 +77,6 @@ describe('Registered User Link Creation', function () {
         $link = $action->execute([
             'url' => 'https://example.com/user-page',
             'user_id' => $user->id,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
 
@@ -108,26 +89,6 @@ describe('Registered User Link Creation', function () {
         ]);
     });
 
-    test('registered user can use custom slug', function () {
-        $user = User::factory()->create();
-        $action = app(CreateLink::class);
-
-        $link = $action->execute([
-            'url' => 'https://example.com/custom',
-            'user_id' => $user->id,
-            'custom_slug' => 'my-awesome-link',
-            'expires_at' => null,
-        ]);
-
-        expect($link->slug)->toBe('my-awesome-link')
-            ->and($link->hash)->toBe('my-awesome-link');
-
-        $this->assertDatabaseHas('links', [
-            'slug' => 'my-awesome-link',
-            'hash' => 'my-awesome-link',
-        ]);
-    });
-
     test('registered user can set expiration date', function () {
         $user = User::factory()->create();
         $action = app(CreateLink::class);
@@ -136,7 +97,6 @@ describe('Registered User Link Creation', function () {
         $link = $action->execute([
             'url' => 'https://example.com/expires',
             'user_id' => $user->id,
-            'custom_slug' => null,
             'expires_at' => $expiresAt->toDateTimeString(),
         ]);
 
@@ -154,7 +114,6 @@ describe('Duplicate Detection', function () {
         $firstLink = $action->execute([
             'url' => $url,
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
 
@@ -162,7 +121,6 @@ describe('Duplicate Detection', function () {
         $secondLink = $action->execute([
             'url' => $url,
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
 
@@ -176,14 +134,12 @@ describe('Duplicate Detection', function () {
         $firstLink = $action->execute([
             'url' => 'https://example.com/page1',
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
 
         $secondLink = $action->execute([
             'url' => 'https://example.com/page2',
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
 
@@ -199,7 +155,6 @@ describe('Validation', function () {
         $action->execute([
             'url' => 'not-a-valid-url',
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
     })->throws(\InvalidArgumentException::class);
@@ -210,7 +165,6 @@ describe('Validation', function () {
         $action->execute([
             'url' => 'http://192.168.1.1/admin',
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
     })->throws(\InvalidArgumentException::class, 'Internal or private IP addresses are not allowed');
@@ -221,7 +175,6 @@ describe('Validation', function () {
         $action->execute([
             'url' => 'ftp://example.com/file.txt',
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
     })->throws(\InvalidArgumentException::class, 'Only HTTP and HTTPS URLs are allowed');

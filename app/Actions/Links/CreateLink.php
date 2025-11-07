@@ -20,7 +20,7 @@ class CreateLink
     /**
      * Create a new shortened link.
      *
-     * @param  array{url: string, user_id: int|null, custom_slug: string|null, expires_at: string|null}  $data
+     * @param  array{url: string, user_id: int|null, expires_at: string|null}  $data
      *
      * @throws \InvalidArgumentException If validation fails
      * @throws \RuntimeException If hash generation fails
@@ -29,7 +29,6 @@ class CreateLink
     {
         $url = $data['url'];
         $userId = $data['user_id'] ?? null;
-        $customSlug = $data['custom_slug'] ?? null;
         $expiresAt = $data['expires_at'] ?? null;
 
         // Step 1: Validate URL
@@ -45,8 +44,8 @@ class CreateLink
         // Step 3: Parse URL into components
         $parsed = $this->urlService->parse($url);
 
-        // Step 4: Generate unique hash or validate custom slug
-        $hash = $this->generateHash->execute($customSlug);
+        // Step 4: Generate unique hash
+        $hash = $this->generateHash->execute();
 
         // Step 5: Hash IP address for privacy
         $ipAddress = request()->ip();
@@ -55,7 +54,6 @@ class CreateLink
         // Step 6: Create link record
         $link = Link::create([
             'hash' => $hash,
-            'slug' => $customSlug,
             'url_scheme' => $parsed['scheme'],
             'url_host' => $parsed['host'],
             'url_port' => $parsed['port'],
@@ -84,9 +82,5 @@ class CreateLink
         $ttl = config('anon.default_cache_ttl', 86400); // 24 hours
 
         Cache::put("link:{$link->hash}", $link, $ttl);
-
-        if ($link->slug) {
-            Cache::put("link:{$link->slug}", $link, $ttl);
-        }
     }
 }

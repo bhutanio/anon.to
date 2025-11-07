@@ -24,7 +24,6 @@ class LinkFactory extends Factory
 
         return [
             'hash' => Str::random(6),
-            'slug' => null,
             'url_scheme' => $parsed['scheme'] ?? 'https',
             'url_host' => $parsed['host'] ?? fake()->domainName(),
             'url_port' => $parsed['port'] ?? null,
@@ -65,16 +64,6 @@ class LinkFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'is_reported' => true,
-        ]);
-    }
-
-    /**
-     * Indicate that the link has a custom slug.
-     */
-    public function withSlug(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'slug' => Str::slug(fake()->words(3, true)),
         ]);
     }
 

@@ -17,7 +17,6 @@ test('creates link with valid URL', function () {
     $data = [
         'url' => 'https://example.com/test-page',
         'user_id' => null,
-        'custom_slug' => null,
         'expires_at' => null,
     ];
 
@@ -33,27 +32,12 @@ test('creates link with valid URL', function () {
         ->visits->toBe(0);
 });
 
-test('creates link with custom slug', function () {
-    $data = [
-        'url' => 'https://example.com/page',
-        'user_id' => null,
-        'custom_slug' => 'my-custom-slug',
-        'expires_at' => null,
-    ];
-
-    $link = $this->action->execute($data);
-
-    expect($link->slug)->toBe('my-custom-slug')
-        ->and($link->hash)->toBe('my-custom-slug');
-});
-
 test('creates link with expiration date', function () {
     $expiresAt = now()->addDays(7)->toDateTimeString();
 
     $data = [
         'url' => 'https://example.com/expires',
         'user_id' => null,
-        'custom_slug' => null,
         'expires_at' => $expiresAt,
     ];
 
@@ -69,7 +53,6 @@ test('creates link with user ID', function () {
     $data = [
         'url' => 'https://example.com/user-link',
         'user_id' => $user->id,
-        'custom_slug' => null,
         'expires_at' => null,
     ];
 
@@ -82,7 +65,6 @@ test('parses URL into components correctly', function () {
     $data = [
         'url' => 'https://example.com:8080/path?query=value#fragment',
         'user_id' => null,
-        'custom_slug' => null,
         'expires_at' => null,
     ];
 
@@ -103,7 +85,6 @@ test('stores SHA256 hash of full URL', function () {
     $data = [
         'url' => $url,
         'user_id' => null,
-        'custom_slug' => null,
         'expires_at' => null,
     ];
 
@@ -116,7 +97,6 @@ test('caches link after creation', function () {
     $data = [
         'url' => 'https://example.com/cached',
         'user_id' => null,
-        'custom_slug' => null,
         'expires_at' => null,
     ];
 
@@ -128,24 +108,6 @@ test('caches link after creation', function () {
         ->id->toBe($link->id);
 });
 
-test('caches link with custom slug using slug key', function () {
-    $data = [
-        'url' => 'https://example.com/slug-cached',
-        'user_id' => null,
-        'custom_slug' => 'test-slug',
-        'expires_at' => null,
-    ];
-
-    $link = $this->action->execute($data);
-
-    $cachedByHash = Cache::get("link:{$link->hash}");
-    $cachedBySlug = Cache::get("link:{$link->slug}");
-
-    expect($cachedByHash)->not->toBeNull()
-        ->and($cachedBySlug)->not->toBeNull()
-        ->and($cachedBySlug->id)->toBe($link->id);
-});
-
 test('returns existing link for duplicate URL', function () {
     $url = 'https://example.com/duplicate';
 
@@ -153,7 +115,6 @@ test('returns existing link for duplicate URL', function () {
     $firstLink = $this->action->execute([
         'url' => $url,
         'user_id' => null,
-        'custom_slug' => null,
         'expires_at' => null,
     ]);
 
@@ -161,7 +122,6 @@ test('returns existing link for duplicate URL', function () {
     $secondLink = $this->action->execute([
         'url' => $url,
         'user_id' => null,
-        'custom_slug' => null,
         'expires_at' => null,
     ]);
 
@@ -173,7 +133,6 @@ test('throws exception for invalid URL', function () {
     $data = [
         'url' => 'not-a-valid-url',
         'user_id' => null,
-        'custom_slug' => null,
         'expires_at' => null,
     ];
 
@@ -184,7 +143,6 @@ test('throws exception for internal URL', function () {
     $data = [
         'url' => 'http://localhost/admin',
         'user_id' => null,
-        'custom_slug' => null,
         'expires_at' => null,
     ];
 

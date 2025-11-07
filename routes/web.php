@@ -32,7 +32,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Anonymous redirect warning page - must be last to avoid conflicts with other routes
-// Handles both hash (6 chars) and custom slug formats
-Route::get('/{hashOrSlug}', [RedirectController::class, 'show'])
-    ->where('hashOrSlug', '[a-zA-Z0-9\-]{3,50}')
+// Handles 6-character hash only
+Route::get('/{hash}', [RedirectController::class, 'show'])
+    ->where('hash', '[a-zA-Z0-9]{6}')
     ->name('redirect.show');

@@ -68,10 +68,6 @@ class LinkObserver
         $ttl = config('anon.default_cache_ttl', 86400); // 24 hours
 
         Cache::put("link:{$link->hash}", $link, $ttl);
-
-        if ($link->slug) {
-            Cache::put("link:{$link->slug}", $link, $ttl);
-        }
     }
 
     /**
@@ -80,9 +76,5 @@ class LinkObserver
     protected function invalidateCache(Link $link): void
     {
         Cache::forget("link:{$link->hash}");
-
-        if ($link->slug) {
-            Cache::forget("link:{$link->slug}");
-        }
     }
 }

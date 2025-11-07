@@ -16,7 +16,6 @@ describe('Link Creation Caching', function () {
         $link = $action->execute([
             'url' => 'https://example.com/test',
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
 
@@ -27,25 +26,6 @@ describe('Link Creation Caching', function () {
             ->full_url->toBe('https://example.com/test');
     });
 
-    test('link with custom slug is cached under both hash and slug', function () {
-        $action = app(CreateLink::class);
-
-        $link = $action->execute([
-            'url' => 'https://example.com/slug-test',
-            'user_id' => null,
-            'custom_slug' => 'test-slug',
-            'expires_at' => null,
-        ]);
-
-        $cachedByHash = Cache::get("link:{$link->hash}");
-        $cachedBySlug = Cache::get('link:test-slug');
-
-        expect($cachedByHash)->not->toBeNull()
-            ->and($cachedBySlug)->not->toBeNull()
-            ->and($cachedByHash->id)->toBe($link->id)
-            ->and($cachedBySlug->id)->toBe($link->id);
-    });
-
     test('cache has correct TTL', function () {
         $action = app(CreateLink::class);
         config(['anon.default_cache_ttl' => 100]); // 100 seconds for test
@@ -53,7 +33,6 @@ describe('Link Creation Caching', function () {
         $link = $action->execute([
             'url' => 'https://example.com/ttl-test',
             'user_id' => null,
-            'custom_slug' => null,
             'expires_at' => null,
         ]);
 
@@ -113,78 +92,63 @@ describe('Link Deletion Caching', function () {
 
         expect(Cache::has("link:{$link->hash}"))->toBeFalse();
     });
-
-    test('custom slug cache is cleared on deletion', function () {
-        $link = Link::factory()->create([
-            'hash' => 'slug-delete',
-            'slug' => 'slug-delete',
-        ]);
-
-        expect(Cache::has("link:{$link->hash}"))->toBeTrue();
-        expect(Cache::has("link:{$link->slug}"))->toBeTrue();
-
-        $link->delete();
-
-        expect(Cache::has("link:{$link->hash}"))->toBeFalse();
-        expect(Cache::has("link:{$link->slug}"))->toBeFalse();
-    });
 });
 
 describe('Redirect Controller Caching', function () {
     test('redirect controller uses cache', function () {
         $link = Link::factory()->create([
-            'hash' => 'controller-cache',
+            'hash' => 'ctrl01',
             'full_url' => 'https://example.com/cached',
             'is_active' => true,
         ]);
 
         // First request should cache the link
-        $response = $this->get('/controller-cache');
+        $response = $this->get('/ctrl01');
         $response->assertSuccessful();
 
         // Verify it's in cache
-        expect(Cache::has('link:controller-cache'))->toBeTrue();
+        expect(Cache::has('link:ctrl01'))->toBeTrue();
 
         // Second request should use cache
-        $response = $this->get('/controller-cache');
+        $response = $this->get('/ctrl01');
         $response->assertSuccessful();
     });
 
     test('cache miss triggers database query', function () {
         $link = Link::factory()->create([
-            'hash' => 'cache-miss',
+            'hash' => 'miss01',
             'full_url' => 'https://example.com/miss',
             'is_active' => true,
         ]);
 
         // Clear cache to simulate miss
-        Cache::forget('link:cache-miss');
+        Cache::forget('link:miss01');
 
-        $response = $this->get('/cache-miss');
+        $response = $this->get('/miss01');
 
         $response->assertSuccessful();
 
         // Should be cached now
-        expect(Cache::has('link:cache-miss'))->toBeTrue();
+        expect(Cache::has('link:miss01'))->toBeTrue();
     });
 });
 
 describe('Observer Caching', function () {
     test('observer caches link on creation', function () {
         $link = Link::create([
-            'hash' => 'observer-create',
+            'hash' => 'obs001',
             'url_scheme' => 'https',
             'url_host' => 'example.com',
             'full_url' => 'https://example.com',
             'full_url_hash' => hash('sha256', 'https://example.com'),
         ]);
 
-        expect(Cache::has('link:observer-create'))->toBeTrue();
+        expect(Cache::has('link:obs001'))->toBeTrue();
     });
 
     test('observer sets default values', function () {
         $link = Link::create([
-            'hash' => 'defaults',
+            'hash' => 'def001',
             'url_scheme' => 'https',
             'url_host' => 'example.com',
             'full_url' => 'https://example.com',
@@ -199,33 +163,33 @@ describe('Observer Caching', function () {
 
     test('observer caches link on update', function () {
         $link = Link::factory()->create([
-            'hash' => 'observer-update',
+            'hash' => 'upd001',
         ]);
 
-        Cache::forget('link:observer-update');
+        Cache::forget('link:upd001');
 
         $link->update(['full_url' => 'https://example.com/updated']);
 
-        expect(Cache::has('link:observer-update'))->toBeTrue();
+        expect(Cache::has('link:upd001'))->toBeTrue();
     });
 
     test('observer clears cache on deletion', function () {
         $link = Link::factory()->create([
-            'hash' => 'observer-delete',
+            'hash' => 'del001',
         ]);
 
-        expect(Cache::has('link:observer-delete'))->toBeTrue();
+        expect(Cache::has('link:del001'))->toBeTrue();
 
         $link->delete();
 
-        expect(Cache::has('link:observer-delete'))->toBeFalse();
+        expect(Cache::has('link:del001'))->toBeFalse();
     });
 });
 
 describe('Cache Performance', function () {
     test('multiple requests use cache efficiently', function () {
         $link = Link::factory()->create([
-            'hash' => 'performance',
+            'hash' => 'perf01',
             'is_active' => true,
             'visits' => 0, // Start from 0
         ]);
@@ -234,12 +198,12 @@ describe('Cache Performance', function () {
 
         // Make multiple requests
         for ($i = 0; $i < 10; $i++) {
-            $response = $this->get('/performance');
+            $response = $this->get('/perf01');
             $response->assertSuccessful();
         }
 
         // Cache should still exist
-        expect(Cache::has('link:performance'))->toBeTrue();
+        expect(Cache::has('link:perf01'))->toBeTrue();
 
         // Visit counter should be incremented for all requests
         $link->refresh();
@@ -248,16 +212,16 @@ describe('Cache Performance', function () {
 
     test('cache reduces database queries', function () {
         $link = Link::factory()->create([
-            'hash' => 'query-test',
+            'hash' => 'qry001',
             'is_active' => true,
         ]);
 
         // First request (cache miss)
-        $this->get('/query-test');
+        $this->get('/qry001');
 
         // Subsequent requests should use cache
         // This is verified by the cache-first strategy in RedirectController
-        $cached = Cache::get('link:query-test');
+        $cached = Cache::get('link:qry001');
 
         expect($cached)->not->toBeNull()
             ->id->toBe($link->id);

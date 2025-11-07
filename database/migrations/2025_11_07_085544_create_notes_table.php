@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
             $table->string('hash')->unique();
-            $table->string('slug')->unique()->nullable();
             $table->string('title')->nullable();
             $table->longText('content');
             $table->string('content_hash', 64)->index();
@@ -33,7 +32,7 @@ return new class extends Migration
             $table->boolean('is_code')->default(false);
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('forked_from_id')->nullable()->constrained('notes')->nullOnDelete();
-            $table->string('ip_address', 45)->nullable();
+            $table->string('ip_address', 64)->nullable(); // SHA256 hash length
             $table->text('user_agent')->nullable();
             $table->timestamps();
 

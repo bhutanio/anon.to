@@ -21,24 +21,6 @@ describe('Redirect Warning Page', function () {
         $response->assertSee('example.com');
     })->skip('Frontend view not built yet - will pass after Phase 3');
 
-    test('shows warning page for valid custom slug', function () {
-        $link = Link::factory()->create([
-            'hash' => 'abc123',
-            'slug' => 'custom-slug',
-            'url_scheme' => 'https',
-            'url_host' => 'example.com',
-            'url_path' => '/custom',
-            'full_url' => 'https://example.com/custom',
-            'is_active' => true,
-        ]);
-
-        $response = $this->get('/custom-slug');
-
-        $response->assertSuccessful();
-        $response->assertSee('example.com', false); // Don't escape HTML
-        $response->assertViewHas('destinationUrl', 'https://example.com/custom');
-    });
-
     test('returns 404 for non-existent hash', function () {
         $response = $this->get('/nonexistent');
 
@@ -47,38 +29,38 @@ describe('Redirect Warning Page', function () {
 
     test('returns 410 for expired link', function () {
         $link = Link::factory()->create([
-            'hash' => 'expired',
+            'hash' => 'exp001',
             'full_url' => 'https://example.com/old',
             'expires_at' => now()->subDay(),
             'is_active' => true,
         ]);
 
-        $response = $this->get('/expired');
+        $response = $this->get('/exp001');
 
         $response->assertStatus(410);
     });
 
     test('returns 403 for inactive link', function () {
         $link = Link::factory()->create([
-            'hash' => 'inactive',
+            'hash' => 'inact1',
             'full_url' => 'https://example.com/disabled',
             'is_active' => false,
         ]);
 
-        $response = $this->get('/inactive');
+        $response = $this->get('/inact1');
 
         $response->assertForbidden();
     });
 
     test('increments visit counter', function () {
         $link = Link::factory()->create([
-            'hash' => 'counter',
+            'hash' => 'cnt001',
             'full_url' => 'https://example.com/count',
             'visits' => 5,
             'is_active' => true,
         ]);
 
-        $this->get('/counter');
+        $this->get('/cnt001');
 
         $link->refresh();
 
@@ -87,7 +69,7 @@ describe('Redirect Warning Page', function () {
 
     test('updates last_visited_at timestamp', function () {
         $link = Link::factory()->create([
-            'hash' => 'timestamp',
+            'hash' => 'time01',
             'full_url' => 'https://example.com/time',
             'last_visited_at' => now()->subHour(),
             'is_active' => true,
@@ -97,7 +79,7 @@ describe('Redirect Warning Page', function () {
 
         sleep(1);
 
-        $this->get('/timestamp');
+        $this->get('/time01');
 
         $link->refresh();
 
@@ -106,7 +88,7 @@ describe('Redirect Warning Page', function () {
 
     test('passes destination URL to view', function () {
         $link = Link::factory()->create([
-            'hash' => 'viewdata',
+            'hash' => 'view01',
             'url_scheme' => 'https',
             'url_host' => 'example.com',
             'url_path' => '/test-path',
@@ -116,7 +98,7 @@ describe('Redirect Warning Page', function () {
             'is_active' => true,
         ]);
 
-        $response = $this->get('/viewdata');
+        $response = $this->get('/view01');
 
         $response->assertSuccessful();
         $response->assertViewHas('destinationUrl', 'https://example.com/test-path?key=value#section');
@@ -128,12 +110,12 @@ describe('Redirect Warning Page', function () {
 describe('Direct Redirect', function () {
     test('redirects to destination URL', function () {
         $link = Link::factory()->create([
-            'hash' => 'direct',
+            'hash' => 'dir001',
             'full_url' => 'https://example.com/target',
             'is_active' => true,
         ]);
 
-        $response = $this->get('/direct/redirect');
+        $response = $this->get('/dir001/redirect');
 
         // This route doesn't exist yet - will be added in frontend phase
         // For now, just verify the controller method works
@@ -144,7 +126,7 @@ describe('Direct Redirect', function () {
 describe('URL Reconstruction', function () {
     test('reconstructs simple URL correctly', function () {
         $link = Link::factory()->create([
-            'hash' => 'simple',
+            'hash' => 'sim001',
             'url_scheme' => 'https',
             'url_host' => 'example.com',
             'url_path' => null,
@@ -154,7 +136,7 @@ describe('URL Reconstruction', function () {
             'is_active' => true,
         ]);
 
-        $response = $this->get('/simple');
+        $response = $this->get('/sim001');
 
         $response->assertSuccessful();
         $response->assertViewHas('destinationUrl', 'https://example.com');
@@ -162,7 +144,7 @@ describe('URL Reconstruction', function () {
 
     test('reconstructs complex URL correctly', function () {
         $link = Link::factory()->create([
-            'hash' => 'complex',
+            'hash' => 'cplx01',
             'url_scheme' => 'https',
             'url_host' => 'example.com',
             'url_port' => 8080,
@@ -173,7 +155,7 @@ describe('URL Reconstruction', function () {
             'is_active' => true,
         ]);
 
-        $response = $this->get('/complex');
+        $response = $this->get('/cplx01');
 
         $response->assertSuccessful();
         $response->assertViewHas('destinationUrl', 'https://example.com:8080/path/to/page?param1=value1&param2=value2#section');
@@ -181,7 +163,7 @@ describe('URL Reconstruction', function () {
 
     test('omits standard ports from URL', function () {
         $link = Link::factory()->create([
-            'hash' => 'stdport',
+            'hash' => 'port01',
             'url_scheme' => 'https',
             'url_host' => 'example.com',
             'url_port' => 443,
@@ -192,7 +174,7 @@ describe('URL Reconstruction', function () {
             'is_active' => true,
         ]);
 
-        $response = $this->get('/stdport');
+        $response = $this->get('/port01');
 
         $response->assertSuccessful();
         $response->assertViewHas('destinationUrl', 'https://example.com/page');
@@ -202,13 +184,13 @@ describe('URL Reconstruction', function () {
 describe('Cache Integration', function () {
     test('uses cached link for subsequent requests', function () {
         $link = Link::factory()->create([
-            'hash' => 'cached',
+            'hash' => 'cch001',
             'full_url' => 'https://example.com/cached',
             'is_active' => true,
         ]);
 
         // First request
-        $this->get('/cached');
+        $this->get('/cch001');
 
         // Delete from database but keep in cache
         $link->delete();
@@ -216,7 +198,7 @@ describe('Cache Integration', function () {
         // Second request should still work (from cache)
         // Note: This might fail due to cache invalidation in observer
         // This test validates the cache-first strategy
-        $response = $this->get('/cached');
+        $response = $this->get('/cch001');
 
         // Might be 404 if cache was invalidated, or 200 if cached
         expect($response->status())->toBeIn([200, 404]);

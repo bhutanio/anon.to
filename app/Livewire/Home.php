@@ -62,7 +62,6 @@ class Home extends Component
             $link = $createLink->execute([
                 'url' => $validated['url'],
                 'user_id' => auth()->id(),
-                'custom_slug' => null,
                 'expires_at' => null,
             ]);
 
@@ -70,7 +69,7 @@ class Home extends Component
             RateLimiter::hit($key, 3600); // 1 hour
 
             // Set the short URL
-            $this->hash = $link->hash ?? $link->slug;
+            $this->hash = $link->hash;
             $this->shortUrl = url($this->hash);
 
             // Clear the input

@@ -14,7 +14,6 @@ class Note extends Model
 
     protected $fillable = [
         'hash',
-        'slug',
         'title',
         'content',
         'content_hash',

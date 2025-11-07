@@ -24,7 +24,6 @@ class NoteFactory extends Factory
 
         return [
             'hash' => Str::random(8),
-            'slug' => null,
             'title' => fake()->optional()->sentence(),
             'content' => $content,
             'content_hash' => hash('sha256', $content),

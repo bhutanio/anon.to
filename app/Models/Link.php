@@ -14,7 +14,6 @@ class Link extends Model
 
     protected $fillable = [
         'hash',
-        'slug',
         'url_scheme',
         'url_host',
         'url_port',

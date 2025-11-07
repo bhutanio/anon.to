@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('username')->unique()->nullable()->after('id');
             $table->boolean('is_admin')->default(false)->after('remember_token');
             $table->boolean('is_verified')->default(false)->after('is_admin');
-            $table->integer('api_rate_limit')->default(100)->after('is_verified');
+            $table->unsignedBigInteger('api_rate_limit')->default(100)->after('is_verified');
             $table->timestamp('last_login_at')->nullable()->after('api_rate_limit');
         });
     }

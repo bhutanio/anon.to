@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('links', function (Blueprint $table) {
             $table->id();
             $table->string('hash')->unique();
-            $table->string('slug')->unique()->nullable();
             $table->string('url_scheme', 10);
             $table->string('url_host');
             $table->integer('url_port')->nullable();
@@ -33,7 +32,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->boolean('is_reported')->default(false);
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('ip_address', 45)->nullable();
+            $table->string('ip_address', 64)->nullable(); // SHA256 hash length
             $table->text('user_agent')->nullable();
             $table->timestamps();
 

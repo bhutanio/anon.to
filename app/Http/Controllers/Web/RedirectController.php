@@ -21,15 +21,13 @@ class RedirectController extends Controller
     /**
      * Show the anonymous redirect warning page.
      */
-    public function show(Request $request, string $hashOrSlug)
+    public function show(Request $request, string $hash)
     {
         // Try to get link from cache first, fallback to database
         $link = Cache::remember(
-            "link:{$hashOrSlug}",
+            "link:{$hash}",
             config('anon.default_cache_ttl', 86400),
-            fn () => Link::where('hash', $hashOrSlug)
-                ->orWhere('slug', $hashOrSlug)
-                ->first()
+            fn () => Link::where('hash', $hash)->first()
         );
 
         // Handle not found
@@ -70,11 +68,9 @@ class RedirectController extends Controller
      * This method can be called via a route or handled in the Livewire component.
      * For now, we'll handle it in the Livewire component with a simple redirect.
      */
-    public function redirect(Request $request, string $hashOrSlug)
+    public function redirect(Request $request, string $hash)
     {
-        $link = Link::where('hash', $hashOrSlug)
-            ->orWhere('slug', $hashOrSlug)
-            ->firstOrFail();
+        $link = Link::where('hash', $hash)->firstOrFail();
 
         if ($link->expires_at && $link->expires_at->isPast()) {
             abort(410, 'This link has expired');
