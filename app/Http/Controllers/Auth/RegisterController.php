@@ -10,6 +10,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -39,7 +40,7 @@ class RegisterController extends Controller
 
     protected function registered(Request $request, User $user)
     {
-        $token = hash_hmac('sha256', $user->username . $user->email . str_random(16), config('app.key'));
+        $token = hash_hmac('sha256', $user->username . $user->email . Str::random(16), config('app.key'));
 
         UserActivation::create([
             'user_id' => $user->id,

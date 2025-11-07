@@ -4,22 +4,22 @@
     <div class="block">
         <h1 class="page-title text-center">Anonymous URL Shortener</h1>
         <p class="lead text-center">Create a secure anonymous short link from your url which also hides http referer!</p>
-        {!! Form::open(['files'=>false, 'url'=>url('shorten'), 'id'=>'form_shortener', 'class' => '', 'role'=>'form']) !!}
-        <div class="input-group" style="width: 100%;">
-            {!! Form::text('url', null, ['class' => 'form-control input-lg', 'placeholder'=>'Paste a link to shorten it']) !!}
-            <span class="input-group-btn">
-                {!! Form::submit('Shorten', ['class'=>'btn btn-lg btn-primary']) !!}
+        <form action="{{ url('shorten') }}" method="POST" id="form_shortener" role="form">
+            {{ csrf_field() }}
+            <div class="input-group" style="width: 100%;">
+                <input type="text" name="url" class="form-control input-lg" placeholder="Paste a link to shorten it">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-lg btn-primary">Shorten</button>
                 </span>
-        </div>
-
-        <div class="shorten-output">
-            <div class="input-group short-url-group has-success hidden">
-                <span class="input-group-addon" id="sizing-addon1">Short URL: </span>
-                {!! Form::text('short_url', null, ['class' => 'form-control', 'readonly'=>'readonly']) !!}
             </div>
-        </div>
 
-        {!! Form::close() !!}
+            <div class="shorten-output">
+                <div class="input-group short-url-group has-success hidden">
+                    <span class="input-group-addon" id="sizing-addon1">Short URL: </span>
+                    <input type="text" name="short_url" class="form-control" readonly="readonly">
+                </div>
+            </div>
+        </form>
     </div>
 
     <div class="block">

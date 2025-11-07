@@ -29,7 +29,7 @@ class UrlFormatTest extends TestCase
     private function assertRedirection($url)
     {
         $response = $this->get('/?'.$url);
-        $response->assertSee($this->redirectionTitle($url));
+        $response->assertSee($this->redirectionTitle($url), false);
     }
 
     /**
@@ -43,7 +43,7 @@ class UrlFormatTest extends TestCase
             $url = '?' . $url;
 
         $response = $this->get('/'.$url);
-        $response->assertSee(self::noRedirectTitle);
+        $response->assertSee(self::noRedirectTitle, false);
     }
 
     /**
@@ -81,7 +81,7 @@ class UrlFormatTest extends TestCase
     public function testUrlWithHashAndNoEncoding()
     {
         $response = $this->get('/?https://local.dev/test#withHash');
-        $response->assertSee($this->redirectionTitle('https://local.dev/test'));
+        $response->assertSee($this->redirectionTitle('https://local.dev/test'), false);
     }
 
     /**

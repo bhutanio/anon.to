@@ -85,7 +85,7 @@ class LinksController extends Controller
 
     protected function cacheLink($link)
     {
-        Cache::put($link->hash, $this->url_service->unParseUrlFromDb($link), 60 * 24);
+        Cache::put($link->hash, $this->url_service->unParseUrlFromDb($link), 60 * 60 * 24);
 
         return $link;
     }
