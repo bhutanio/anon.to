@@ -118,7 +118,6 @@ users (1) ----< (N) api_tokens (Sanctum)
 |--------|------|------------|-------------|
 | id | bigint unsigned | PK, auto_increment | Unique link ID |
 | hash | varchar(255) | unique | Short code (6 chars) |
-| slug | varchar(255) | unique, nullable | Custom slug (registered users) |
 | url_scheme | varchar(10) | | http or https |
 | url_host | varchar(255) | | Domain name |
 | url_port | integer | nullable | Port number |
@@ -145,7 +144,6 @@ users (1) ----< (N) api_tokens (Sanctum)
 **Indexes:**
 - PRIMARY KEY (id)
 - UNIQUE (hash)
-- UNIQUE (slug)
 - INDEX (full_url_hash) - For duplicate detection
 - INDEX (user_id)
 - INDEX (expires_at)
@@ -194,7 +192,6 @@ users (1) ----< (N) api_tokens (Sanctum)
 |--------|------|------------|-------------|
 | id | bigint unsigned | PK, auto_increment | Unique note ID |
 | hash | varchar(255) | unique | Short code (6-8 chars) |
-| slug | varchar(255) | unique, nullable | Custom slug (registered users) |
 | title | varchar(255) | nullable | Optional note title |
 | content | longtext | | Note content (10MB max) |
 | content_hash | varchar(64) | index | SHA256 for duplicate detection |
@@ -221,7 +218,6 @@ users (1) ----< (N) api_tokens (Sanctum)
 **Indexes:**
 - PRIMARY KEY (id)
 - UNIQUE (hash)
-- UNIQUE (slug)
 - INDEX (content_hash) - Duplicate detection
 - INDEX (user_id)
 - INDEX (syntax) - Language filtering
@@ -601,7 +597,6 @@ class CreateLink
     public function execute(
         string $url,
         ?int $userId = null,
-        ?string $customSlug = null,
         ?string $expiresAt = null,
     ): Link {
         // 1. Validate URL
@@ -616,12 +611,11 @@ class CreateLink
         }
 
         // 4. Generate unique hash
-        $hash = $this->hashGenerator->execute($customSlug);
+        $hash = $this->hashGenerator->execute();
 
         // 5. Create link
         $link = Link::create([
             'hash' => $hash,
-            'slug' => $customSlug,
             'url_scheme' => $parsed['scheme'],
             'url_host' => $parsed['host'],
             'url_port' => $parsed['port'],
@@ -666,14 +660,8 @@ class GenerateHash
         $this->excludedWords = config('anon.excluded_words', []);
     }
 
-    public function execute(?string $customSlug = null): string
+    public function execute(): string
     {
-        // Use custom slug if provided (registered users only)
-        if ($customSlug) {
-            return $this->validateCustomSlug($customSlug);
-        }
-
-        // Generate random hash
         return $this->generateUniqueHash();
     }
 
@@ -696,26 +684,6 @@ class GenerateHash
         }
 
         throw new \RuntimeException('Failed to generate unique hash');
-    }
-
-    protected function validateCustomSlug(string $slug): string
-    {
-        // Validate format (alphanumeric + dashes)
-        if (!preg_match('/^[a-zA-Z0-9\-]+$/', $slug)) {
-            throw new \InvalidArgumentException('Invalid slug format');
-        }
-
-        // Check length
-        if (strlen($slug) < 3 || strlen($slug) > 50) {
-            throw new \InvalidArgumentException('Slug must be 3-50 characters');
-        }
-
-        // Check uniqueness
-        if (Link::where('slug', $slug)->exists()) {
-            throw new \InvalidArgumentException('Slug already taken');
-        }
-
-        return $slug;
     }
 }
 ```
@@ -744,15 +712,13 @@ class RedirectController extends Controller
         protected RecordVisit $recordVisit,
     ) {}
 
-    public function redirect(string $hashOrSlug)
+    public function redirect(string $hash)
     {
         // Try cache first
         $link = Cache::remember(
-            "link:{$hashOrSlug}",
+            "link:{$hash}",
             now()->addDay(),
-            fn () => Link::where('hash', $hashOrSlug)
-                ->orWhere('slug', $hashOrSlug)
-                ->firstOrFail()
+            fn () => Link::where('hash', $hash)->firstOrFail()
         );
 
         // Check if expired
@@ -1147,7 +1113,6 @@ Request:
 ```json
 {
   "url": "https://example.com/very/long/url",
-  "slug": "my-link", // optional, requires auth
   "expires_at": "2025-12-31" // optional
 }
 ```
@@ -1721,20 +1686,19 @@ test('excludes profane words', function () {
 use App\Models\{User, Link};
 use function Pest\Laravel\{actingAs, postJson, assertDatabaseHas};
 
-test('authenticated user can create link with custom slug', function () {
+test('authenticated user can create link', function () {
     $user = User::factory()->create();
 
     $response = actingAs($user)
         ->postJson('/api/v1/links', [
             'url' => 'https://example.com',
-            'slug' => 'my-custom-link',
         ]);
 
     $response->assertSuccessful();
-    expect($response->json('data.short_url'))->toContain('my-custom-link');
+    expect($response->json('data.hash'))->toHaveLength(6);
 
     assertDatabaseHas('links', [
-        'slug' => 'my-custom-link',
+        'full_url' => 'https://example.com',
         'user_id' => $user->id,
     ]);
 });

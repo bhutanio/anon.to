@@ -32,7 +32,6 @@ Build a modern, privacy-focused platform that combines URL anonymization and eph
 - **Duplicate detection**: Reuse existing hash for same URL
 
 #### Advanced Link Options
-- **Custom slugs**: Registered users can choose memorable slugs (e.g., anon.to/myproject)
 - **Expiration dates**: Auto-delete after 1hr, 1day, 1week, 1month, never
 - **QR code generation**: Download or display QR codes for easy sharing
 - **Password protection**: Optional password to access link (coming in future phase)
@@ -119,7 +118,6 @@ Build a modern, privacy-focused platform that combines URL anonymization and eph
 - **Email verification**: Confirm email to unlock features
 - **Benefits of registration**:
   - Manage all your links/notes in one place
-  - Custom slugs for links
   - Permanent notes (never expire)
   - View detailed analytics
   - API access tokens
@@ -278,16 +276,7 @@ GET    /api/v1/analytics/{hash} - Get detailed analytics
 - Delete unwanted links
 - View analytics charts
 
-**Story 5: Create Custom Slug**
-> "As a content creator, I want to use a memorable custom slug, so my audience can easily remember and type the link."
-
-- Create link as usual
-- Check "Custom slug" option
-- Enter "my-awesome-project"
-- System validates uniqueness
-- Receive link: anon.to/my-awesome-project
-
-**Story 6: Password-Protected Note**
+**Story 5: Password-Protected Note**
 > "As a team lead, I want to share credentials in a password-protected note, so only intended recipients can access it."
 
 - Create new note
@@ -300,7 +289,7 @@ GET    /api/v1/analytics/{hash} - Get detailed analytics
 
 ### As an Admin
 
-**Story 7: Review Abuse Reports**
+**Story 6: Review Abuse Reports**
 > "As an admin, I want to quickly review and act on abuse reports, so I can keep the platform safe."
 
 - Navigate to Admin → Reports
@@ -310,7 +299,7 @@ GET    /api/v1/analytics/{hash} - Get detailed analytics
 - Click "Delete Content & Ban User"
 - Report marked as dealt
 
-**Story 8: Block Malicious Domain**
+**Story 7: Block Malicious Domain**
 > "As an admin, I want to block an entire domain from being shortened, so users can't abuse the platform for phishing."
 
 - Navigate to Admin → Allow Lists
@@ -440,7 +429,6 @@ Report received → Admin notification → Review content → Take action → Up
 - ✅ Burn after reading
 - ✅ Admin dashboard with moderation
 - ✅ QR code generation
-- ✅ Custom slugs
 - ✅ Link analytics
 
 **Nice to Have:**
@@ -558,7 +546,6 @@ Report received → Admin notification → Review content → Take action → Up
 - Password protection for notes
 - Burn after reading
 - QR code generation
-- Custom slugs
 
 ### Week 5: Analytics & Moderation
 - Visit tracking and analytics

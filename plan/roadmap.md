@@ -517,18 +517,15 @@ Migration:
 ---
 
 ### Phase 7: Link Enhancements
-**Timeline**: Week 6 (5-7 days)
+**Timeline**: Week 6 (3-5 days)
 **Priority**: 🟡 High
-**Effort**: 6-8 person-days
+**Effort**: 4-6 person-days
 **Status**: ⬜ Not Started
 
 #### Goals
-Custom slugs, QR codes, and link expiration
+QR codes and link expiration
 
 #### Features
-- [ ] Custom slugs (registered users only)
-- [ ] Slug validation (alphanumeric + dashes, 3-50 chars)
-- [ ] Slug uniqueness checking
 - [ ] QR code generation (PNG download)
 - [ ] QR code display on link page
 - [ ] Link expiration dates
@@ -549,10 +546,6 @@ app/Http/Controllers/Web/
 resources/views/components/
   - expiration-picker.blade.php
 
-Enhanced:
-  app/Actions/Links/GenerateHash.php (support custom slugs)
-  resources/views/livewire/home.blade.php (custom slug field)
-
 routes/web.php
   - GET /links/{hash}/qr
   - GET /links/{hash}/qr/download
@@ -562,14 +555,11 @@ composer.json
 ```
 
 #### Deliverables
-- ✅ Custom slugs working for authenticated users
 - ✅ QR codes generate correctly
 - ✅ Link expiration functional
 - ✅ Expired links auto-deleted
 
 #### Tests
-- [ ] Feature: Custom slug creation
-- [ ] Feature: Slug uniqueness enforced
 - [ ] Feature: QR code generation
 - [ ] Feature: Expiration countdown
 - [ ] Feature: Expired link returns 410
@@ -577,14 +567,12 @@ composer.json
 
 #### Dependencies
 - Phase 1 (links)
-- Phase 4 (authentication for custom slugs)
 
 #### Risks
 - QR code generation slow for batch operations
 - Job queue not running (expired links pile up)
 
 #### Success Criteria
-- Custom slug available only to registered users
 - QR code generates in < 200ms
 - Expired links deleted within 1 hour
 
