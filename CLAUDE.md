@@ -1,5 +1,6 @@
 # IMPORTANT
 - old database can be accessed using `mysql -h127.0.0.1 -uroot anondb`
+- Project is locally accessible at http://anon.to.test
 
 <laravel-boost-guidelines>
 === foundation rules ===

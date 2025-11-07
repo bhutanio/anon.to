@@ -1,12 +1,12 @@
 <?php
 
+use App\Http\Controllers\Web\RedirectController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Home page with link creation form (Livewire component)
+Route::get('/', App\Livewire\Home::class)->name('home');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -30,3 +30,9 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 });
+
+// Anonymous redirect warning page - must be last to avoid conflicts with other routes
+// Handles both hash (6 chars) and custom slug formats
+Route::get('/{hashOrSlug}', [RedirectController::class, 'show'])
+    ->where('hashOrSlug', '[a-zA-Z0-9\-]{3,50}')
+    ->name('redirect.show');
