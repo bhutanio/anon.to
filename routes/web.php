@@ -1,30 +1,32 @@
 <?php
 
-Route::group(['middleware' => 'auth'], function () {
-    Route::group(['prefix' => 'my'], function () {
-        Route::get('/', 'My\MyLinksController@index');
-    });
+use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Features;
+use Livewire\Volt\Volt;
 
-    Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
-        Route::get('links', 'My\MyLinksController@index');
-        Route::get('reports', 'Admin\AdminController@reports');
-    });
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 
-    Route::delete('delete/link', 'My\MyLinksController@delete')->middleware(['admin']);
+Route::view('dashboard', 'dashboard')
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+Route::middleware(['auth'])->group(function () {
+    Route::redirect('settings', 'settings/profile');
+
+    Volt::route('settings/profile', 'settings.profile')->name('profile.edit');
+    Volt::route('settings/password', 'settings.password')->name('user-password.edit');
+    Volt::route('settings/appearance', 'settings.appearance')->name('appearance.edit');
+
+    Volt::route('settings/two-factor', 'settings.two-factor')
+        ->middleware(
+            when(
+                Features::canManageTwoFactorAuthentication()
+                    && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
+                ['password.confirm'],
+                [],
+            ),
+        )
+        ->name('two-factor.show');
 });
-
-Auth::routes();
-Route::get('activate/{token}', 'Auth\ActivationController@activate');
-
-Route::get('report', 'ReportLinkController@report');
-Route::post('report', 'ReportLinkController@postReport');
-
-Route::get('email/unsubscribe', 'StaticPagesController@unsubscribe');
-
-Route::post('shorten', 'ShortenLinkController@shorten')->middleware(['ajax', 'throttle:20,1']);
-
-Route::get('csrf', function () {
-    return response()->json(csrf_token());
-})->middleware(['ajax']);
-
-Route::get('/', 'HomeController@index');
