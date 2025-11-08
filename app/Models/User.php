@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -74,7 +75,7 @@ class User extends Authenticatable
     /**
      * Get the user's links.
      */
-    public function links()
+    public function links(): HasMany
     {
         return $this->hasMany(Link::class);
     }
@@ -82,7 +83,7 @@ class User extends Authenticatable
     /**
      * Get the user's notes.
      */
-    public function notes()
+    public function notes(): HasMany
     {
         return $this->hasMany(Note::class);
     }
@@ -90,7 +91,7 @@ class User extends Authenticatable
     /**
      * Get the user's reports.
      */
-    public function reports()
+    public function reports(): HasMany
     {
         return $this->hasMany(Report::class);
     }
@@ -98,7 +99,7 @@ class User extends Authenticatable
     /**
      * Get the allow list rules added by this admin.
      */
-    public function allowListRules()
+    public function allowListRules(): HasMany
     {
         return $this->hasMany(AllowList::class, 'added_by');
     }

@@ -1,6 +1,30 @@
 # IMPORTANT
 - old database can be accessed using `mysql -h127.0.0.1 -uroot anondb`
 - Project is locally accessible at http://anon.to.test
+- Edit migrations directly instead of creating new "update" migrations. This is acceptable during active development since migrations haven't been deployed to production yet.
+
+# PRIVACY POLICY FOR DEVELOPMENT
+This is a privacy-focused application. ALL development must respect user privacy:
+
+## No Logging in Production
+- **NEVER** use `Log::`, `logger()`, `error_log()`, or any logging functions that write user data
+- Production logging is disabled via `LOG_CHANNEL=null` (see config/logging.php)
+- Development can use logging for debugging, but production MUST NOT log anything
+- IP addresses are hashed (SHA256) before storage
+- User-generated content (URLs, notes) must NEVER appear in logs
+
+## What Gets Stored
+- IP addresses: SHA256 hashed only
+- User agents: Stored for analytics (acceptable)
+- URLs/Notes: Stored in database only, NEVER in logs
+- Analytics: Aggregated only, no personally identifiable information
+
+## What NEVER Gets Logged
+- User IPs (raw)
+- User content (URLs, notes, passwords)
+- User behavior patterns
+- Error messages containing user data
+- Exception traces with user input
 
 <laravel-boost-guidelines>
 === foundation rules ===

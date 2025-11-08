@@ -17,7 +17,6 @@ describe('Anonymous Link Creation', function () {
         $link = $action->execute([
             'url' => 'https://example.com/page',
             'user_id' => null,
-            'expires_at' => null,
         ]);
 
         expect($link)->toBeInstanceOf(Link::class)
@@ -40,7 +39,6 @@ describe('Anonymous Link Creation', function () {
         $link = $action->execute([
             'url' => $complexUrl,
             'user_id' => null,
-            'expires_at' => null,
         ]);
 
         expect($link->url_scheme)->toBe('https')
@@ -58,7 +56,6 @@ describe('Anonymous Link Creation', function () {
         $link = $action->execute([
             'url' => 'https://example.com/cached-link',
             'user_id' => null,
-            'expires_at' => null,
         ]);
 
         $cached = Cache::get("link:{$link->hash}");
@@ -77,7 +74,6 @@ describe('Registered User Link Creation', function () {
         $link = $action->execute([
             'url' => 'https://example.com/user-page',
             'user_id' => $user->id,
-            'expires_at' => null,
         ]);
 
         expect($link->user_id)->toBe($user->id)
@@ -87,21 +83,6 @@ describe('Registered User Link Creation', function () {
             'user_id' => $user->id,
             'full_url' => 'https://example.com/user-page',
         ]);
-    });
-
-    test('registered user can set expiration date', function () {
-        $user = User::factory()->create();
-        $action = app(CreateLink::class);
-        $expiresAt = now()->addDays(30);
-
-        $link = $action->execute([
-            'url' => 'https://example.com/expires',
-            'user_id' => $user->id,
-            'expires_at' => $expiresAt->toDateTimeString(),
-        ]);
-
-        expect($link->expires_at)->not->toBeNull()
-            ->and($link->expires_at->timestamp)->toBe($expiresAt->timestamp);
     });
 });
 
@@ -114,14 +95,12 @@ describe('Duplicate Detection', function () {
         $firstLink = $action->execute([
             'url' => $url,
             'user_id' => null,
-            'expires_at' => null,
         ]);
 
         // Attempt to create duplicate
         $secondLink = $action->execute([
             'url' => $url,
             'user_id' => null,
-            'expires_at' => null,
         ]);
 
         expect($secondLink->id)->toBe($firstLink->id)
@@ -134,13 +113,11 @@ describe('Duplicate Detection', function () {
         $firstLink = $action->execute([
             'url' => 'https://example.com/page1',
             'user_id' => null,
-            'expires_at' => null,
         ]);
 
         $secondLink = $action->execute([
             'url' => 'https://example.com/page2',
             'user_id' => null,
-            'expires_at' => null,
         ]);
 
         expect($secondLink->id)->not->toBe($firstLink->id)
@@ -155,7 +132,6 @@ describe('Validation', function () {
         $action->execute([
             'url' => 'not-a-valid-url',
             'user_id' => null,
-            'expires_at' => null,
         ]);
     })->throws(\InvalidArgumentException::class);
 
@@ -165,7 +141,6 @@ describe('Validation', function () {
         $action->execute([
             'url' => 'http://192.168.1.1/admin',
             'user_id' => null,
-            'expires_at' => null,
         ]);
     })->throws(\InvalidArgumentException::class, 'Internal or private IP addresses are not allowed');
 
@@ -175,7 +150,6 @@ describe('Validation', function () {
         $action->execute([
             'url' => 'ftp://example.com/file.txt',
             'user_id' => null,
-            'expires_at' => null,
         ]);
     })->throws(\InvalidArgumentException::class, 'Only HTTP and HTTPS URLs are allowed');
 });

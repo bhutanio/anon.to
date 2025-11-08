@@ -75,11 +75,13 @@ This document outlines all technology choices for the anon.to platform, covering
 - Plugins: persist, intersect, collapse, focus
 
 ### ~~Prism.js~~ (Removed)
-**Removed**: Syntax highlighting removed from notes to keep the platform simple and privacy-focused
+**Status**: Intentionally removed from notes feature
+**Why Removed**: Syntax highlighting removed to keep the platform simple and privacy-focused
 - Notes now display plain text only
 - Reduces complexity and potential XSS vectors
 - Faster rendering and smaller bundle size
 - Aligns with minimalist, distraction-free design philosophy
+- Simplifies content storage and processing
 
 ---
 
@@ -100,12 +102,12 @@ This document outlines all technology choices for the anon.to platform, covering
 - Personal access tokens for API access
 - CSRF protection for SPAs
 - Built into Laravel, no complex OAuth setup
-- Perfect for our REST API needs
+- Perfect for our REST API needs (Phase 10)
 
 ### Laravel Gates & Policies
 **Why**: Authorization logic for access control
 - Define permissions in code (no database overhead)
-- Policy classes for model-based authorization
+- Policy classes for model-based authorization (LinkPolicy, NotePolicy)
 - Blade directives for UI (`@can`, `@cannot`)
 - Middleware for route protection
 
@@ -136,6 +138,7 @@ This document outlines all technology choices for the anon.to platform, covering
 **Why**: In-memory data store for caching and queues
 - Sub-millisecond read/write performance
 - Cache popular links (24-hour TTL)
+- Cache popular notes (24-hour TTL)
 - Session storage (database alternative)
 - Queue driver for background jobs
 - Pub/sub for real-time features (future)
@@ -202,16 +205,24 @@ This document outlines all technology choices for the anon.to platform, covering
 
 ## Monitoring & Logging
 
-### Laravel Telescope (Development)
+### Production Logging: DISABLED
+**Why**: Privacy-first architecture
+- `LOG_CHANNEL=null` in production environment
+- Prevents accidental logging of user data, URLs, or IPs
+- No user-generated content ever appears in logs
+- Development can use logging for debugging
+- Critical security feature for privacy compliance
+
+### Laravel Telescope (Development Only)
 **Why**: Debug assistant for Laravel applications
 - Request/response logging
 - Query profiling (N+1 detection)
 - Exception tracking
 - Mail preview
 - Scheduled job monitoring
-- Only enabled in development/staging
+- Only enabled in development/staging, NEVER in production
 
-### Sentry (Production - Future)
+### Sentry (Production - Planned Phase 17)
 **Why**: Error tracking and performance monitoring
 - Real-time error alerts
 - Stack traces with context
@@ -220,7 +231,7 @@ This document outlines all technology choices for the anon.to platform, covering
 - Issue assignment and resolution
 - Integrates with Laravel
 
-### Laravel Horizon (Queue Monitoring)
+### Laravel Horizon (Queue Monitoring - Planned)
 **Why**: Dashboard for Redis queue workers
 - Real-time queue metrics
 - Job throughput and runtime
@@ -233,14 +244,16 @@ This document outlines all technology choices for the anon.to platform, covering
 ## Third-Party Services
 
 ### QR Code Generation: chillerlan/php-qrcode
-**Why**: Generate QR codes for shortened links
+**Why**: Generate QR codes for shortened links and any content
 - Pure PHP implementation (no external API)
-- PNG/SVG output formats
+- PNG/SVG/PDF output formats
 - Customizable size and quality
 - No rate limits or costs
 - Works offline/on-premise
+- Privacy-first: No content sent to third parties
+- Multi-format downloads (Phase 5.5 complete)
 
-### Google Safe Browsing API (Optional)
+### Google Safe Browsing API (Optional - Phase 10)
 **Why**: Check URLs for malware/phishing
 - Free tier: 10K lookups per day
 - Identifies malicious sites
@@ -248,7 +261,7 @@ This document outlines all technology choices for the anon.to platform, covering
 - Reduces manual moderation burden
 - Privacy-friendly (hashed URL lookups)
 
-### hCaptcha or Google reCAPTCHA v3
+### hCaptcha or Google reCAPTCHA v3 (Planned Phase 14)
 **Why**: Bot protection for forms
 - Invisible CAPTCHA (better UX)
 - Only shown after suspicious activity
@@ -256,7 +269,7 @@ This document outlines all technology choices for the anon.to platform, covering
 - Free tier sufficient for traffic
 - GDPR compliant (hCaptcha better for EU)
 
-### GeoIP2 (MaxMind)
+### GeoIP2 (MaxMind) - Planned Phase 9
 **Why**: Country-level geolocation for analytics
 - Privacy-focused (country only, no city/IP tracking)
 - Downloadable database (no API calls)
@@ -318,6 +331,7 @@ This document outlines all technology choices for the anon.to platform, covering
 - Different configs per environment (dev/staging/prod)
 - Laravel's `config()` helper for access
 - Never use `env()` outside config files
+- `LOG_CHANNEL=null` for production privacy
 
 ### Laravel Configuration
 **Why**: Centralized, cached configuration
@@ -332,18 +346,19 @@ This document outlines all technology choices for the anon.to platform, covering
 
 ### NPM/Yarn
 **Why**: JavaScript package manager
-- Install frontend dependencies (Alpine, Prism)
+- Install frontend dependencies
 - Scripts for build automation
 - Lock file for reproducible builds
 - Version pinning for stability
 
-### Laravel Mix / Vite
+### Vite (Laravel Mix Replacement)
 **Why**: Asset compilation pipeline
 - Compile Tailwind CSS
 - Bundle JavaScript modules
 - Minify for production
 - Versioning for cache busting
 - Source maps for debugging
+- Hot Module Replacement (HMR) for development
 
 ---
 
@@ -356,7 +371,7 @@ This document outlines all technology choices for the anon.to platform, covering
 - HSTS header for forced HTTPS
 - No mixed content warnings
 
-### Content Security Policy (CSP)
+### Content Security Policy (CSP) - Planned Phase 14
 **Why**: Prevent XSS attacks
 - Whitelist allowed resources
 - Block inline scripts (except trusted)
@@ -376,6 +391,65 @@ This document outlines all technology choices for the anon.to platform, covering
 - Resistant to rainbow table attacks
 - Configurable work factor
 
+### SHA256 IP Address Hashing
+**Why**: Privacy-compliant rate limiting
+- IP addresses hashed before storage
+- Prevents storing raw IPs in database
+- Enables rate limiting without privacy violation
+- Used throughout the application for anonymous users
+
+---
+
+## Current Implementation Status
+
+### ✅ Fully Operational Technologies
+These are actively used in the current implementation:
+
+**Backend**: Laravel 12, PHP 8.4, Eloquent ORM, Redis caching
+**Frontend**: Livewire 3, Volt 1, Flux UI 2 (free), Tailwind CSS 4, Alpine.js
+**Authentication**: Fortify 1 (email verification, 2FA, password reset)
+**Testing**: Pest 4 (212+ tests), PHPUnit 12, Pint 1
+**Development**: Sail 1, Vite, GitHub (version control)
+**Security**: Bcrypt password hashing, SHA256 IP hashing, CSRF protection, SSRF prevention
+**Privacy**: Production logging disabled (`LOG_CHANNEL=null`)
+**QR Codes**: chillerlan/php-qrcode (PNG, SVG, PDF generation)
+
+### 📦 Installed But Not Yet Utilized
+These are installed/configured but not actively used:
+
+**Laravel Sanctum**: Installed but no API endpoints created yet (planned Phase 10)
+**Queue System**: Redis queue driver configured but no jobs dispatched yet
+**GeoIP2**: Database setup but analytics not recording detailed data (planned Phase 9)
+**Laravel Horizon**: Not installed (queue monitoring for when queues are used)
+**Laravel Telescope**: Not installed (for development debugging)
+
+### 🚧 Planned Technologies
+These will be added in future phases:
+
+**Chart.js/ApexCharts**: For Phase 9 (analytics dashboard)
+**hCaptcha/reCAPTCHA**: For Phase 14 (security hardening)
+**Safe Browsing API**: For Phase 10 (malware URL detection)
+**Sentry**: For Phase 17 (production error tracking)
+**Supervisor**: For Phase 17 (production queue workers)
+
+---
+
+## Database Schema Status
+
+### Active Tables (In Use)
+- ✅ **users** - User accounts with authentication
+- ✅ **links** - Shortened URLs with metadata
+- ✅ **notes** - Ephemeral text notes with password protection
+- ✅ **sessions** - User session data
+- ✅ **personal_access_tokens** - Sanctum tokens (ready for Phase 10)
+- ✅ **cache** - Redis cache entries
+- ✅ **jobs** - Queue jobs table
+
+### Schema Ready (Not Yet Used)
+- 📦 **reports** - Polymorphic abuse reports (Phase 8)
+- 📦 **allow_lists** - Domain filtering rules (Phase 11)
+- 📦 **link_analytics** - Detailed visit tracking (Phase 9)
+
 ---
 
 ## Why This Stack?
@@ -386,9 +460,10 @@ All technologies are actively maintained with long-term support commitments. Lar
 ### 2. Privacy-First
 Every technology choice supports our privacy mission:
 - No tracking pixels or analytics SDKs
-- Self-hosted components where possible
+- Self-hosted components where possible (QR codes, no external APIs)
 - Minimal third-party dependencies
 - Data sovereignty (we control the stack)
+- Production logging completely disabled
 
 ### 3. Performance-Optimized
 Redis caching, HTTP/2, CDN integration, and compiled assets ensure sub-second page loads even at scale.
@@ -407,23 +482,39 @@ Modern syntax (PHP 8.4, Livewire 3, Tailwind 4) with clear upgrade paths as tech
 
 ---
 
-## Deviations from User's Standard Stack
+## Alignment with User Standards
 
-Based on the user's tech stack preferences, anon.to aligns perfectly with standard choices:
-- Laravel 12 (framework)
-- Livewire 3 + Volt (frontend)
-- Tailwind CSS 4 (styling)
-- Pest 4 (testing)
-- Redis (caching/queues)
-- MySQL (database)
+Based on the user's tech stack preferences documented in `/Users/abi/.claude/CLAUDE.md` and project CLAUDE.md, anon.to aligns perfectly with standard choices:
 
-**No major deviations** - this project follows best practices established in the user's standards documentation.
+- ✅ Laravel 12 (framework)
+- ✅ PHP 8.4 (latest version policy)
+- ✅ Livewire 3 + Volt (frontend)
+- ✅ Tailwind CSS 4 (styling)
+- ✅ Pest 4 (testing)
+- ✅ Redis (caching/queues)
+- ✅ MySQL (database)
+- ✅ Flux UI (component library)
+- ✅ Fortify (authentication)
+
+**No major deviations** - this project follows best practices established in the user's standards documentation and always installs latest package versions without constraints.
 
 ---
 
 ## Technology Changelog
 
+### Recent Changes (November 2025)
+
+**Added:**
+- ✅ QR Code Generator (chillerlan/php-qrcode) - Phase 5.5 complete
+- ✅ Multi-format downloads (PNG, SVG, PDF)
+- ✅ SHA256 IP hashing throughout application
+
+**Removed:**
+- ❌ Prism.js syntax highlighting (intentionally removed for simplicity)
+- ❌ Custom slug support for links (simplified to hash-only)
+
 ### Laravel 5.4 → Laravel 12 (Current Rebuild)
+
 **What Changed**:
 - File structure simplified (no `app/Console/Kernel.php`)
 - Middleware registered in `bootstrap/app.php`
@@ -434,6 +525,7 @@ Based on the user's tech stack preferences, anon.to aligns perfectly with standa
 **Why**: Laravel 5.4 is no longer supported. Laravel 12 provides better DX, performance, and security.
 
 ### Bootstrap 3 + jQuery → Tailwind 4 + Alpine.js
+
 **What Changed**:
 - Utility-first CSS instead of component classes
 - Declarative JavaScript instead of jQuery DOM manipulation
@@ -443,6 +535,7 @@ Based on the user's tech stack preferences, anon.to aligns perfectly with standa
 **Why**: Modern stack, faster development, better performance, easier maintenance.
 
 ### Laravel Collective (Forms) → Livewire Forms
+
 **What Changed**:
 - Wire models replace form helpers
 - Validation moved to Livewire components
@@ -452,44 +545,42 @@ Based on the user's tech stack preferences, anon.to aligns perfectly with standa
 
 ---
 
-## Implementation Status Summary
+## Privacy-First Technology Decisions
 
-### ✅ Fully Operational Technologies
-These are actively used in the current implementation:
+### Production Logging: Disabled
+- `LOG_CHANNEL=null` prevents accidental user data logging
+- No URLs, IPs, or user content ever written to logs
+- Development can use logging, production cannot
+- Critical architectural decision for privacy compliance
 
-**Backend**: Laravel 12, PHP 8.4, Eloquent ORM, Redis caching
-**Frontend**: Livewire 3, Volt 1, Flux UI 2 (free), Tailwind CSS 4, Alpine.js (no Prism.js)
-**Authentication**: Fortify 1 (email verification, 2FA, password reset)
-**Testing**: Pest 4 (212 tests), PHPUnit 12, Pint 1
-**Development**: Sail 1, Vite, GitHub (version control)
-**Security**: Bcrypt password hashing, CSRF protection, SSRF prevention
+### IP Address Hashing
+- All IPs hashed with SHA256 before storage
+- Rate limiting works without storing raw IPs
+- Analytics (future) use hashed IPs only
+- No personally identifiable information stored
 
-### 📦 Installed But Not Yet Utilized
-These are installed/configured but not actively used:
+### QR Code Generation
+- Pure PHP implementation (no external API calls)
+- User content never sent to third parties
+- Generated in-memory and streamed to user
+- No storage of QR code content or history
 
-**Laravel Sanctum**: Installed but no API endpoints created yet
-**Queue System**: Redis queue driver configured but no jobs dispatched yet
-**GeoIP2**: Database setup but analytics not recording detailed data
-**Laravel Horizon**: Not installed (queue monitoring for when queues are used)
-**Laravel Telescope**: Not installed (for development debugging)
-
-### 🚧 Planned Technologies
-These will be added in future phases:
-
-**Chart.js/ApexCharts**: For Phase 8 (analytics dashboard)
-**hCaptcha/reCAPTCHA**: For Phase 13 (security hardening)
-**Safe Browsing API**: For Phase 10 (malware URL detection)
-**Sentry**: For Phase 16 (production error tracking)
-**Supervisor**: For Phase 16 (production queue workers)
-
-### Current Database Usage
-- ✅ **Active Tables**: links, notes, users, sessions, personal_access_tokens
-- 📦 **Schema Ready**: reports, allow_lists, link_analytics
-- ⚠️ **Partial**: link_analytics table exists but only basic visit counting active
+### Notes Storage
+- Plain text only (no syntax highlighting to reduce XSS risk)
+- Content encrypted when password-protected
+- Burn-after-reading deletes immediately
+- Ephemeral by design with automatic expiration
 
 ---
 
-**Version**: 2.0
-**Last Updated**: 2025-11-07
-**Key Change**: Added implementation status section
+**Version**: 3.0
+**Last Updated**: 2025-11-08
+**Status**: Reflects Phase 1-5.5 implementation (Core + Notes + QR Codes)
+**Key Changes**:
+- Added QR code generator implementation details
+- Updated syntax highlighting removal rationale
+- Added SHA256 IP hashing documentation
+- Updated production logging status
+- Documented privacy-first technology decisions
+- Updated implementation status for all technologies
 **Next Review**: When adding new major dependencies

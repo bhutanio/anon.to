@@ -5,33 +5,11 @@ declare(strict_types=1);
 namespace App\Observers;
 
 use App\Models\Link;
+use App\Services\CacheKeyService;
 use Illuminate\Support\Facades\Cache;
 
 class LinkObserver
 {
-    /**
-     * Handle the Link "creating" event.
-     */
-    public function creating(Link $link): void
-    {
-        // Set default values if not already set
-        if ($link->visits === null) {
-            $link->visits = 0;
-        }
-
-        if ($link->unique_visits === null) {
-            $link->unique_visits = 0;
-        }
-
-        if ($link->is_active === null) {
-            $link->is_active = true;
-        }
-
-        if ($link->is_reported === null) {
-            $link->is_reported = false;
-        }
-    }
-
     /**
      * Handle the Link "created" event.
      */
@@ -65,9 +43,9 @@ class LinkObserver
      */
     protected function cacheLink(Link $link): void
     {
-        $ttl = config('anon.default_cache_ttl', 86400); // 24 hours
+        $ttl = config('anon.default_cache_ttl', 86400);
 
-        Cache::put("link:{$link->hash}", $link, $ttl);
+        Cache::put(CacheKeyService::forLinkModel($link), $link, $ttl);
     }
 
     /**
@@ -75,6 +53,6 @@ class LinkObserver
      */
     protected function invalidateCache(Link $link): void
     {
-        Cache::forget("link:{$link->hash}");
+        Cache::forget(CacheKeyService::forLinkModel($link));
     }
 }

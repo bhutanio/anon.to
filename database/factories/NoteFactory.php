@@ -23,7 +23,7 @@ class NoteFactory extends Factory
         $lines = explode("\n", $content);
 
         return [
-            'hash' => Str::random(8),
+            'hash' => Str::random(6),
             'title' => fake()->optional()->sentence(),
             'content' => $content,
             'content_hash' => hash('sha256', $content),
@@ -33,7 +33,6 @@ class NoteFactory extends Factory
             'password_hash' => null,
             'view_limit' => null,
             'views' => fake()->numberBetween(0, 100),
-            'unique_views' => fake()->numberBetween(0, 75), // FIXED: Was unique_visits, should be unique_views
             'last_viewed_at' => fake()->optional()->dateTimeThisMonth(),
             'is_active' => true,
             'is_reported' => false,
@@ -41,7 +40,6 @@ class NoteFactory extends Factory
             'user_id' => null,
             'forked_from_id' => null,
             'ip_address' => hash('sha256', fake()->ipv4()),
-            'user_agent' => fake()->userAgent(),
         ];
     }
 

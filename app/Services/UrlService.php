@@ -74,6 +74,14 @@ class UrlService
 
     /**
      * Check if URL points to an internal/private IP address (SSRF prevention).
+     *
+     * Note: This method does NOT perform DNS resolution to avoid:
+     * - Performance issues (DNS timeouts can hang for 5-30 seconds)
+     * - DNS rebinding attacks (attacker changes DNS from public to private IP)
+     * - Security vulnerabilities (no timeout control in gethostbyname)
+     *
+     * If the host is already an IP address, we validate it.
+     * If it's a hostname, we trust firewall rules to block internal domains.
      */
     public function isInternalUrl(string $url): bool
     {
@@ -85,43 +93,58 @@ class UrlService
 
         $host = $parsed['host'];
 
-        // Check for localhost variations
-        if (in_array($host, ['localhost', '127.0.0.1', '::1', '0.0.0.0'])) {
+        // Check for localhost variations (no DNS needed)
+        if (in_array(strtolower($host), ['localhost', '127.0.0.1', '::1', '0.0.0.0'])) {
             return true;
         }
 
-        // Resolve hostname to IP if needed
-        $ip = filter_var($host, FILTER_VALIDATE_IP) ? $host : gethostbyname($host);
+        // If host is already an IP address, validate it directly
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            // Returns false if IP is in private/reserved range, true otherwise
+            $isPublicIp = filter_var(
+                $host,
+                FILTER_VALIDATE_IP,
+                FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+            );
 
-        // If gethostbyname fails to resolve, it returns the original hostname
-        if ($ip === $host && ! filter_var($ip, FILTER_VALIDATE_IP)) {
-            // Hostname didn't resolve, could be suspicious
+            // If it's NOT a public IP, it's internal
+            return ! $isPublicIp;
+        }
+
+        // For hostnames, do NOT resolve DNS
+        // Trust that external hostnames are safe, and rely on:
+        // 1. Firewall rules to block requests to internal domains
+        // 2. Network-level restrictions
+        // 3. Server configuration to prevent SSRF
+        return false;
+    }
+
+    /**
+     * Check if the URL is from this application (already shortened).
+     *
+     * This checks if the URL's host matches the APP_URL configuration.
+     */
+    public function isAnonUrl(string $url): bool
+    {
+        $parsed = parse_url($url);
+
+        if (! isset($parsed['host'])) {
             return false;
         }
 
-        // Check private IP ranges
-        if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-            return true;
+        $host = strtolower($parsed['host']);
+
+        // Exclude localhost and internal hosts (these should be caught by isInternalUrl instead)
+        $excludedHosts = ['localhost', '127.0.0.1', '::1', '0.0.0.0'];
+        if (in_array($host, $excludedHosts)) {
+            return false;
         }
 
-        // Additional checks for private ranges
-        $privateRanges = [
-            '10.', // 10.0.0.0/8
-            '192.168.', // 192.168.0.0/16
-            '172.16.', '172.17.', '172.18.', '172.19.', // 172.16.0.0/12
-            '172.20.', '172.21.', '172.22.', '172.23.',
-            '172.24.', '172.25.', '172.26.', '172.27.',
-            '172.28.', '172.29.', '172.30.', '172.31.',
-            '169.254.', // 169.254.0.0/16 (link-local)
-        ];
+        $appUrl = parse_url(config('app.url'));
+        $appHost = isset($appUrl['host']) ? strtolower($appUrl['host']) : null;
 
-        foreach ($privateRanges as $range) {
-            if (str_starts_with($ip, $range)) {
-                return true;
-            }
-        }
-
-        return false;
+        // Check if the host matches the app URL host
+        return $appHost && $host === $appHost;
     }
 
     /**

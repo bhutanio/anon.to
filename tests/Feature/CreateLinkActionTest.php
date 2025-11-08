@@ -17,7 +17,6 @@ test('creates link with valid URL', function () {
     $data = [
         'url' => 'https://example.com/test-page',
         'user_id' => null,
-        'expires_at' => null,
     ];
 
     $link = $this->action->execute($data);
@@ -32,28 +31,12 @@ test('creates link with valid URL', function () {
         ->visits->toBe(0);
 });
 
-test('creates link with expiration date', function () {
-    $expiresAt = now()->addDays(7)->toDateTimeString();
-
-    $data = [
-        'url' => 'https://example.com/expires',
-        'user_id' => null,
-        'expires_at' => $expiresAt,
-    ];
-
-    $link = $this->action->execute($data);
-
-    expect($link->expires_at)->not->toBeNull()
-        ->and($link->expires_at->toDateTimeString())->toBe($expiresAt);
-});
-
 test('creates link with user ID', function () {
     $user = \App\Models\User::factory()->create();
 
     $data = [
         'url' => 'https://example.com/user-link',
         'user_id' => $user->id,
-        'expires_at' => null,
     ];
 
     $link = $this->action->execute($data);
@@ -65,7 +48,6 @@ test('parses URL into components correctly', function () {
     $data = [
         'url' => 'https://example.com:8080/path?query=value#fragment',
         'user_id' => null,
-        'expires_at' => null,
     ];
 
     $link = $this->action->execute($data);
@@ -85,7 +67,6 @@ test('stores SHA256 hash of full URL', function () {
     $data = [
         'url' => $url,
         'user_id' => null,
-        'expires_at' => null,
     ];
 
     $link = $this->action->execute($data);
@@ -97,7 +78,6 @@ test('caches link after creation', function () {
     $data = [
         'url' => 'https://example.com/cached',
         'user_id' => null,
-        'expires_at' => null,
     ];
 
     $link = $this->action->execute($data);
@@ -115,14 +95,12 @@ test('returns existing link for duplicate URL', function () {
     $firstLink = $this->action->execute([
         'url' => $url,
         'user_id' => null,
-        'expires_at' => null,
     ]);
 
     // Try to create duplicate
     $secondLink = $this->action->execute([
         'url' => $url,
         'user_id' => null,
-        'expires_at' => null,
     ]);
 
     expect($secondLink->id)->toBe($firstLink->id)
@@ -133,7 +111,6 @@ test('throws exception for invalid URL', function () {
     $data = [
         'url' => 'not-a-valid-url',
         'user_id' => null,
-        'expires_at' => null,
     ];
 
     $this->action->execute($data);
@@ -143,8 +120,35 @@ test('throws exception for internal URL', function () {
     $data = [
         'url' => 'http://localhost/admin',
         'user_id' => null,
-        'expires_at' => null,
     ];
 
     $this->action->execute($data);
 })->throws(\InvalidArgumentException::class, 'Internal or private IP addresses are not allowed');
+
+test('throws exception when trying to shorten app URL', function () {
+    // Uses APP_URL from phpunit.xml (http://anon.to.test)
+    $appUrl = config('app.url');
+    $parsed = parse_url($appUrl);
+    $host = $parsed['host'] ?? 'localhost';
+
+    $data = [
+        'url' => "http://{$host}/abc123",
+        'user_id' => null,
+    ];
+
+    $this->action->execute($data);
+})->throws(\InvalidArgumentException::class, 'You cannot shorten a URL from this application');
+
+test('throws exception when trying to shorten app URL with different path', function () {
+    // Uses APP_URL from phpunit.xml (http://anon.to.test)
+    $appUrl = config('app.url');
+    $parsed = parse_url($appUrl);
+    $host = $parsed['host'] ?? 'localhost';
+
+    $data = [
+        'url' => "https://{$host}/xyz789",
+        'user_id' => null,
+    ];
+
+    $this->action->execute($data);
+})->throws(\InvalidArgumentException::class, 'You cannot shorten a URL from this application');

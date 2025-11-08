@@ -50,10 +50,11 @@ test('view counter increments on each access', function () {
     $note->refresh();
     expect($note->views)->toBe(1);
 
+    // Second request in same session should NOT increment
     $this->get("/n/{$note->hash}");
 
     $note->refresh();
-    expect($note->views)->toBe(2);
+    expect($note->views)->toBe(1); // Still 1 (session-based tracking)
 });
 
 test('cache is cleared when note is deleted after view limit', function () {

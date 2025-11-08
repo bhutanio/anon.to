@@ -6,13 +6,11 @@ return [
     | Hash Configuration
     |--------------------------------------------------------------------------
     |
-    | Configuration for generating short URL hashes.
+    | Configuration for generating short hashes for both links and notes.
     |
     */
 
     'hash_length' => env('HASH_LENGTH', 6),
-
-    'note_hash_length' => env('NOTE_HASH_LENGTH', 8),
 
     /*
     |--------------------------------------------------------------------------

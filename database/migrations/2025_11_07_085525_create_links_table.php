@@ -21,29 +21,22 @@ return new class extends Migration
             $table->text('url_query')->nullable();
             $table->text('url_fragment')->nullable();
             $table->text('full_url');
-            $table->string('full_url_hash', 64)->index();
+            $table->string('full_url_hash', 64)->unique();
             $table->string('title', 500)->nullable();
             $table->text('description')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->string('password_hash')->nullable();
             $table->unsignedBigInteger('visits')->default(0);
-            $table->unsignedBigInteger('unique_visits')->default(0);
             $table->timestamp('last_visited_at')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_reported')->default(false);
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('ip_address', 64)->nullable(); // SHA256 hash length
-            $table->text('user_agent')->nullable();
             $table->timestamps();
 
             // Additional indexes
             $table->index('user_id');
-            $table->index('expires_at');
             $table->index('created_at');
             $table->index('visits');
             $table->index(['is_active', 'is_reported']);
-            // Note: fullText index on url_host removed for SQLite compatibility
-            // Add manually for MySQL: ALTER TABLE links ADD FULLTEXT(url_host);
         });
     }
 

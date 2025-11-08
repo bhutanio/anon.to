@@ -10,47 +10,43 @@ use Illuminate\Support\Facades\Cache;
 class IncrementViews
 {
     /**
-     * Increment view count for a note.
+     * Increment view count for a note (once per session).
      *
-     * Tracks total views and unique views. If view_limit is reached, deletes the note.
+     * Only increments the view counter if this note hasn't been viewed
+     * in the current session, preventing double-counting on page refreshes.
+     * If view_limit is reached, deletes the note.
      *
      * @param  Note  $note  The note to increment views for
-     * @param  string|null  $ipAddress  The IP address of the viewer (optional)
+     * @param  string|null  $ipAddress  The IP address of the viewer (unused, kept for backward compatibility)
      * @return bool Returns true if note was deleted due to view limit, false otherwise
      */
     public function execute(Note $note, ?string $ipAddress = null): bool
     {
-        // Increment views counter
-        $note->views++;
+        $sessionKey = 'viewed_notes';
+        $viewedNotes = session($sessionKey, []);
 
-        // Track unique views if IP address provided
-        if ($ipAddress !== null) {
-            $cacheKey = "note-viewed:{$note->hash}:".hash('sha256', $ipAddress);
+        // Check if this note has already been viewed in this session
+        if (! in_array($note->id, $viewedNotes)) {
+            // Atomic increment to prevent race conditions
+            $note->increment('views');
 
-            // Check if this IP has viewed before
-            if (! Cache::has($cacheKey)) {
-                $note->unique_views++;
+            // Update last viewed timestamp
+            $note->update(['last_viewed_at' => now()]);
 
-                // Store flag for 24 hours
-                Cache::put($cacheKey, true, 86400);
+            // Mark this note as viewed in the current session
+            $viewedNotes[] = $note->id;
+            session([$sessionKey => $viewedNotes]);
+
+            // Check view_limit and delete if reached
+            if ($note->view_limit !== null && $note->views >= $note->view_limit) {
+                // Clear cache
+                Cache::forget("note:{$note->hash}");
+
+                // Hard delete note (burn-after-reading)
+                $note->delete();
+
+                return true;
             }
-        }
-
-        // Update last_viewed_at timestamp
-        $note->last_viewed_at = now();
-
-        // Save changes
-        $note->save();
-
-        // Check view_limit and delete if reached
-        if ($note->view_limit !== null && $note->views >= $note->view_limit) {
-            // Clear cache
-            Cache::forget("note:{$note->hash}");
-
-            // Hard delete note (burn-after-reading)
-            $note->delete();
-
-            return true;
         }
 
         return false;

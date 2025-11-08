@@ -34,27 +34,13 @@ class LinkFactory extends Factory
             'full_url_hash' => hash('sha256', $url),
             'title' => fake()->optional()->sentence(),
             'description' => fake()->optional()->paragraph(),
-            'expires_at' => fake()->optional(0.3)->dateTimeBetween('now', '+30 days'),
-            'password_hash' => null,
             'visits' => fake()->numberBetween(0, 1000),
-            'unique_visits' => fake()->numberBetween(0, 500),
             'last_visited_at' => fake()->optional()->dateTimeThisMonth(),
             'is_active' => true,
             'is_reported' => false,
             'user_id' => null,
             'ip_address' => hash('sha256', fake()->ipv4()),
-            'user_agent' => fake()->userAgent(),
         ];
-    }
-
-    /**
-     * Indicate that the link is expired.
-     */
-    public function expired(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'expires_at' => now()->subDays(rand(1, 30)),
-        ]);
     }
 
     /**

@@ -34,11 +34,6 @@ class CreateLinkRequest extends FormRequest
                 "max:{$maxUrlLength}",
                 'regex:/^https?:\/\//', // Must start with http:// or https://
             ],
-            'expires_at' => [
-                'nullable',
-                'date',
-                'after:now',
-            ],
         ];
     }
 
@@ -54,8 +49,6 @@ class CreateLinkRequest extends FormRequest
             'url.url' => 'Please enter a valid URL.',
             'url.max' => 'The URL is too long. Maximum length is :max characters.',
             'url.regex' => 'Only HTTP and HTTPS URLs are supported.',
-            'expires_at.date' => 'Please enter a valid expiration date.',
-            'expires_at.after' => 'Expiration date must be in the future.',
         ];
     }
 
@@ -68,7 +61,6 @@ class CreateLinkRequest extends FormRequest
     {
         return [
             'url' => 'URL',
-            'expires_at' => 'expiration date',
         ];
     }
 }

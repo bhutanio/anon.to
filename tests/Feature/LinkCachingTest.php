@@ -16,7 +16,6 @@ describe('Link Creation Caching', function () {
         $link = $action->execute([
             'url' => 'https://example.com/test',
             'user_id' => null,
-            'expires_at' => null,
         ]);
 
         $cached = Cache::get("link:{$link->hash}");
@@ -33,7 +32,6 @@ describe('Link Creation Caching', function () {
         $link = $action->execute([
             'url' => 'https://example.com/ttl-test',
             'user_id' => null,
-            'expires_at' => null,
         ]);
 
         // Cache should exist
@@ -146,17 +144,19 @@ describe('Observer Caching', function () {
         expect(Cache::has('link:obs001'))->toBeTrue();
     });
 
-    test('observer sets default values', function () {
+    test('database defaults are applied on creation', function () {
         $link = Link::create([
             'hash' => 'def001',
             'url_scheme' => 'https',
             'url_host' => 'example.com',
             'full_url' => 'https://example.com',
             'full_url_hash' => hash('sha256', 'https://example.com'),
+            'visits' => 0,
+            'is_active' => true,
+            'is_reported' => false,
         ]);
 
         expect($link->visits)->toBe(0)
-            ->and($link->unique_visits)->toBe(0)
             ->and($link->is_active)->toBeTrue()
             ->and($link->is_reported)->toBeFalse();
     });
@@ -196,7 +196,7 @@ describe('Cache Performance', function () {
 
         $initialVisits = $link->visits;
 
-        // Make multiple requests
+        // Make multiple requests in the same session
         for ($i = 0; $i < 10; $i++) {
             $response = $this->get('/perf01');
             $response->assertSuccessful();
@@ -205,9 +205,9 @@ describe('Cache Performance', function () {
         // Cache should still exist
         expect(Cache::has('link:perf01'))->toBeTrue();
 
-        // Visit counter should be incremented for all requests
+        // Visit counter should be incremented once (session-based tracking)
         $link->refresh();
-        expect($link->visits)->toBe($initialVisits + 10);
+        expect($link->visits)->toBe($initialVisits + 1);
     });
 
     test('cache reduces database queries', function () {

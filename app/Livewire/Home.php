@@ -4,12 +4,14 @@ namespace App\Livewire;
 
 use App\Actions\Links\CreateLink;
 use App\Actions\Links\ValidateUrl;
+use App\Livewire\Concerns\HasRateLimiting;
 use App\Services\UrlService;
-use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
 class Home extends Component
 {
+    use HasRateLimiting;
+
     public string $url = '';
 
     public ?string $shortUrl = null;
@@ -79,13 +81,9 @@ class Home extends Component
         $this->errorMessage = null;
         $this->copied = false;
 
-        // Check rate limit
-        $key = auth()->check()
-            ? 'create-link:user:'.auth()->id()
-            : 'create-link:ip:'.request()->ip();
-
-        if (RateLimiter::tooManyAttempts($key, auth()->check() ? 100 : 20)) {
-            $seconds = RateLimiter::availableIn($key);
+        // Check rate limit (with IP hashing for privacy)
+        if ($this->checkRateLimit('create-link', 100, 20, true)) {
+            $seconds = $this->getRateLimitSeconds('create-link', true);
             $this->errorMessage = "Too many requests. Please try again in {$seconds} seconds.";
 
             return;
@@ -112,11 +110,10 @@ class Home extends Component
             $link = $createLink->execute([
                 'url' => $validated['url'],
                 'user_id' => auth()->id(),
-                'expires_at' => null,
             ]);
 
-            // Hit the rate limiter
-            RateLimiter::hit($key, 3600); // 1 hour
+            // Hit the rate limiter (with IP hashing for privacy)
+            $this->hitRateLimit('create-link', 3600, true);
 
             // Set the short URL
             $this->hash = $link->hash;

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Livewire\Notes;
 
 use App\Actions\Notes\CreateNote;
-use Illuminate\Support\Facades\RateLimiter;
+use App\Livewire\Concerns\HasRateLimiting;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use HasRateLimiting;
+
     public string $content = '';
 
     public ?string $title = null;
@@ -43,15 +45,9 @@ class Create extends Component
         $this->errorMessage = null;
         $this->copied = false;
 
-        // Check rate limit
-        $key = auth()->check()
-            ? 'create-note:user:'.auth()->id()
-            : 'create-note:ip:'.request()->ip();
-
-        $limit = auth()->check() ? 50 : 10;
-
-        if (RateLimiter::tooManyAttempts($key, $limit)) {
-            $seconds = RateLimiter::availableIn($key);
+        // Check rate limit (with IP hashing for privacy)
+        if ($this->checkRateLimit('create-note', 50, 10, true)) {
+            $seconds = $this->getRateLimitSeconds('create-note', true);
             $minutes = ceil($seconds / 60);
             $this->errorMessage = "Too many notes created. Please try again in {$minutes} minutes.";
 
@@ -75,11 +71,7 @@ class Create extends Component
                 'string',
                 'min:8',
                 'max:255',
-                'same:password_confirmation',
-            ],
-            'password_confirmation' => [
-                'nullable',
-                'required_with:password',
+                'confirmed',
             ],
             'view_limit' => [
                 'nullable',
@@ -91,8 +83,7 @@ class Create extends Component
             'content.required' => 'Please enter some content for your note.',
             'content.max' => 'Content is too large. Maximum size is 1MB.',
             'password.min' => 'Password must be at least 8 characters.',
-            'password.same' => 'Password confirmation does not match.',
-            'password_confirmation.required_with' => 'Please confirm your password.',
+            'password.confirmed' => 'Password confirmation does not match.',
             'view_limit.min' => 'View limit must be at least 1.',
             'view_limit.max' => 'View limit cannot exceed 100.',
         ]);
@@ -111,8 +102,8 @@ class Create extends Component
                 'user_id' => auth()->id(),
             ]);
 
-            // Hit the rate limiter
-            RateLimiter::hit($key, 3600); // 1 hour
+            // Hit the rate limiter (with IP hashing for privacy)
+            $this->hitRateLimit('create-note', 3600, true);
 
             // Set the short URL
             $this->hash = $note->hash;

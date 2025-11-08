@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Actions\Notes;
 
 use App\Models\Note;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 class CreateNote
@@ -65,8 +64,8 @@ class CreateNote
         // Step 8: Hash password if provided
         $passwordHash = $password ? Hash::make($password) : null;
 
-        // Step 9: Create note record
-        $note = Note::create([
+        // Step 9: Create note record (caching handled by observer)
+        return Note::create([
             'hash' => $hash,
             'title' => $title,
             'content' => $content,
@@ -77,29 +76,12 @@ class CreateNote
             'expires_at' => $expiresAt,
             'view_limit' => $viewLimit,
             'views' => 0,
-            'unique_views' => 0,
             'last_viewed_at' => null,
             'is_active' => true,
             'is_reported' => false,
             'is_public' => true,
             'user_id' => $userId,
             'ip_address' => $hashedIp,
-            'user_agent' => request()->userAgent(),
         ]);
-
-        // Step 11: Cache note for fast retrieval
-        $this->cacheNote($note);
-
-        return $note;
-    }
-
-    /**
-     * Cache a note for fast retrieval.
-     */
-    protected function cacheNote(Note $note): void
-    {
-        $ttl = config('anon.default_cache_ttl', 86400); // 24 hours
-
-        Cache::put("note:{$note->hash}", $note, $ttl);
     }
 }

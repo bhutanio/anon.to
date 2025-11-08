@@ -6,7 +6,6 @@ namespace App\Actions\Links;
 
 use App\Models\Link;
 use App\Services\UrlService;
-use Illuminate\Support\Facades\Cache;
 
 class CreateLink
 {
@@ -20,7 +19,7 @@ class CreateLink
     /**
      * Create a new shortened link.
      *
-     * @param  array{url: string, user_id: int|null, expires_at: string|null}  $data
+     * @param  array{url: string, user_id: int|null}  $data
      *
      * @throws \InvalidArgumentException If validation fails
      * @throws \RuntimeException If hash generation fails
@@ -29,7 +28,6 @@ class CreateLink
     {
         $url = $data['url'];
         $userId = $data['user_id'] ?? null;
-        $expiresAt = $data['expires_at'] ?? null;
 
         // Step 1: Validate URL
         $this->validateUrl->execute($url);
@@ -51,8 +49,8 @@ class CreateLink
         $ipAddress = request()->ip();
         $hashedIp = $ipAddress ? hash('sha256', $ipAddress) : null;
 
-        // Step 6: Create link record
-        $link = Link::create([
+        // Step 6: Create link record (caching handled by observer)
+        return Link::create([
             'hash' => $hash,
             'url_scheme' => $parsed['scheme'],
             'url_host' => $parsed['host'],
@@ -62,25 +60,11 @@ class CreateLink
             'url_fragment' => $parsed['fragment'],
             'full_url' => $url,
             'full_url_hash' => hash('sha256', $url),
-            'expires_at' => $expiresAt,
+            'visits' => 0,
+            'is_active' => true,
+            'is_reported' => false,
             'user_id' => $userId,
             'ip_address' => $hashedIp,
-            'user_agent' => request()->userAgent(),
         ]);
-
-        // Step 7: Cache the link for fast retrieval
-        $this->cacheLink($link);
-
-        return $link;
-    }
-
-    /**
-     * Cache a link for fast retrieval.
-     */
-    protected function cacheLink(Link $link): void
-    {
-        $ttl = config('anon.default_cache_ttl', 86400); // 24 hours
-
-        Cache::put("link:{$link->hash}", $link, $ttl);
     }
 }

@@ -16,9 +16,12 @@ return [
     | messages to your logs. The value provided here should match one of
     | the channels present in the list of "channels" configured below.
     |
+    | For privacy: Production uses 'null' to prevent logging sensitive data.
+    | Development uses 'stack' for debugging.
+    |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => env('LOG_CHANNEL', env('APP_ENV') === 'production' ? 'null' : 'stack'),
 
     /*
     |--------------------------------------------------------------------------

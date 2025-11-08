@@ -9,35 +9,23 @@ uses(RefreshDatabase::class);
 
 describe('Redirect Warning Page', function () {
     test('shows warning page for valid hash', function () {
-        $link = Link::factory()->create([
-            'hash' => 'abc123',
-            'full_url' => 'https://example.com/destination',
-            'is_active' => true,
-        ]);
+        $link = Link::factory()
+            ->withUrl('https://example.com/destination')
+            ->create([
+                'hash' => 'abc123',
+                'is_active' => true,
+            ]);
 
         $response = $this->get('/abc123');
 
         $response->assertSuccessful();
-        $response->assertSee('example.com');
-    })->skip('Frontend view not built yet - will pass after Phase 3');
+        $response->assertSee('example.com', false);
+    });
 
     test('returns 404 for non-existent hash', function () {
         $response = $this->get('/nonexistent');
 
         $response->assertNotFound();
-    });
-
-    test('returns 410 for expired link', function () {
-        $link = Link::factory()->create([
-            'hash' => 'exp001',
-            'full_url' => 'https://example.com/old',
-            'expires_at' => now()->subDay(),
-            'is_active' => true,
-        ]);
-
-        $response = $this->get('/exp001');
-
-        $response->assertStatus(410);
     });
 
     test('returns 403 for inactive link', function () {

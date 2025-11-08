@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace App\Livewire\QrCode;
 
 use App\Actions\QrCode\GenerateQrCode;
-use Illuminate\Support\Facades\RateLimiter;
+use App\Livewire\Concerns\HasRateLimiting;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use HasRateLimiting;
+
     public string $content = '';
 
     public ?string $qrCodeDataUrl = null;
 
     public ?string $errorMessage = null;
+
+    public string $lastGeneratedContent = '';
 
     /**
      * Generate a QR code with rate limiting.
@@ -25,15 +29,9 @@ class Create extends Component
         $this->qrCodeDataUrl = null;
         $this->errorMessage = null;
 
-        // Check rate limit
-        $key = auth()->check()
-            ? 'generate-qr:user:'.auth()->id()
-            : 'generate-qr:ip:'.hash('sha256', request()->ip());
-
-        $limit = auth()->check() ? 50 : 10;
-
-        if (RateLimiter::tooManyAttempts($key, $limit)) {
-            $seconds = RateLimiter::availableIn($key);
+        // Check rate limit (with IP hashing for privacy)
+        if ($this->checkRateLimit('generate-qr', 50, 10, true)) {
+            $seconds = $this->getRateLimitSeconds('generate-qr', true);
             $minutes = ceil($seconds / 60);
             $this->errorMessage = "Too many QR codes generated. Please try again in {$minutes} minutes.";
 
@@ -59,8 +57,11 @@ class Create extends Component
             // Convert to base64 for preview
             $this->qrCodeDataUrl = 'data:image/png;base64,'.base64_encode($pngData);
 
-            // Hit the rate limiter
-            RateLimiter::hit($key, 3600); // 1 hour
+            // Save content for downloads before clearing input
+            $this->lastGeneratedContent = $validated['content'];
+
+            // Hit the rate limiter (with IP hashing for privacy)
+            $this->hitRateLimit('generate-qr', 3600, true);
 
             // Clear the input
             $this->reset(['content']);
@@ -156,13 +157,11 @@ class Create extends Component
     }
 
     /**
-     * Extract content from data URL (placeholder for demo - in real scenario we'd store content temporarily).
+     * Extract content from the last generated QR code.
      */
     protected function extractContentFromDataUrl(): string
     {
-        // For demo purposes, use a default value
-        // In production, you'd need to maintain the content temporarily
-        return 'https://example.com';
+        return $this->lastGeneratedContent ?: 'https://example.com';
     }
 
     public function render()

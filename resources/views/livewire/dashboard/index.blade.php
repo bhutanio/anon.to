@@ -171,7 +171,7 @@
                                                 </a>
                                                 <button
                                                     type="button"
-                                                    @click="navigator.clipboard.writeText('{{ url('/n/' . $note->hash) }}').then(() => { copied = '{{ $note->hash }}'; $wire.copyNoteUrl('{{ $note->hash }}'); setTimeout(() => copied = null, 2000); })"
+                                                    @click="$clipboard.copy('{{ url('/n/' . $note->hash) }}').then((success) => { if (success) { copied = '{{ $note->hash }}'; $wire.copyNoteUrl('{{ $note->hash }}'); setTimeout(() => copied = null, 2000); } })"
                                                     class="inline-flex items-center justify-center rounded-md p-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                                                 >
                                                     <svg x-show="copied !== '{{ $note->hash }}'" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

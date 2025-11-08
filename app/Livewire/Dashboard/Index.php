@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Dashboard;
 
-use App\Models\Link;
 use App\Models\Note;
 use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Index extends Component
@@ -54,10 +54,7 @@ class Index extends Component
             // Authorize deletion
             $this->authorize('delete', $note);
 
-            // Clear cache
-            Cache::forget("note:{$note->hash}");
-
-            // Delete the note
+            // Delete the note (cache clearing handled by observer)
             $note->delete();
         }
 
@@ -78,9 +75,10 @@ class Index extends Component
     /**
      * Get user's links.
      */
-    public function getLinksProperty()
+    #[Computed]
+    public function links()
     {
-        return Link::where('user_id', auth()->id())
+        return auth()->user()->links()
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -88,9 +86,10 @@ class Index extends Component
     /**
      * Get user's notes.
      */
-    public function getNotesProperty()
+    #[Computed]
+    public function notes()
     {
-        return Note::where('user_id', auth()->id())
+        return auth()->user()->notes()
             ->orderBy('created_at', 'desc')
             ->get();
     }

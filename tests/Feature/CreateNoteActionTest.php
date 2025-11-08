@@ -29,7 +29,7 @@ test('creates note with valid content', function () {
 
     expect($note)->toBeInstanceOf(Note::class)
         ->content->toBe('Hello World')
-        ->hash->toHaveLength(8)
+        ->hash->toHaveLength(6)
         ->is_active->toBeTrue()
         ->views->toBe(0)
         ->char_count->toBe(11)
@@ -74,7 +74,7 @@ test('creates note with all optional fields', function () {
     expect($note->expires_at)->not->toBeNull();
 });
 
-test('generates unique 8-character hash', function () {
+test('generates unique hash', function () {
     $data = [
         'content' => 'Test content',
         'title' => null,
@@ -87,8 +87,8 @@ test('generates unique 8-character hash', function () {
     $note1 = $this->action->execute($data);
     $note2 = $this->action->execute(['content' => 'Different content'] + $data);
 
-    expect($note1->hash)->toHaveLength(8)
-        ->and($note2->hash)->toHaveLength(8)
+    expect($note1->hash)->toHaveLength(6)
+        ->and($note2->hash)->toHaveLength(6)
         ->and($note1->hash)->not->toBe($note2->hash);
 });
 

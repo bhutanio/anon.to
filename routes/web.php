@@ -11,7 +11,7 @@ Route::get('/', App\Livewire\Home::class)->name('home');
 // Note creation and viewing routes
 Route::get('/notes/create', App\Livewire\Notes\Create::class)->name('notes.create');
 Route::get('/n/{hash}', App\Livewire\Notes\View::class)
-    ->where('hash', '[a-zA-Z0-9]{8}')
+    ->where('hash', '[a-zA-Z0-9]{6}')
     ->name('notes.view');
 
 // QR code generation route

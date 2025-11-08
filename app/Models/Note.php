@@ -23,7 +23,6 @@ class Note extends Model
         'password_hash',
         'view_limit',
         'views',
-        'unique_views',
         'last_viewed_at',
         'is_active',
         'is_reported',
@@ -31,7 +30,6 @@ class Note extends Model
         'user_id',
         'forked_from_id',
         'ip_address',
-        'user_agent',
     ];
 
     protected function casts(): array
@@ -46,7 +44,6 @@ class Note extends Model
             'line_count' => 'integer',
             'view_limit' => 'integer',
             'views' => 'integer',
-            'unique_views' => 'integer',
         ];
     }
 

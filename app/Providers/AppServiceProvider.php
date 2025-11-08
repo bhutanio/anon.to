@@ -32,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
     protected function registerObservers(): void
     {
         \App\Models\Link::observe(\App\Observers\LinkObserver::class);
+        \App\Models\Note::observe(\App\Observers\NoteObserver::class);
     }
 
     /**

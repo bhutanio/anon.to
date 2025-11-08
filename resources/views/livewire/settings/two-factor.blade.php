@@ -343,12 +343,10 @@ new class extends Component {
                         x-data="{
                             copied: false,
                             async copy() {
-                                try {
-                                    await navigator.clipboard.writeText('{{ $manualSetupKey }}');
+                                const success = await $clipboard.copy('{{ $manualSetupKey }}');
+                                if (success) {
                                     this.copied = true;
                                     setTimeout(() => this.copied = false, 1500);
-                                } catch (e) {
-                                    console.warn('Could not copy to clipboard');
                                 }
                             }
                         }"

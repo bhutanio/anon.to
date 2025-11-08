@@ -24,27 +24,21 @@ class Link extends Model
         'full_url_hash',
         'title',
         'description',
-        'expires_at',
-        'password_hash',
         'visits',
-        'unique_visits',
         'last_visited_at',
         'is_active',
         'is_reported',
         'user_id',
         'ip_address',
-        'user_agent',
     ];
 
     protected function casts(): array
     {
         return [
-            'expires_at' => 'datetime',
             'last_visited_at' => 'datetime',
             'is_active' => 'boolean',
             'is_reported' => 'boolean',
             'visits' => 'integer',
-            'unique_visits' => 'integer',
             'url_port' => 'integer',
         ];
     }

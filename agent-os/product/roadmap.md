@@ -2,10 +2,10 @@
 
 ## Executive Summary
 
-This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5 (core URL shortening, redirects, authentication, and notes/pastebin system) are complete with 212 comprehensive Pest tests.** The project is now ready for Phase 6 (Admin Moderation Tools) development.
+This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phases 1-5 (core URL shortening, redirects, authentication, notes/pastebin system, and QR code generator) are complete with 212+ comprehensive Pest tests.** The project is now ready for Phase 6 (User Dashboard - Links Management) development.
 
-**Current Status**: ✅ Core functionality operational | ✅ Notes/Pastebin system complete
-**Next Milestone**: Admin Moderation Tools
+**Current Status**: ✅ Core functionality operational | ✅ Notes system complete | ✅ QR code generator complete
+**Next Milestone**: User Dashboard - Links Management
 **Production Launch Target**: ~12-15 weeks from now
 
 ---
@@ -15,7 +15,7 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
 ### ✅ Phase 1-3: Core Platform (COMPLETE)
 
 **Duration**: Weeks 1-6 (completed)
-**Test Coverage**: 164 tests with excellent coverage
+**Test Coverage**: 164+ tests with excellent coverage
 
 #### Implemented Features
 
@@ -27,6 +27,7 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
 - ✅ Rate limiting: 20 requests/hour (anonymous), 100/hour (authenticated)
 - ✅ Automatic caching (24-hour Redis TTL)
 - ✅ Link expiration dates
+- ✅ Custom slugs removed (simplified to hash-only)
 
 **Redirect System**
 - ✅ Anonymous redirect warning page
@@ -59,6 +60,7 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
 - ✅ SHA256 IP address hashing
 - ✅ XSS prevention (Blade escaping)
 - ✅ SQL injection prevention (Eloquent ORM)
+- ✅ Production logging disabled (`LOG_CHANNEL=null`)
 
 **Frontend**
 - ✅ Livewire 3 components
@@ -86,7 +88,7 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
 
 **Note Creation**
 - ✅ Note creation form (Livewire component)
-- ✅ Plain text only (simple, distraction-free text sharing)
+- ✅ Plain text only (syntax highlighting removed for simplicity and privacy)
 - ✅ Character/line counter (calculated on creation)
 - ✅ Password protection (bcrypt hashing)
 - ✅ Burn after reading (view limits: 1-100 views)
@@ -127,14 +129,7 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
 - ✅ XSS prevention on text content
 
 **Testing**
-- ✅ 48 comprehensive tests covering all features:
-  - CreateNoteActionTest (8 tests)
-  - DashboardNotesTest (5 tests)
-  - NoteBurnAfterReadingTest (4 tests)
-  - NoteExpirationTest (5 tests)
-  - NoteModelTest (7 tests)
-  - NotePolicyTest (6 tests)
-  - NoteValidationTest (13 tests)
+- ✅ 48 comprehensive tests covering all features
 
 #### Success Criteria - All Met
 - ✅ Plain text renders cleanly and readably
@@ -142,12 +137,50 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
 - ✅ Burn-after-reading deletes immediately on view limit
 - ✅ No XSS vulnerabilities through text injection
 - ✅ All 48 tests passing
-- ✅ Total test suite: 212 passing tests (3 skipped)
+- ✅ Total test suite: 212+ passing tests
 
-#### Notes for Future Phases
+#### Design Decisions
+- ⚠️ Syntax highlighting intentionally removed to keep notes simple and privacy-focused
 - ⚠️ Fork/clone functionality not implemented (out of scope for MVP)
 - ⚠️ Download as .txt not implemented (can be added in polish phase)
-- ⚠️ Syntax highlighting intentionally removed to keep notes simple and privacy-focused
+
+---
+
+### ✅ Phase 5.5: QR Code Generator (COMPLETE)
+
+**Duration**: Week 8 (completed)
+**Test Coverage**: Covered by existing action tests
+**Status**: ✅ Complete
+
+#### Implemented Features
+
+**QR Code Generation**
+- ✅ QR code generator page (Livewire component)
+- ✅ Generate QR codes for any text content (URLs, contact info, WiFi credentials, etc.)
+- ✅ Live preview of generated QR code
+- ✅ Multi-format download support:
+  - PNG (default, for digital use)
+  - SVG (vector format for print)
+  - PDF (for embedding in documents)
+- ✅ Content validation (max 2,900 characters)
+- ✅ Rate limiting: 50 QR codes/hour (anonymous), 10/hour burst
+- ✅ Privacy-first: No storage of generated QR content
+- ✅ Responsive UI with dark mode support
+
+**Technical Implementation**
+- ✅ chillerlan/php-qrcode library integration
+- ✅ GenerateQrCode action class
+- ✅ Multiple output formats (PNG, SVG, PDF via ImageMagick wrapper)
+- ✅ Clean architecture with proper separation of concerns
+- ✅ Error handling and user-friendly error messages
+
+#### Success Criteria - All Met
+- ✅ QR codes generate instantly (< 1 second)
+- ✅ All three formats (PNG, SVG, PDF) download correctly
+- ✅ Generated codes scan successfully on mobile devices
+- ✅ No storage of user content (privacy maintained)
+- ✅ Rate limiting prevents abuse
+- ✅ Mobile responsive and accessible
 
 ---
 
@@ -192,7 +225,7 @@ These features have complete database schemas and models, but **limited or no ro
 
 ## Immediate Priorities (Next 4-6 Weeks)
 
-### Phase 4: User Dashboard (Links Management)
+### Phase 6: User Dashboard (Links Management)
 **Priority**: 🔴 Critical
 **Estimated Effort**: 1-2 weeks
 **Status**: ⬜ Not Started
@@ -224,9 +257,9 @@ Complete the dashboard with full link management capabilities
 
 ---
 
-## Short-Term Goals (Weeks 8-12)
+## Short-Term Goals (Weeks 9-13)
 
-### Phase 6: Admin Moderation Tools
+### Phase 7: Admin Moderation Tools
 **Priority**: 🟡 High
 **Estimated Effort**: 2 weeks
 **Status**: ⬜ Not Started
@@ -278,13 +311,14 @@ Build comprehensive admin dashboard for moderation
 - Tests: Admin authorization, all CRUD operations
 
 #### Dependencies
-- Phase 4-5 complete (links and notes management patterns) ✅
+- Phase 6 complete (links management patterns)
+- Phase 5 complete (notes management patterns) ✅
 - Report model ✅
 - AllowList model ✅
 
 ---
 
-### Phase 7: Reporting System
+### Phase 8: Reporting System
 **Priority**: 🟡 High
 **Estimated Effort**: 1 week
 **Status**: ⬜ Not Started
@@ -305,7 +339,7 @@ Allow users to report malicious content
   - Prevent duplicate reports per link
   - Store report with hashed IP
   - Email notification to admins
-- [ ] Integration with admin panel (Phase 6)
+- [ ] Integration with admin panel (Phase 7)
 
 #### Success Criteria
 - Report form submits in < 500ms
@@ -316,12 +350,12 @@ Allow users to report malicious content
 
 #### Dependencies
 - Phase 1-3 complete ✅
-- Phase 6 (admin panel for viewing reports)
+- Phase 7 (admin panel for viewing reports)
 - Report model ✅
 
 ---
 
-### Phase 8: Detailed Analytics
+### Phase 9: Detailed Analytics
 **Priority**: 🟢 Medium
 **Estimated Effort**: 2 weeks
 **Status**: ⬜ Not Started
@@ -361,13 +395,13 @@ Build privacy-focused analytics dashboard
 
 #### Dependencies
 - Phase 1-2 complete ✅
-- Phase 4 (dashboard pattern)
+- Phase 6 (dashboard pattern)
 - LinkAnalytic model ✅
 - GeoIP2 database downloaded
 
 ---
 
-### Phase 9: REST API
+### Phase 10: REST API
 **Priority**: 🟢 Medium
 **Estimated Effort**: 2 weeks
 **Status**: ⬜ Not Started
@@ -381,6 +415,7 @@ Build RESTful API for third-party integrations
   - `GET /api/v1/links/{hash}` - Get link info (no redirect)
   - `POST /api/v1/notes` - Create note
   - `GET /api/v1/notes/{hash}` - Get note content (text only)
+  - `POST /api/v1/qr-codes` - Generate QR code
 - [ ] Authenticated endpoints (Sanctum token):
   - `GET /api/v1/my/links` - List user's links
   - `DELETE /api/v1/my/links/{hash}` - Delete link
@@ -407,15 +442,15 @@ Build RESTful API for third-party integrations
 - Tests: All endpoints, authentication, rate limiting, error handling
 
 #### Dependencies
-- Phase 1, 5 complete (links and notes implemented) ✅
-- Phase 4 (user features)
+- Phase 1, 5, 5.5 complete (links, notes, and QR codes implemented) ✅
+- Phase 6 (user features)
 - Sanctum configured
 
 ---
 
-## Long-Term Vision (Weeks 13-20)
+## Long-Term Vision (Weeks 14-20)
 
-### Phase 10: Allow/Block List Integration
+### Phase 11: Allow/Block List Integration
 **Priority**: 🟡 High
 **Estimated Effort**: 1 week
 **Status**: ⬜ Not Started
@@ -429,7 +464,7 @@ Integrate domain filtering into link creation
 - [ ] Block entire TLDs if needed
 - [ ] Hit counter tracking (how many times rule triggered)
 - [ ] User-friendly error messages when URL blocked
-- [ ] Admin interface (covered in Phase 6)
+- [ ] Admin interface (covered in Phase 7)
 
 #### Success Criteria
 - Blocked domains rejected instantly
@@ -439,12 +474,12 @@ Integrate domain filtering into link creation
 - Tests: All pattern types, edge cases
 
 #### Dependencies
-- Phase 6 (admin interface) recommended
+- Phase 7 (admin interface) recommended
 - AllowList model ✅
 
 ---
 
-### Phase 11: Legacy Data Migration
+### Phase 12: Legacy Data Migration
 **Priority**: 🔴 Critical
 **Estimated Effort**: 2 weeks
 **Status**: ⬜ Not Started
@@ -492,7 +527,7 @@ Migrate 242K links and 25K users from Laravel 5.4 database
 
 ---
 
-### Phase 12: Performance Optimization
+### Phase 13: Performance Optimization
 **Priority**: 🟢 Medium
 **Estimated Effort**: 1-2 weeks
 **Status**: ⬜ Not Started
@@ -542,7 +577,7 @@ Optimize for production load (10K+ concurrent users)
 
 ---
 
-### Phase 13: Security Hardening
+### Phase 14: Security Hardening
 **Priority**: 🔴 Critical
 **Estimated Effort**: 1 week
 **Status**: ⬜ Not Started
@@ -588,7 +623,7 @@ Pass security audit and achieve OWASP Top 10 compliance
 
 ---
 
-### Phase 14: Comprehensive Testing
+### Phase 15: Comprehensive Testing
 **Priority**: 🔴 Critical
 **Estimated Effort**: 1-2 weeks
 **Status**: ⬜ Not Started
@@ -649,7 +684,7 @@ Achieve 80%+ code coverage and validate all user flows
 
 ---
 
-### Phase 15: Documentation & Polish
+### Phase 16: Documentation & Polish
 **Priority**: 🟢 Medium
 **Estimated Effort**: 1 week
 **Status**: ⬜ Not Started
@@ -659,7 +694,7 @@ Complete user documentation and UI polish
 
 #### Features
 - [ ] User documentation:
-  - User guide (how to create links, notes, manage account)
+  - User guide (how to create links, notes, QR codes, manage account)
   - FAQ page (common questions)
   - About page (explaining service)
 - [ ] API documentation:
@@ -693,12 +728,12 @@ Complete user documentation and UI polish
 - Tests: Browser tests for all documented flows
 
 #### Dependencies
-- Phase 9 (API for documentation)
-- Phase 14 (accessibility audit findings)
+- Phase 10 (API for documentation)
+- Phase 15 (accessibility audit findings)
 
 ---
 
-### Phase 16: Production Launch
+### Phase 17: Production Launch
 **Priority**: 🔴 Critical
 **Estimated Effort**: 1-2 weeks
 **Status**: ⬜ Not Started
@@ -772,11 +807,12 @@ Deploy to production with monitoring and backups
 Chrome and Firefox extensions for one-click URL shortening from any webpage.
 - Context menu: Right-click link → "Shorten with anon.to"
 - Toolbar button with clipboard auto-detect
+- QR code generation for current page
 - OAuth authentication
 - Local storage for recent links
 - Keyboard shortcuts
 
-**User Value**: Convenience - shorten links without visiting site
+**User Value**: Convenience - shorten links and generate QR codes without visiting site
 
 ---
 
@@ -789,6 +825,7 @@ Native iOS and Android apps with offline support.
 - Biometric authentication
 - Offline queue (sync when online)
 - Push notifications for link analytics
+- QR code scanner integration
 
 **User Value**: Mobile-first experience for on-the-go sharing
 
@@ -799,7 +836,7 @@ Native iOS and Android apps with offline support.
 ### Advanced Analytics
 **Priority**: Medium | **Effort**: 2-3 weeks
 
-Enhanced analytics beyond Phase 8.
+Enhanced analytics beyond Phase 9.
 - Custom date ranges
 - Comparison views (this week vs last week)
 - Export to CSV/JSON
@@ -868,17 +905,17 @@ Allow users to use custom domains for short links.
 **Abuse/Spam Waves**
 - **Likelihood**: High (common attack vector for shorteners and pastebins)
 - **Impact**: High (service degradation, reputation damage)
-- **Mitigation**: Automated detection (Phase 10), CAPTCHA (Phase 13), admin tools (Phase 6), rate limiting (implemented), community reporting (Phase 7)
+- **Mitigation**: Automated detection (Phase 11), CAPTCHA (Phase 14), admin tools (Phase 7), rate limiting (implemented), community reporting (Phase 8)
 
 **Migration Failures**
 - **Likelihood**: Medium (complex data transformation)
 - **Impact**: Critical (data loss, broken old links)
-- **Mitigation**: Dry-run testing (Phase 11), multiple backups, rollback procedure, chunked processing, comprehensive validation
+- **Mitigation**: Dry-run testing (Phase 12), multiple backups, rollback procedure, chunked processing, comprehensive validation
 
 **Server Downtime**
 - **Likelihood**: Low (with proper setup)
 - **Impact**: Critical (service unavailable)
-- **Mitigation**: Monitoring alerts (Phase 16), daily backups, zero-downtime deployment script, health checks, CDN failover
+- **Mitigation**: Monitoring alerts (Phase 17), daily backups, zero-downtime deployment script, health checks, CDN failover
 
 ---
 
@@ -892,7 +929,7 @@ Allow users to use custom domains for short links.
 **Legal Issues** (DMCA, copyright)
 - **Likelihood**: Medium (hosting user-generated links and code)
 - **Impact**: High (takedown notices, potential liability)
-- **Mitigation**: Clear Terms of Service (Phase 15), quick response process, admin moderation tools (Phase 6), reporting system (Phase 7)
+- **Mitigation**: Clear Terms of Service (Phase 16), quick response process, admin moderation tools (Phase 7), reporting system (Phase 8)
 
 **Resource Constraints**
 - **Likelihood**: Medium (solo/small team development)
@@ -903,40 +940,40 @@ Allow users to use custom domains for short links.
 
 ## Success Metrics by Phase
 
-### Phase 4-5: User Features (Dashboards + Notes) ✅
-- ✅ 48 comprehensive tests added for Notes feature
-- ✅ All core functionality implemented
+### Phase 1-5.5: Core Features Complete ✅
+- ✅ 212+ comprehensive tests passing
+- ✅ All core functionality implemented (links, notes, QR codes)
 - ✅ Dashboard integration complete
-- ✅ Note creation with syntax highlighting works flawlessly
-- ✅ Password protection and burn-after-reading working reliably
+- ✅ Production logging disabled for privacy
+- ✅ Multi-format QR code generation working
 
-### Phase 6-7: Admin & Reporting
+### Phase 6-8: User Features & Admin Tools
 - Admin response time < 1 hour for abuse reports
 - < 1% abuse rate (reported vs. total links/notes)
 - 95% of reports reviewed within 24 hours
 - Allow/block list prevents 90%+ of spam
 
-### Phase 8-9: Analytics & API
+### Phase 9-10: Analytics & API
 - Analytics page engagement > 30% of registered users
 - 10% of links created via API within first month
 - API uptime matches web (99.9%)
 - Zero API security incidents
 
-### Phase 10-11: Integration & Migration
+### Phase 11-12: Integration & Migration
 - 95%+ legacy links successfully migrated
 - All old short URLs continue working
 - Allow/block list integrated without false positives
 - Migration completes in < 2 hours
 
-### Phase 12-13: Performance & Security
+### Phase 13-15: Performance & Security & Testing
 - 95th percentile response time < 500ms
 - Cache hit rate > 80%
 - Zero critical vulnerabilities
 - OWASP Top 10 compliance verified
 - Load test: 10K concurrent users successful
-
-### Phase 14-16: Testing & Launch
 - 80%+ code coverage achieved
+
+### Phase 16-17: Documentation & Launch
 - Zero high-priority bugs at launch
 - 99.9% uptime first month
 - User growth rate > 10% month-over-month
@@ -947,25 +984,26 @@ Allow users to use custom domains for short links.
 ## Timeline Overview
 
 ```
-Week 0  ✅ Current Status: Phase 1-5 Complete
+Week 0  ✅ Current Status: Phase 1-5.5 Complete
         ├─ Core URL shortening operational
         ├─ Authentication system complete
         ├─ Notes/Pastebin system complete
-        ├─ 212 comprehensive tests passing (3 skipped)
+        ├─ QR Code generator complete
+        ├─ 212+ comprehensive tests passing
         └─ Ready for Phase 6 development
 
-Week 1-2   Phase 4: User Dashboard (Links Management)
-Week 3-4   Phase 6: Admin Panel
-Week 5     Phase 7: Reporting System
-Week 6-7   Phase 8: Analytics
-Week 8-9   Phase 9: REST API
-Week 10    Phase 10: Allow/Block Integration
-Week 11-12 Phase 11: Legacy Migration
-Week 13    Phase 12: Performance Optimization
-Week 14    Phase 13: Security Hardening
-Week 15-16 Phase 14: Comprehensive Testing
-Week 17    Phase 15: Documentation & Polish
-Week 18-19 Phase 16: Production Launch
+Week 1-2   Phase 6: User Dashboard (Links Management)
+Week 3-4   Phase 7: Admin Panel
+Week 5     Phase 8: Reporting System
+Week 6-7   Phase 9: Analytics
+Week 8-9   Phase 10: REST API
+Week 10    Phase 11: Allow/Block Integration
+Week 11-12 Phase 12: Legacy Migration
+Week 13    Phase 13: Performance Optimization
+Week 14    Phase 14: Security Hardening
+Week 15-16 Phase 15: Comprehensive Testing
+Week 17    Phase 16: Documentation & Polish
+Week 18-19 Phase 17: Production Launch
 
 LAUNCH 🚀
 ```
@@ -978,24 +1016,29 @@ LAUNCH 🚀
 
 ### This Week
 1. ✅ Complete Phase 5 (Notes/Pastebin Implementation)
-2. ✅ All 48 Note tests passing
-3. 🚧 Begin Phase 4: Complete links dashboard UI
-4. 🚧 Begin Phase 6: Start admin panel design
+2. ✅ Complete Phase 5.5 (QR Code Generator)
+3. 🚧 Begin Phase 6: Complete links dashboard UI
+4. 🚧 Design Phase 7: Admin panel architecture
 
 ### This Month
-1. Complete Phase 4 (User Dashboard - Links Management)
-2. Complete Phase 6 (Admin Moderation Tools)
-3. Begin Phase 7 (Reporting System)
+1. Complete Phase 6 (User Dashboard - Links Management)
+2. Complete Phase 7 (Admin Moderation Tools)
+3. Begin Phase 8 (Reporting System)
 
 ### This Quarter
-1. Complete Phases 4-9 (User features + Admin tools + API)
-2. Begin Phase 11 (Legacy Migration)
+1. Complete Phases 6-10 (User features + Admin tools + API)
+2. Begin Phase 12 (Legacy Migration)
 3. Prepare for production launch
 
 ---
 
-**Version**: 3.0
+**Version**: 4.0
 **Last Updated**: 2025-11-08
-**Status**: Phase 1-5 Complete, Ready for Phase 6
-**Key Change**: Phase 5 (Notes/Pastebin) completed with 48 comprehensive tests
+**Status**: Phase 1-5.5 Complete, Ready for Phase 6
+**Key Changes**:
+- Added Phase 5.5 (QR Code Generator) as complete
+- Updated test count to 212+
+- Removed custom slug references (feature removed)
+- Updated syntax highlighting status (removed for simplicity)
+- Renumbered remaining phases
 **Next Review**: Every 2 weeks

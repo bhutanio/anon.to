@@ -205,3 +205,38 @@ describe('isInternalUrl()', function () {
         expect($this->urlService->isInternalUrl('https://github.com/path'))->toBeFalse();
     });
 });
+
+describe('isAnonUrl()', function () {
+    test('detects URL matching APP_URL host', function () {
+        // Uses APP_URL from phpunit.xml (http://anon.to.test)
+        $appUrl = config('app.url');
+        $parsed = parse_url($appUrl);
+        $host = $parsed['host'] ?? 'localhost';
+
+        expect($this->urlService->isAnonUrl("http://{$host}/abc123"))->toBeTrue();
+        expect($this->urlService->isAnonUrl("https://{$host}/xyz789"))->toBeTrue();
+        expect($this->urlService->isAnonUrl("http://{$host}"))->toBeTrue();
+    });
+
+    test('does not detect other domains', function () {
+        expect($this->urlService->isAnonUrl('https://example.com'))->toBeFalse();
+        expect($this->urlService->isAnonUrl('https://google.com'))->toBeFalse();
+        expect($this->urlService->isAnonUrl('https://shortener.com'))->toBeFalse();
+    });
+
+    test('handles case insensitivity', function () {
+        // Uses APP_URL from phpunit.xml but uppercased
+        $appUrl = config('app.url');
+        $parsed = parse_url($appUrl);
+        $host = strtoupper($parsed['host'] ?? 'localhost');
+
+        expect($this->urlService->isAnonUrl("https://{$host}/abc123"))->toBeTrue();
+        expect($this->urlService->isAnonUrl("http://{$host}/xyz789"))->toBeTrue();
+    });
+
+    test('does not detect localhost as app URL', function () {
+        // localhost is excluded from isAnonUrl check (handled by isInternalUrl instead)
+        expect($this->urlService->isAnonUrl('https://localhost/test'))->toBeFalse();
+        expect($this->urlService->isAnonUrl('http://127.0.0.1/test'))->toBeFalse();
+    });
+});

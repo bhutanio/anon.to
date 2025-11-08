@@ -18,7 +18,7 @@ class GenerateNoteHash
     public function __construct()
     {
         $this->excludedWords = array_map('strtolower', config('anon.excluded_words', []));
-        $this->hashLength = config('anon.note_hash_length', 8);
+        $this->hashLength = config('anon.hash_length', 6);
     }
 
     /**

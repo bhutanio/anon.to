@@ -20,13 +20,13 @@ class NotePolicy
      */
     public function view(?User $user, Note $note): bool
     {
-        // Allow viewing if note is active and not expired
-        if ($note->is_active && ($note->expires_at === null || $note->expires_at->isFuture())) {
+        // Allow owners to view their own notes regardless of status
+        if ($user !== null && $note->user_id === $user->id) {
             return true;
         }
 
-        // Allow owners to view their own notes even if expired
-        if ($user !== null && $note->user_id === $user->id) {
+        // For non-owners, the note must be public, active, and not expired
+        if ($note->is_public && $note->is_active && ($note->expires_at === null || $note->expires_at->isFuture())) {
             return true;
         }
 

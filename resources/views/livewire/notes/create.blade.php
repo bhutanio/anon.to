@@ -191,7 +191,7 @@
                             >
                             <button
                                 type="button"
-                                @click="navigator.clipboard.writeText('{{ $shortUrl }}').then(() => { copied = true; $wire.markAsCopied(); setTimeout(() => copied = false, 2000); })"
+                                @click="$clipboard.copy('{{ $shortUrl }}').then((success) => { if (success) { copied = true; $wire.markAsCopied(); setTimeout(() => copied = false, 2000); } })"
                                 class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition flex items-center gap-2 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
                                 <svg x-show="!copied" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

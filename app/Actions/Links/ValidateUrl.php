@@ -51,6 +51,11 @@ class ValidateUrl
             throw new \InvalidArgumentException('Only HTTP and HTTPS URLs are allowed');
         }
 
+        // Prevent shortening already shortened URLs from this application (check this BEFORE internal URL check)
+        if ($this->urlService->isAnonUrl($url)) {
+            throw new \InvalidArgumentException('This URL is already shortened. You cannot shorten a URL from this application.');
+        }
+
         // SSRF Prevention: Check for internal IPs
         if ($this->urlService->isInternalUrl($url)) {
             throw new \InvalidArgumentException('Internal or private IP addresses are not allowed');
