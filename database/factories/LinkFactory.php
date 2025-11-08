@@ -76,4 +76,23 @@ class LinkFactory extends Factory
             'user_id' => $user?->id ?? User::factory(),
         ]);
     }
+
+    /**
+     * Create a link with a specific destination URL.
+     */
+    public function withUrl(string $url): static
+    {
+        $parsed = parse_url($url);
+
+        return $this->state(fn (array $attributes) => [
+            'url_scheme' => $parsed['scheme'] ?? 'https',
+            'url_host' => $parsed['host'] ?? '',
+            'url_port' => $parsed['port'] ?? null,
+            'url_path' => $parsed['path'] ?? '/',
+            'url_query' => $parsed['query'] ?? null,
+            'url_fragment' => $parsed['fragment'] ?? null,
+            'full_url' => $url,
+            'full_url_hash' => hash('sha256', $url),
+        ]);
+    }
 }

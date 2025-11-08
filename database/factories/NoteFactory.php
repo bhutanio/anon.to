@@ -34,7 +34,7 @@ class NoteFactory extends Factory
             'password_hash' => null,
             'view_limit' => null,
             'views' => fake()->numberBetween(0, 100),
-            'unique_views' => fake()->numberBetween(0, 75),
+            'unique_views' => fake()->numberBetween(0, 75), // FIXED: Was unique_visits, should be unique_views
             'last_viewed_at' => fake()->optional()->dateTimeThisMonth(),
             'is_active' => true,
             'is_reported' => false,
@@ -54,6 +54,30 @@ class NoteFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'password_hash' => bcrypt($password),
+        ]);
+    }
+
+    /**
+     * Indicate that the note has an expiration date.
+     */
+    public function withExpiration(?int $days = null): static
+    {
+        $days = $days ?? fake()->randomElement([1, 7, 14, 30]);
+
+        return $this->state(fn (array $attributes) => [
+            'expires_at' => now()->addDays($days),
+        ]);
+    }
+
+    /**
+     * Indicate that the note has a view limit.
+     */
+    public function withViewLimit(?int $limit = null): static
+    {
+        $limit = $limit ?? fake()->numberBetween(1, 10);
+
+        return $this->state(fn (array $attributes) => [
+            'view_limit' => $limit,
         ]);
     }
 

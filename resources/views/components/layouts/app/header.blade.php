@@ -15,6 +15,9 @@
                 <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
                 </flux:navbar.item>
+                <flux:navbar.item icon="document-text" href="/notes/create" wire:navigate>
+                    {{ __('Create Note') }}
+                </flux:navbar.item>
             </flux:navbar>
 
             <flux:spacer />
@@ -100,6 +103,9 @@
                 <flux:navlist.group :heading="__('Platform')">
                     <flux:navlist.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="document-text" href="/notes/create" wire:navigate>
+                    {{ __('Create Note') }}
                     </flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>

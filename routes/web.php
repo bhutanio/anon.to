@@ -8,7 +8,13 @@ use Livewire\Volt\Volt;
 // Home page with link creation form (Livewire component)
 Route::get('/', App\Livewire\Home::class)->name('home');
 
-Route::view('dashboard', 'dashboard')
+// Note creation and viewing routes
+Route::get('/notes/create', App\Livewire\Notes\Create::class)->name('notes.create');
+Route::get('/n/{hash}', App\Livewire\Notes\View::class)
+    ->where('hash', '[a-zA-Z0-9]{8}')
+    ->name('notes.view');
+
+Route::get('dashboard', App\Livewire\Dashboard\Index::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 

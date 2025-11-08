@@ -1,0 +1,2 @@
+Install Blade Heroicons:
+ composer require blade-ui-kit/blade-heroicons

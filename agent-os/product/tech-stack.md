@@ -1,0 +1,497 @@
+# anon.to Technical Stack
+
+This document outlines all technology choices for the anon.to platform, covering backend, frontend, infrastructure, and third-party services.
+
+---
+
+## Backend Framework & Runtime
+
+### Laravel 12.37.0
+**Why**: Modern PHP framework with excellent ecosystem and developer experience
+- Latest stable Laravel version with streamlined file structure
+- Robust routing, middleware, and request lifecycle
+- Built-in authentication, authorization, and validation
+- Active community and extensive documentation
+- Proven at scale with millions of applications
+
+### PHP 8.4.14
+**Why**: Latest PHP version with performance and type safety improvements
+- JIT compiler for improved performance
+- Named arguments and constructor property promotion
+- Improved type system with union types and nullsafe operator
+- Better error handling and debugging
+- Compatible with Laravel 12
+
+### Composer 2.x
+**Why**: Standard PHP dependency manager
+- Fast parallel downloads
+- Lock file for reproducible builds
+- PSR-4 autoloading
+- Scripts for automation
+
+---
+
+## Frontend Stack
+
+### Livewire 3.6.4
+**Why**: Build dynamic interfaces without writing JavaScript
+- Full-stack framework for Laravel
+- Real-time validation and form handling
+- Wire models for reactive data binding
+- Pagination, file uploads, and events built-in
+- Reduces JavaScript complexity while maintaining interactivity
+
+### Volt 1.9.0
+**Why**: Single-file components for Livewire (functional and class-based)
+- Blade templates with co-located PHP logic
+- Reduces boilerplate compared to traditional Livewire components
+- Supports both functional and class-based approaches
+- Perfect for small to medium components
+- Maintains full Livewire functionality
+
+### Flux UI 2.6.1 (Free Edition)
+**Why**: Pre-built UI component library specifically for Livewire
+- Consistent design language out of the box
+- Accessible components (WCAG compliant)
+- Tailwind-based styling for easy customization
+- Components: buttons, inputs, modals, tables, badges, etc.
+- Free tier includes all essential components
+- Reduces development time for common UI patterns
+
+### Tailwind CSS 4.1.11
+**Why**: Utility-first CSS framework for rapid UI development
+- CSS-first configuration using `@theme` directive (v4 feature)
+- No separate tailwind.config.js needed
+- Faster build times than v3
+- Dark mode support via `dark:` variants
+- Mobile-first responsive design
+- Tree-shaking removes unused styles in production
+
+### Alpine.js (bundled with Livewire)
+**Why**: Lightweight JavaScript for simple interactions
+- Declarative syntax similar to Vue.js
+- Perfect for dropdowns, modals, toggles
+- Included with Livewire 3 (no separate install)
+- Plugins: persist, intersect, collapse, focus
+
+### Prism.js
+**Why**: Syntax highlighting for code snippets in notes
+- Supports 50+ programming languages
+- Lightweight and performant
+- Customizable themes for light/dark mode
+- Line numbers and copy button support
+- Safe rendering with proper escaping
+
+---
+
+## Authentication & Authorization
+
+### Laravel Fortify 1.31.2
+**Why**: Headless authentication backend for Laravel
+- Email/password authentication
+- Email verification
+- Two-factor authentication (TOTP)
+- Password reset functionality
+- Integrates seamlessly with Livewire
+- No frontend opinions - full control over UI
+
+### Laravel Sanctum
+**Why**: API token authentication for mobile/SPA apps
+- Simple token-based authentication
+- Personal access tokens for API access
+- CSRF protection for SPAs
+- Built into Laravel, no complex OAuth setup
+- Perfect for our REST API needs
+
+### Laravel Gates & Policies
+**Why**: Authorization logic for access control
+- Define permissions in code (no database overhead)
+- Policy classes for model-based authorization
+- Blade directives for UI (`@can`, `@cannot`)
+- Middleware for route protection
+
+---
+
+## Database & Storage
+
+### MySQL 8.0+
+**Why**: Reliable relational database with strong ecosystem
+- Proven at scale (242K+ links already stored)
+- Full-text search support for note content
+- JSON column support for flexible data
+- Window functions for analytics
+- Strong community and tooling
+- Cost-effective for self-hosted deployments
+
+**Alternative**: PostgreSQL 15+ (if advanced features needed later)
+
+### Laravel Eloquent ORM
+**Why**: Database abstraction built into Laravel
+- Fluent query builder with type safety
+- Model relationships (hasMany, belongsTo, polymorphic)
+- Migrations for version-controlled schema
+- Seeders and factories for testing
+- Query logging and debugging
+
+### Redis 7.x
+**Why**: In-memory data store for caching and queues
+- Sub-millisecond read/write performance
+- Cache popular links (24-hour TTL)
+- Session storage (database alternative)
+- Queue driver for background jobs
+- Pub/sub for real-time features (future)
+- Data persistence for durability
+
+---
+
+## Testing & Quality
+
+### Pest 4.1.3
+**Why**: Modern PHP testing framework built on PHPUnit
+- Beautiful, expressive syntax
+- Browser testing with headless Chrome/Firefox
+- Parallel test execution for speed
+- Visual regression testing (future use)
+- Architectural testing (enforce rules)
+- Perfect for Laravel applications
+
+### PHPUnit 12.4.1
+**Why**: Underlying test runner for Pest
+- Industry standard for PHP testing
+- Code coverage reports
+- Data providers and mocking
+- Integration with CI/CD pipelines
+
+### Laravel Pint 1.25.1
+**Why**: Opinionated code formatter for PHP
+- Zero-configuration Laravel code style
+- Automatically fixes formatting issues
+- Fast (uses PHP-CS-Fixer under the hood)
+- CI/CD integration for enforcement
+- Runs via `vendor/bin/pint`
+
+---
+
+## Development Tools & DevOps
+
+### Laravel Sail 1.47.0
+**Why**: Docker-based local development environment
+- Pre-configured containers (PHP, MySQL, Redis)
+- One-command setup (`sail up`)
+- Consistent across team members
+- Includes Mailhog for email testing
+- Production parity for reliable deployments
+
+### Vite
+**Why**: Modern asset bundler with HMR (Hot Module Replacement)
+- Fast build times compared to Webpack
+- Hot reload for CSS/JS during development
+- Tree-shaking for smaller production bundles
+- Official Laravel integration
+- PostCSS and autoprefixer built-in
+
+### GitHub Actions
+**Why**: CI/CD pipeline integrated with repository
+- Free for public repositories
+- YAML-based configuration
+- Matrix builds (multiple PHP versions)
+- Automated testing on every push
+- Deployment automation
+- Secret management for credentials
+
+---
+
+## Monitoring & Logging
+
+### Laravel Telescope (Development)
+**Why**: Debug assistant for Laravel applications
+- Request/response logging
+- Query profiling (N+1 detection)
+- Exception tracking
+- Mail preview
+- Scheduled job monitoring
+- Only enabled in development/staging
+
+### Sentry (Production - Future)
+**Why**: Error tracking and performance monitoring
+- Real-time error alerts
+- Stack traces with context
+- Performance monitoring (APM)
+- Release tracking
+- Issue assignment and resolution
+- Integrates with Laravel
+
+### Laravel Horizon (Queue Monitoring)
+**Why**: Dashboard for Redis queue workers
+- Real-time queue metrics
+- Job throughput and runtime
+- Failed job management
+- Worker configuration
+- Beautiful UI built into Laravel
+
+---
+
+## Third-Party Services
+
+### QR Code Generation: chillerlan/php-qrcode
+**Why**: Generate QR codes for shortened links
+- Pure PHP implementation (no external API)
+- PNG/SVG output formats
+- Customizable size and quality
+- No rate limits or costs
+- Works offline/on-premise
+
+### Google Safe Browsing API (Optional)
+**Why**: Check URLs for malware/phishing
+- Free tier: 10K lookups per day
+- Identifies malicious sites
+- Update 4 protocol (latest version)
+- Reduces manual moderation burden
+- Privacy-friendly (hashed URL lookups)
+
+### hCaptcha or Google reCAPTCHA v3
+**Why**: Bot protection for forms
+- Invisible CAPTCHA (better UX)
+- Only shown after suspicious activity
+- Prevents spam report submissions
+- Free tier sufficient for traffic
+- GDPR compliant (hCaptcha better for EU)
+
+### GeoIP2 (MaxMind)
+**Why**: Country-level geolocation for analytics
+- Privacy-focused (country only, no city/IP tracking)
+- Downloadable database (no API calls)
+- Free GeoLite2-Country database
+- Updates via Composer script
+- Works offline
+
+### Email Service: AWS SES / Mailgun / Postmark
+**Why**: Reliable transactional email delivery
+- Password resets, email verification
+- Report notifications to admins
+- High deliverability rates
+- API and SMTP support
+- Cost-effective for low volume
+
+---
+
+## Infrastructure & Hosting
+
+### Web Server: Nginx
+**Why**: High-performance HTTP server
+- Handles static assets efficiently
+- Reverse proxy for PHP-FPM
+- SSL/TLS termination
+- HTTP/2 support
+- Gzip compression
+
+### PHP-FPM
+**Why**: FastCGI Process Manager for PHP
+- Better performance than mod_php
+- Process pooling for concurrency
+- Resource limits per pool
+- Graceful restarts
+
+### Supervisor
+**Why**: Process control system for queue workers
+- Keeps queue workers running
+- Auto-restart on failure
+- Multiple workers for concurrency
+- Log rotation
+- Easy configuration
+
+### Cloudflare (CDN & DDoS Protection)
+**Why**: Performance and security layer
+- Global CDN for static assets
+- DDoS protection (free tier)
+- SSL/TLS encryption
+- Caching at edge locations
+- CF-Connecting-IP header support (already implemented)
+- Analytics and insights
+
+---
+
+## Configuration & Environment
+
+### Environment Variables (.env)
+**Why**: Secure configuration management
+- Sensitive data kept out of version control
+- Different configs per environment (dev/staging/prod)
+- Laravel's `config()` helper for access
+- Never use `env()` outside config files
+
+### Laravel Configuration
+**Why**: Centralized, cached configuration
+- Config files in `config/` directory
+- Cache config for production (`php artisan config:cache`)
+- Type-safe access via facades
+- Custom configs: `config/anon.php` for app-specific settings
+
+---
+
+## Asset Management
+
+### NPM/Yarn
+**Why**: JavaScript package manager
+- Install frontend dependencies (Alpine, Prism)
+- Scripts for build automation
+- Lock file for reproducible builds
+- Version pinning for stability
+
+### Laravel Mix / Vite
+**Why**: Asset compilation pipeline
+- Compile Tailwind CSS
+- Bundle JavaScript modules
+- Minify for production
+- Versioning for cache busting
+- Source maps for debugging
+
+---
+
+## Security Technologies
+
+### HTTPS/SSL
+**Why**: Encrypt all traffic
+- Let's Encrypt for free certificates
+- Automatic renewal via Certbot
+- HSTS header for forced HTTPS
+- No mixed content warnings
+
+### Content Security Policy (CSP)
+**Why**: Prevent XSS attacks
+- Whitelist allowed resources
+- Block inline scripts (except trusted)
+- Reduce attack surface
+- Reporting endpoint for violations
+
+### CSRF Protection
+**Why**: Prevent cross-site request forgery
+- Laravel's built-in VerifyCsrfToken middleware
+- Token included in all forms
+- Validated on every POST/PUT/DELETE
+
+### Bcrypt/Argon2
+**Why**: Secure password hashing
+- One-way hashing (irreversible)
+- Salt automatically generated
+- Resistant to rainbow table attacks
+- Configurable work factor
+
+---
+
+## Why This Stack?
+
+### 1. Modern & Maintainable
+All technologies are actively maintained with long-term support commitments. Laravel 12 and PHP 8.4 represent the latest stable releases.
+
+### 2. Privacy-First
+Every technology choice supports our privacy mission:
+- No tracking pixels or analytics SDKs
+- Self-hosted components where possible
+- Minimal third-party dependencies
+- Data sovereignty (we control the stack)
+
+### 3. Performance-Optimized
+Redis caching, HTTP/2, CDN integration, and compiled assets ensure sub-second page loads even at scale.
+
+### 4. Developer Experience
+Laravel's ecosystem provides excellent tooling (Sail, Telescope, Pint) that reduces friction and increases productivity.
+
+### 5. Proven at Scale
+This isn't experimental tech - every component has been battle-tested in production across thousands of applications.
+
+### 6. Cost-Effective
+Open-source foundation with generous free tiers for third-party services. Self-hostable without vendor lock-in.
+
+### 7. Future-Proof
+Modern syntax (PHP 8.4, Livewire 3, Tailwind 4) with clear upgrade paths as technologies evolve.
+
+---
+
+## Deviations from User's Standard Stack
+
+Based on the user's tech stack preferences, anon.to aligns perfectly with standard choices:
+- Laravel 12 (framework)
+- Livewire 3 + Volt (frontend)
+- Tailwind CSS 4 (styling)
+- Pest 4 (testing)
+- Redis (caching/queues)
+- MySQL (database)
+
+**No major deviations** - this project follows best practices established in the user's standards documentation.
+
+---
+
+## Technology Changelog
+
+### Laravel 5.4 → Laravel 12 (Current Rebuild)
+**What Changed**:
+- File structure simplified (no `app/Console/Kernel.php`)
+- Middleware registered in `bootstrap/app.php`
+- Commands auto-discover from `app/Console/Commands/`
+- Modern Blade components and slots
+- Database query improvements (native eager loading limits)
+
+**Why**: Laravel 5.4 is no longer supported. Laravel 12 provides better DX, performance, and security.
+
+### Bootstrap 3 + jQuery → Tailwind 4 + Alpine.js
+**What Changed**:
+- Utility-first CSS instead of component classes
+- Declarative JavaScript instead of jQuery DOM manipulation
+- Smaller bundle sizes (no jQuery dependency)
+- Better dark mode support
+
+**Why**: Modern stack, faster development, better performance, easier maintenance.
+
+### Laravel Collective (Forms) → Livewire Forms
+**What Changed**:
+- Wire models replace form helpers
+- Validation moved to Livewire components
+- Real-time validation without page refresh
+
+**Why**: Laravel Collective is deprecated. Livewire provides better UX and simpler code.
+
+---
+
+## Implementation Status Summary
+
+### ✅ Fully Operational Technologies
+These are actively used in the current implementation:
+
+**Backend**: Laravel 12, PHP 8.4, Eloquent ORM, Redis caching
+**Frontend**: Livewire 3, Volt 1, Flux UI 2 (free), Tailwind CSS 4, Alpine.js
+**Authentication**: Fortify 1 (email verification, 2FA, password reset)
+**Testing**: Pest 4 (20 test files), PHPUnit 12, Pint 1
+**Development**: Sail 1, Vite, GitHub (version control)
+**Security**: Bcrypt password hashing, CSRF protection, SSRF prevention
+
+### 📦 Installed But Not Yet Utilized
+These are installed/configured but not actively used:
+
+**Laravel Sanctum**: Installed but no API endpoints created yet
+**Queue System**: Redis queue driver configured but no jobs dispatched yet
+**GeoIP2**: Database setup but analytics not recording detailed data
+**Laravel Horizon**: Not installed (queue monitoring for when queues are used)
+**Laravel Telescope**: Not installed (for development debugging)
+
+### 🚧 Planned Technologies
+These will be added in future phases:
+
+**Prism.js**: For Phase 5 (syntax highlighting in notes)
+**Chart.js/ApexCharts**: For Phase 8 (analytics dashboard)
+**hCaptcha/reCAPTCHA**: For Phase 13 (security hardening)
+**Safe Browsing API**: For Phase 10 (malware URL detection)
+**Sentry**: For Phase 16 (production error tracking)
+**Supervisor**: For Phase 16 (production queue workers)
+
+### Current Database Usage
+- ✅ **Active Tables**: links, users, sessions, personal_access_tokens
+- 📦 **Schema Ready**: notes, reports, allow_lists, link_analytics
+- ⚠️ **Partial**: link_analytics table exists but only basic visit counting active
+
+---
+
+**Version**: 2.0
+**Last Updated**: 2025-11-07
+**Key Change**: Added implementation status section
+**Next Review**: When adding new major dependencies

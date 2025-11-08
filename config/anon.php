@@ -12,6 +12,8 @@ return [
 
     'hash_length' => env('HASH_LENGTH', 6),
 
+    'note_hash_length' => env('NOTE_HASH_LENGTH', 8),
+
     /*
     |--------------------------------------------------------------------------
     | URL Validation
@@ -201,16 +203,76 @@ return [
     |--------------------------------------------------------------------------
     |
     | Supported programming languages for syntax highlighting in notes.
-    | Will be used in Phase 5+.
+    | Organized alphabetically for dropdown display.
     |
     */
 
     'syntax_languages' => [
-        'markup', 'html', 'xml', 'svg', 'css', 'scss', 'sass', 'less',
-        'javascript', 'js', 'typescript', 'ts', 'jsx', 'tsx',
-        'php', 'python', 'py', 'ruby', 'rb', 'go', 'rust', 'java',
-        'c', 'cpp', 'csharp', 'cs', 'swift', 'kotlin', 'scala',
-        'sql', 'bash', 'shell', 'powershell', 'json', 'yaml', 'yml',
-        'markdown', 'md', 'plaintext', 'text',
+        'abap',
+        'actionscript',
+        'ada',
+        'apache',
+        'apex',
+        'bash',
+        'c',
+        'clojure',
+        'cobol',
+        'coffeescript',
+        'cpp',
+        'crystal',
+        'csharp',
+        'css',
+        'dart',
+        'diff',
+        'docker',
+        'elixir',
+        'elm',
+        'erlang',
+        'fortran',
+        'fsharp',
+        'go',
+        'graphql',
+        'groovy',
+        'haskell',
+        'html',
+        'http',
+        'java',
+        'javascript',
+        'json',
+        'jsx',
+        'julia',
+        'kotlin',
+        'latex',
+        'less',
+        'lisp',
+        'lua',
+        'makefile',
+        'markdown',
+        'matlab',
+        'nginx',
+        'objectivec',
+        'pascal',
+        'perl',
+        'php',
+        'plaintext',
+        'powershell',
+        'python',
+        'r',
+        'ruby',
+        'rust',
+        'sass',
+        'scala',
+        'scheme',
+        'scss',
+        'shell',
+        'sql',
+        'swift',
+        'typescript',
+        'vbnet',
+        'verilog',
+        'vhdl',
+        'vim',
+        'xml',
+        'yaml',
     ],
 ];

@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Actions\Links\CreateLink;
+use App\Actions\Links\ValidateUrl;
+use App\Services\UrlService;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
@@ -17,6 +19,54 @@ class Home extends Component
     public bool $copied = false;
 
     public ?string $errorMessage = null;
+
+    public ?string $urlParam = null;
+
+    public ?array $parsedUrl = null;
+
+    /**
+     * Mount the component and handle URL parameter if provided.
+     */
+    public function mount(
+        ValidateUrl $validateUrl,
+        UrlService $urlService
+    ): void {
+        // Check for URL parameter in query string
+        // Support both formats: ?url=https://... and /?https://...
+        $urlToAnonymize = request()->query('url');
+
+        if (! $urlToAnonymize) {
+            // Check if the raw query string is a URL (format: /?https://...)
+            // We use the raw query string because Laravel converts dots to underscores in query keys
+            $queryString = request()->getQueryString();
+            if ($queryString) {
+                // URL decode first, then check if it starts with http:// or https://
+                $decodedQueryString = urldecode($queryString);
+                // Remove trailing '=' if present (Laravel adds it during parsing)
+                $decodedQueryString = rtrim($decodedQueryString, '=');
+
+                if (str_starts_with($decodedQueryString, 'http://') || str_starts_with($decodedQueryString, 'https://')) {
+                    $urlToAnonymize = $decodedQueryString;
+                }
+            }
+        }
+
+        if ($urlToAnonymize) {
+            try {
+                // Validate the URL
+                $validateUrl->execute($urlToAnonymize);
+
+                // Parse URL into components
+                $this->parsedUrl = $urlService->parse($urlToAnonymize);
+
+                // Set the URL parameter for display
+                $this->urlParam = $urlToAnonymize;
+            } catch (\InvalidArgumentException $e) {
+                $this->errorMessage = $e->getMessage();
+                $this->urlParam = $urlToAnonymize; // Still set it to show error state
+            }
+        }
+    }
 
     /**
      * Create a shortened link with rate limiting.
