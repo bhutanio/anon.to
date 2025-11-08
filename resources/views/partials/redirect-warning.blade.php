@@ -204,19 +204,18 @@
 
     {{-- Action Buttons --}}
     <div class="flex flex-col sm:flex-row gap-3">
-        <a
+        <flux:button
             href="{{ $destinationUrl }}"
             @click="saveTrustedDomain()"
-            class="flex-1 inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+            variant="primary"
+            icon-trailing="arrow-right"
+            class="flex-1">
             Continue to Site
-            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-        </a>
+        </flux:button>
 
-        <a href="/" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+        <flux:button href="/" variant="ghost">
             Go Back
-        </a>
+        </flux:button>
     </div>
 
     {{-- Footer Info --}}

@@ -20,43 +20,40 @@
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8">
                 <form wire:submit.prevent="generateQrCode" class="space-y-6">
                     {{-- Content Input --}}
-                    <div>
-                        <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Content <span class="text-red-500">*</span>
-                        </label>
-                        <textarea
+                    <flux:field>
+                        <flux:label>Content <span class="text-red-500">*</span></flux:label>
+                        <flux:textarea
                             wire:model.defer="content"
-                            id="content"
+                            name="content"
                             rows="10"
                             placeholder="Enter text, URL, or any data to generate QR code..."
-                            class="block w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition font-mono"
+                            class="font-mono"
                             style="font-family: 'Fira Code', 'Monaco', 'Courier New', monospace;"
-                        ></textarea>
+                        />
                         <div class="mt-1 flex items-center justify-between">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ mb_strlen($content) }} / 2,900 characters</p>
+                            <flux:description>{{ mb_strlen($content) }} / 2,900 characters</flux:description>
                             @error('content')
-                                <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <flux:error>{{ $message }}</flux:error>
                             @enderror
                         </div>
-                    </div>
+                    </flux:field>
 
                     {{-- Error Messages --}}
                     @if($errorMessage)
                         <div class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                             <p class="text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                                <flux:icon.exclamation-circle variant="mini" />
                                 {{ $errorMessage }}
                             </p>
                         </div>
                     @endif
 
                     {{-- Generate Button --}}
-                    <button
+                    <flux:button
                         type="submit"
+                        variant="primary"
+                        class="w-full"
                         wire:loading.attr="disabled"
-                        class="w-full flex items-center justify-center px-6 py-4 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl"
                     >
                         <span wire:loading.remove wire:target="generateQrCode">Generate QR Code</span>
                         <span wire:loading wire:target="generateQrCode" class="flex items-center gap-2">
@@ -66,7 +63,7 @@
                             </svg>
                             Generating...
                         </span>
-                    </button>
+                    </flux:button>
                 </form>
 
                 {{-- QR Code Preview --}}
@@ -86,38 +83,32 @@
 
                         {{-- Download Buttons --}}
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <button
+                            <flux:button
                                 wire:click="downloadPng"
                                 wire:loading.attr="disabled"
-                                class="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                variant="primary"
+                                icon="arrow-down-tray"
                             >
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
                                 Download PNG
-                            </button>
+                            </flux:button>
 
-                            <button
+                            <flux:button
                                 wire:click="downloadSvg"
                                 wire:loading.attr="disabled"
-                                class="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                variant="primary"
+                                icon="arrow-down-tray"
                             >
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
                                 Download SVG
-                            </button>
+                            </flux:button>
 
-                            <button
+                            <flux:button
                                 wire:click="downloadPdf"
                                 wire:loading.attr="disabled"
-                                class="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                variant="primary"
+                                icon="arrow-down-tray"
                             >
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
                                 Download PDF
-                            </button>
+                            </flux:button>
                         </div>
                     </div>
                 @endif

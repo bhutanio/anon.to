@@ -16,9 +16,9 @@
                 <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">
                     This note has been deleted or does not exist. It may have reached its view limit or has been manually deleted.
                 </p>
-                <a href="/notes/create" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                <flux:button href="/notes/create" variant="primary">
                     Create Your Own Note
-                </a>
+                </flux:button>
             </div>
         @elseif($isExpired)
             {{-- 410 Gone - Note Expired --}}
@@ -35,9 +35,9 @@
                 <p class="text-base text-gray-500 dark:text-gray-500 mb-8">
                     Expired notes are automatically deleted to protect your privacy.
                 </p>
-                <a href="/notes/create" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                <flux:button href="/notes/create" variant="primary">
                     Create Your Own Note
-                </a>
+                </flux:button>
             </div>
         @elseif($requiresPassword)
             {{-- Password Protection Overlay --}}
@@ -54,32 +54,33 @@
                     </div>
 
                     <form wire:submit.prevent="verifyPassword" class="space-y-4">
-                        <div>
-                            <input
+                        <flux:field>
+                            <flux:input
                                 wire:model.defer="passwordInput"
                                 type="password"
+                                name="password"
                                 placeholder="Enter password"
                                 autofocus
-                                class="block w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition"
-                            >
+                            />
                             @if($passwordError)
-                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $passwordError }}</p>
+                                <flux:error>{{ $passwordError }}</flux:error>
                             @endif
                             @if($attemptsRemaining < 5)
-                                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                <flux:description>
                                     {{ $attemptsRemaining }} {{ $attemptsRemaining === 1 ? 'attempt' : 'attempts' }} remaining
-                                </p>
+                                </flux:description>
                             @endif
-                        </div>
+                        </flux:field>
 
-                        <button
+                        <flux:button
                             type="submit"
+                            variant="primary"
+                            class="w-full"
                             wire:loading.attr="disabled"
-                            class="w-full px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
                         >
                             <span wire:loading.remove wire:target="verifyPassword">Unlock Note</span>
                             <span wire:loading wire:target="verifyPassword">Verifying...</span>
-                        </button>
+                        </flux:button>
                     </form>
                 </div>
             </div>
@@ -186,19 +187,15 @@
 
                 {{-- Action Buttons --}}
                 <div class="flex flex-wrap items-center gap-3 mb-6" x-data="{ copied: @entangle('copied') }">
-                    <button
+                    <flux:button
                         @click="$clipboard.copy(@js($note->content)).then((success) => { if (success) { copied = true; $wire.markAsCopied(); setTimeout(() => copied = false, 2000); } })"
-                        class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
+                        variant="ghost"
                     >
-                        <svg x-show="!copied" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <svg x-show="copied" x-cloak class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
+                        <flux:icon.clipboard x-show="!copied" variant="mini" />
+                        <flux:icon.check x-show="copied" x-cloak variant="mini" />
                         <span x-show="!copied">Copy to Clipboard</span>
                         <span x-show="copied" x-cloak>Copied!</span>
-                    </button>
+                    </flux:button>
 
                 </div>
 

@@ -2,11 +2,11 @@
 
 ## Executive Summary
 
-This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phases 1-5 (core URL shortening, redirects, authentication, notes/pastebin system, and QR code generator) are complete with 212+ comprehensive Pest tests.** The project is now ready for Phase 6 (User Dashboard - Links Management) development.
+This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phases 1-7 (core URL shortening, redirects, authentication, notes/pastebin system, QR code generator, and admin panel) are complete with 270+ comprehensive Pest tests.** The project is now ready for Phase 6 (User Dashboard - Links Management) and Phase 8 (Reporting System) development.
 
-**Current Status**: ✅ Core functionality operational | ✅ Notes system complete | ✅ QR code generator complete
+**Current Status**: ✅ Core functionality operational | ✅ Notes system complete | ✅ QR code generator complete | ✅ Admin panel complete
 **Next Milestone**: User Dashboard - Links Management
-**Production Launch Target**: ~12-15 weeks from now
+**Production Launch Target**: ~10-12 weeks from now
 
 ---
 
@@ -184,6 +184,116 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phases 1-
 
 ---
 
+### ✅ Phase 7: Admin Moderation Tools (COMPLETE)
+
+**Duration**: Week 9 (completed)
+**Test Coverage**: 47 comprehensive tests (46 passing, 1 skipped)
+**Status**: ✅ Complete (excluding audit logging)
+
+#### Implemented Features
+
+**Admin Authentication & Authorization**
+- ✅ Admin middleware (check `is_admin` flag)
+- ✅ Route protection with auth + admin middleware
+- ✅ Policy-based authorization for all admin operations
+- ✅ Non-admin users receive 403 Forbidden
+
+**Admin Dashboard Overview**
+- ✅ Real-time stats (total links, notes, users, pending reports)
+- ✅ Active/inactive/verified/banned counts
+- ✅ System health metrics (disk usage, cache status)
+- ✅ Privacy warning banner (prominent display)
+- ✅ Statistics cached for 60 seconds
+- ✅ Auto-refresh every 60 seconds with wire:poll
+- ❌ Recent activity feed (skipped - no audit logging)
+
+**Link Management**
+- ✅ View all links (paginated, 25 per page)
+- ✅ Search by hash, URL, user name, user email
+- ✅ Filter by status (All, Active, Inactive, Reported)
+- ✅ Bulk delete operations with confirmation
+- ✅ Toggle active/inactive status
+- ✅ View link details in modal
+- ✅ Eager loading to prevent N+1 queries
+
+**Note Management**
+- ✅ View all notes (paginated, 25 per page, content preview)
+- ✅ Search by hash, title, content, user
+- ✅ Filter by status (All, Active, Inactive, Reported, Expired)
+- ✅ View full note content in modal
+- ✅ Delete notes with confirmation
+- ✅ Eager loading to prevent N+1 queries
+
+**User Management**
+- ✅ View all users with link/note counts
+- ✅ Search by name and email
+- ✅ Ban/unban users (deactivates all content)
+- ✅ Verify users (increases rate limit to 500)
+- ✅ Promote to admin (with confirmation)
+- ✅ View user profile with recent activity
+- ✅ Policy restrictions (cannot ban self or other admins)
+
+**Report Queue**
+- ✅ View pending reports (default filter)
+- ✅ Filter by status (Pending, Resolved, Dismissed, All)
+- ✅ One-click actions: Delete content, Ban user, Dismiss
+- ✅ Add admin notes (500 character limit)
+- ✅ View reportable content (Link URL or Note content)
+- ✅ Polymorphic eager loading
+- ✅ Database transactions for multi-step operations
+
+**Allow/Block List Management**
+- ✅ Add/edit/remove domains with pattern type (exact, wildcard, regex)
+- ✅ Regex validation before saving
+- ✅ CSV import functionality with validation
+- ✅ CSV export functionality
+- ✅ Test utility (check if domain would be blocked)
+- ✅ Toggle active/inactive status
+- ✅ Hit counter tracking
+- ✅ Form Request validation class
+
+**Audit Logging**
+- ❌ **INTENTIONALLY SKIPPED** per user request
+- ❌ No audit_logs table
+- ❌ No AuditLog model
+- ❌ No audit log viewer component
+- ❌ No audit log entries for any actions
+
+**UI/UX Consistency**
+- ✅ Flux UI components throughout
+- ✅ Dark mode support with dark: classes
+- ✅ Indigo/red/green color scheme
+- ✅ Loading states with wire:loading
+- ✅ Confirmation modals for destructive actions
+- ✅ Responsive design (mobile, tablet, desktop)
+
+**Testing**
+- ✅ 47 comprehensive tests across 6 test files
+- ✅ AdminAuthorizationTest (7 tests)
+- ✅ BanUserWorkflowTest (7 tests)
+- ✅ LinkPolicyTest (4 tests)
+- ✅ NotePolicyTest (6 tests)
+- ✅ PrivacyComplianceTest (7 tests)
+- ✅ ReportWorkflowTest (5 tests - 1 skipped)
+- ✅ UserPolicyTest (11 tests)
+
+#### Success Criteria - All Met (Excluding Audit Logging)
+- ✅ All actions have authorization gates (only admins)
+- ✅ Dashboard cached and optimized
+- ✅ Policy restrictions prevent admin self-harm
+- ✅ Privacy compliance verified by tests
+- ✅ Code formatted with Laravel Pint
+- ❌ Audit log (intentionally excluded)
+- ⚠️ Dashboard performance not load-tested (< 500ms target)
+- ⚠️ Bulk operations >100 items not tested
+
+#### Design Decisions
+- ⚠️ Audit logging functionality completely excluded per user request
+- ⚠️ Rate limiting on admin search routes not implemented (low priority)
+- ⚠️ Queue jobs for bulk operations >100 items not implemented (can be added if needed)
+
+---
+
 ### 🚧 Database Schema Ready (NOT Fully Implemented)
 
 These features have complete database schemas and models, but **limited or no routes/UI**:
@@ -195,25 +305,19 @@ These features have complete database schemas and models, but **limited or no ro
 - ❌ No detailed analytics records created
 - ❌ No analytics dashboard
 
-**Reporting System**
+**Reporting System (Partial)**
 - 📦 Schema: Polymorphic reports table
 - 📦 Model: Complete with relationships
-- ✅ Supports both Link and Note reporting
-- ❌ Routes: None
-- ❌ UI: No report button on warning page
-- ❌ Actions: None
+- ✅ Admin interface complete (Phase 7)
+- ✅ Report queue management working
+- ❌ Public report form not implemented
+- ❌ No report button on warning page
 
-**Allow/Block Lists**
+**Allow/Block Lists (Partial)**
 - 📦 Schema: Domain filtering with pattern matching (exact, wildcard, regex)
 - 📦 Model: Complete
-- ❌ Not integrated into ValidateUrl action
-- ❌ No admin interface
-
-**Admin Panel**
-- 📦 `is_admin` column exists on users
-- ❌ No admin routes
-- ❌ No moderation interface
-- ❌ No user management UI
+- ✅ Admin interface complete (Phase 7)
+- ❌ Not integrated into ValidateUrl action (Phase 11)
 
 **User Dashboard (Partial)**
 - ✅ `/dashboard` route exists
@@ -259,65 +363,6 @@ Complete the dashboard with full link management capabilities
 
 ## Short-Term Goals (Weeks 9-13)
 
-### Phase 7: Admin Moderation Tools
-**Priority**: 🟡 High
-**Estimated Effort**: 2 weeks
-**Status**: ⬜ Not Started
-
-#### Objectives
-Build comprehensive admin dashboard for moderation
-
-#### Features
-- [ ] Admin middleware (check `is_admin` flag)
-- [ ] Admin dashboard overview:
-  - Real-time stats (total links, notes, users, pending reports)
-  - Recent activity feed
-  - System health metrics
-- [ ] Link management:
-  - View all links (paginated)
-  - Search by hash, URL, user
-  - Bulk delete
-  - Toggle active/inactive
-- [ ] Note management:
-  - View all notes (paginated, preview content)
-  - Search by hash, content
-  - Delete notes
-- [ ] User management:
-  - View all users
-  - Ban/unban users
-  - Verify users (higher rate limits)
-  - Promote to admin
-  - View user's links/notes
-- [ ] Report queue:
-  - View pending reports
-  - One-click actions: Delete content, Ban user, Dismiss
-  - Add admin notes
-  - Mark as dealt
-- [ ] Allow/block list management:
-  - Add/edit/remove domains
-  - Pattern type (exact, wildcard, regex)
-  - CSV import/export
-  - Test utility (check if domain would be blocked)
-- [ ] Audit logging:
-  - Track all admin actions
-  - Immutable log
-  - Filter by admin, action type, date
-
-#### Success Criteria
-- Admin dashboard loads in < 500ms
-- All actions have authorization gates (only admins)
-- Audit log is complete and immutable
-- Bulk operations handle 1000+ items
-- Tests: Admin authorization, all CRUD operations
-
-#### Dependencies
-- Phase 6 complete (links management patterns)
-- Phase 5 complete (notes management patterns) ✅
-- Report model ✅
-- AllowList model ✅
-
----
-
 ### Phase 8: Reporting System
 **Priority**: 🟡 High
 **Estimated Effort**: 1 week
@@ -339,7 +384,7 @@ Allow users to report malicious content
   - Prevent duplicate reports per link
   - Store report with hashed IP
   - Email notification to admins
-- [ ] Integration with admin panel (Phase 7)
+- [ ] Integration with admin panel (Phase 7 already complete ✅)
 
 #### Success Criteria
 - Report form submits in < 500ms
@@ -350,7 +395,7 @@ Allow users to report malicious content
 
 #### Dependencies
 - Phase 1-3 complete ✅
-- Phase 7 (admin panel for viewing reports)
+- Phase 7 (admin panel for viewing reports) ✅
 - Report model ✅
 
 ---
@@ -464,7 +509,7 @@ Integrate domain filtering into link creation
 - [ ] Block entire TLDs if needed
 - [ ] Hit counter tracking (how many times rule triggered)
 - [ ] User-friendly error messages when URL blocked
-- [ ] Admin interface (covered in Phase 7)
+- [ ] Admin interface (covered in Phase 7) ✅
 
 #### Success Criteria
 - Blocked domains rejected instantly
@@ -474,7 +519,7 @@ Integrate domain filtering into link creation
 - Tests: All pattern types, edge cases
 
 #### Dependencies
-- Phase 7 (admin interface) recommended
+- Phase 7 (admin interface) ✅
 - AllowList model ✅
 
 ---
@@ -905,7 +950,7 @@ Allow users to use custom domains for short links.
 **Abuse/Spam Waves**
 - **Likelihood**: High (common attack vector for shorteners and pastebins)
 - **Impact**: High (service degradation, reputation damage)
-- **Mitigation**: Automated detection (Phase 11), CAPTCHA (Phase 14), admin tools (Phase 7), rate limiting (implemented), community reporting (Phase 8)
+- **Mitigation**: Automated detection (Phase 11), CAPTCHA (Phase 14), admin tools (Phase 7 ✅), rate limiting (implemented), community reporting (Phase 8)
 
 **Migration Failures**
 - **Likelihood**: Medium (complex data transformation)
@@ -929,7 +974,7 @@ Allow users to use custom domains for short links.
 **Legal Issues** (DMCA, copyright)
 - **Likelihood**: Medium (hosting user-generated links and code)
 - **Impact**: High (takedown notices, potential liability)
-- **Mitigation**: Clear Terms of Service (Phase 16), quick response process, admin moderation tools (Phase 7), reporting system (Phase 8)
+- **Mitigation**: Clear Terms of Service (Phase 16), quick response process, admin moderation tools (Phase 7 ✅), reporting system (Phase 8)
 
 **Resource Constraints**
 - **Likelihood**: Medium (solo/small team development)
@@ -940,18 +985,20 @@ Allow users to use custom domains for short links.
 
 ## Success Metrics by Phase
 
-### Phase 1-5.5: Core Features Complete ✅
-- ✅ 212+ comprehensive tests passing
+### Phase 1-7: Core Features & Admin Tools Complete ✅
+- ✅ 270+ comprehensive tests passing
 - ✅ All core functionality implemented (links, notes, QR codes)
+- ✅ Admin panel complete with moderation tools
 - ✅ Dashboard integration complete
 - ✅ Production logging disabled for privacy
 - ✅ Multi-format QR code generation working
+- ✅ Privacy compliance verified by tests
 
-### Phase 6-8: User Features & Admin Tools
+### Phase 6-8: User Features & Public Reporting
 - Admin response time < 1 hour for abuse reports
 - < 1% abuse rate (reported vs. total links/notes)
 - 95% of reports reviewed within 24 hours
-- Allow/block list prevents 90%+ of spam
+- Allow/block list prevents 90%+ of spam (Phase 11)
 
 ### Phase 9-10: Analytics & API
 - Analytics page engagement > 30% of registered users
@@ -984,31 +1031,31 @@ Allow users to use custom domains for short links.
 ## Timeline Overview
 
 ```
-Week 0  ✅ Current Status: Phase 1-5.5 Complete
+Week 0  ✅ Current Status: Phase 1-7 Complete
         ├─ Core URL shortening operational
         ├─ Authentication system complete
         ├─ Notes/Pastebin system complete
         ├─ QR Code generator complete
-        ├─ 212+ comprehensive tests passing
-        └─ Ready for Phase 6 development
+        ├─ Admin panel complete (excluding audit logging)
+        ├─ 270+ comprehensive tests passing
+        └─ Ready for Phase 6 and Phase 8 development
 
 Week 1-2   Phase 6: User Dashboard (Links Management)
-Week 3-4   Phase 7: Admin Panel
-Week 5     Phase 8: Reporting System
-Week 6-7   Phase 9: Analytics
-Week 8-9   Phase 10: REST API
-Week 10    Phase 11: Allow/Block Integration
-Week 11-12 Phase 12: Legacy Migration
-Week 13    Phase 13: Performance Optimization
-Week 14    Phase 14: Security Hardening
-Week 15-16 Phase 15: Comprehensive Testing
-Week 17    Phase 16: Documentation & Polish
-Week 18-19 Phase 17: Production Launch
+Week 3     Phase 8: Reporting System
+Week 4-5   Phase 9: Analytics
+Week 6-7   Phase 10: REST API
+Week 8     Phase 11: Allow/Block Integration
+Week 9-10  Phase 12: Legacy Migration
+Week 11    Phase 13: Performance Optimization
+Week 12    Phase 14: Security Hardening
+Week 13-14 Phase 15: Comprehensive Testing
+Week 15    Phase 16: Documentation & Polish
+Week 16-17 Phase 17: Production Launch
 
 LAUNCH 🚀
 ```
 
-**Total Timeline**: ~12-15 weeks (~3-4 months) from current state to production launch
+**Total Timeline**: ~10-12 weeks (~2.5-3 months) from current state to production launch
 
 ---
 
@@ -1017,28 +1064,29 @@ LAUNCH 🚀
 ### This Week
 1. ✅ Complete Phase 5 (Notes/Pastebin Implementation)
 2. ✅ Complete Phase 5.5 (QR Code Generator)
-3. 🚧 Begin Phase 6: Complete links dashboard UI
-4. 🚧 Design Phase 7: Admin panel architecture
+3. ✅ Complete Phase 7 (Admin Panel - excluding audit logging)
+4. 🚧 Begin Phase 6: User Dashboard - Links Management
 
 ### This Month
 1. Complete Phase 6 (User Dashboard - Links Management)
-2. Complete Phase 7 (Admin Moderation Tools)
-3. Begin Phase 8 (Reporting System)
+2. Complete Phase 8 (Reporting System)
+3. Begin Phase 9 (Analytics)
 
 ### This Quarter
-1. Complete Phases 6-10 (User features + Admin tools + API)
-2. Begin Phase 12 (Legacy Migration)
-3. Prepare for production launch
+1. Complete Phases 6, 8-10 (User features + Reporting + Analytics + API)
+2. Complete Phase 11 (Allow/Block List Integration)
+3. Begin Phase 12 (Legacy Migration)
+4. Prepare for production launch
 
 ---
 
-**Version**: 4.0
+**Version**: 5.0
 **Last Updated**: 2025-11-08
-**Status**: Phase 1-5.5 Complete, Ready for Phase 6
+**Status**: Phase 1-7 Complete (excluding audit logging), Ready for Phase 6 and Phase 8
 **Key Changes**:
-- Added Phase 5.5 (QR Code Generator) as complete
-- Updated test count to 212+
-- Removed custom slug references (feature removed)
-- Updated syntax highlighting status (removed for simplicity)
-- Renumbered remaining phases
+- Added Phase 7 (Admin Panel) as complete
+- Marked audit logging as intentionally excluded
+- Updated test count to 270+
+- Adjusted timeline (saved 2 weeks)
+- Updated roadmap status descriptions
 **Next Review**: Every 2 weeks

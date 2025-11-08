@@ -16,26 +16,22 @@
                 {{-- Future Features - Hidden on Mobile, Shown on Desktop --}}
                 <div class="hidden lg:flex items-center gap-4">
                     {{-- QR Code Link --}}
-                    <a
+                    <flux:link
                         href="/qr"
-                        class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+                        icon="qr-code"
+                        class="text-sm font-medium"
                     >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                        </svg>
-                        <span>QR Code</span>
-                    </a>
+                        QR Code
+                    </flux:link>
 
                     {{-- Notes Link --}}
-                    <a
+                    <flux:link
                         href="/notes/create"
-                        class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+                        icon="document-text"
+                        class="text-sm font-medium"
                     >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span>Notes</span>
-                    </a>
+                        Notes
+                    </flux:link>
                 </div>
             </div>
 
@@ -48,7 +44,7 @@
                             <flux:icon.sun x-show="$flux.appearance === 'light'" variant="mini" class="text-zinc-500 dark:text-white" />
                             <flux:icon.moon x-show="$flux.appearance === 'dark'" variant="mini" class="text-zinc-500 dark:text-white" />
                             <flux:icon.moon x-show="$flux.appearance === 'system' && $flux.dark" variant="mini" />
-                            <flux:icon.sun x-show="$flux.appearance === 'system' && ! $flux.dark" variant="mini" />
+                            <flux:icon.sun x-show="$flux.appearance === 'system' && ! $flux.dark'" variant="mini" />
                         </flux:button>
 
                         <flux:menu>
@@ -62,24 +58,24 @@
                 {{-- Authentication Links --}}
                 @auth
                     <div class="flex items-center gap-4">
-                        <a href="/dashboard" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                        <flux:link href="/dashboard" class="text-sm font-medium">
                             Dashboard
-                        </a>
+                        </flux:link>
                         <form method="POST" action="{{ route('logout') }}" class="inline">
                             @csrf
-                            <button type="submit" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                            <flux:button type="submit" variant="ghost" size="sm">
                                 Logout
-                            </button>
+                            </flux:button>
                         </form>
                     </div>
                 @else
                     <div class="flex items-center gap-4">
-                        <a href="/login" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+                        <flux:link href="/login" class="text-sm font-medium">
                             Sign In
-                        </a>
-                        <a href="/register" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                        </flux:link>
+                        <flux:button href="/register" variant="primary">
                             Sign Up
-                        </a>
+                        </flux:button>
                     </div>
                 @endauth
             </div>

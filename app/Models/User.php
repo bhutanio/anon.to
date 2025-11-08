@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -29,6 +30,8 @@ class User extends Authenticatable
         'is_verified',
         'api_rate_limit',
         'last_login_at',
+        'banned_at',
+        'banned_by',
     ];
 
     /**
@@ -57,6 +60,7 @@ class User extends Authenticatable
             'is_verified' => 'boolean',
             'api_rate_limit' => 'integer',
             'last_login_at' => 'datetime',
+            'banned_at' => 'datetime',
         ];
     }
 
@@ -102,5 +106,13 @@ class User extends Authenticatable
     public function allowListRules(): HasMany
     {
         return $this->hasMany(AllowList::class, 'added_by');
+    }
+
+    /**
+     * Get the admin who banned this user.
+     */
+    public function bannedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'banned_by');
     }
 }

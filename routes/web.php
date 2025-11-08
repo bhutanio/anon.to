@@ -40,6 +40,16 @@ Route::middleware(['auth'])->group(function () {
         ->name('two-factor.show');
 });
 
+// Admin routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', App\Livewire\Admin\Dashboard::class)->name('dashboard');
+    Route::get('/links', App\Livewire\Admin\Links::class)->name('links');
+    Route::get('/notes', App\Livewire\Admin\Notes::class)->name('notes');
+    Route::get('/users', App\Livewire\Admin\Users::class)->name('users');
+    Route::get('/reports', App\Livewire\Admin\Reports::class)->name('reports');
+    Route::get('/allowlist', App\Livewire\Admin\AllowList::class)->name('allowlist');
+});
+
 // Anonymous redirect warning page - must be last to avoid conflicts with other routes
 // Handles 6-character hash only
 Route::get('/{hash}', [RedirectController::class, 'show'])

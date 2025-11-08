@@ -76,4 +76,20 @@ class LinkPolicy
         // Only the owner can permanently delete their link
         return $link->user_id === $user->id;
     }
+
+    /**
+     * Determine whether the admin can force view any link.
+     */
+    public function forceView(User $user, Link $link): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the admin can force delete any link.
+     */
+    public function adminDelete(User $user, Link $link): bool
+    {
+        return $user->is_admin;
+    }
 }

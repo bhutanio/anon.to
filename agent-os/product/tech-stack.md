@@ -58,7 +58,7 @@ This document outlines all technology choices for the anon.to platform, covering
 - Free tier includes all essential components
 - Reduces development time for common UI patterns
 
-### Tailwind CSS 4.1.11
+### Tailwind CSS 4.1.17
 **Why**: Utility-first CSS framework for rapid UI development
 - CSS-first configuration using `@theme` directive (v4 feature)
 - No separate tailwind.config.js needed
@@ -184,7 +184,7 @@ This document outlines all technology choices for the anon.to platform, covering
 - Includes Mailhog for email testing
 - Production parity for reliable deployments
 
-### Vite
+### Vite 7.2.2
 **Why**: Modern asset bundler with HMR (Hot Module Replacement)
 - Fast build times compared to Webpack
 - Hot reload for CSS/JS during development
@@ -243,7 +243,7 @@ This document outlines all technology choices for the anon.to platform, covering
 
 ## Third-Party Services
 
-### QR Code Generation: chillerlan/php-qrcode
+### QR Code Generation: chillerlan/php-qrcode 5.0
 **Why**: Generate QR codes for shortened links and any content
 - Pure PHP implementation (no external API)
 - PNG/SVG/PDF output formats
@@ -252,6 +252,14 @@ This document outlines all technology choices for the anon.to platform, covering
 - Works offline/on-premise
 - Privacy-first: No content sent to third parties
 - Multi-format downloads (Phase 5.5 complete)
+
+### PDF Generation: dompdf/dompdf 3.1
+**Why**: Generate PDF files for QR code downloads
+- Pure PHP implementation (no external dependencies)
+- HTML/CSS to PDF conversion
+- Supports embedding images (QR codes)
+- No external API calls
+- Privacy-preserving (all processing in-memory)
 
 ### Google Safe Browsing API (Optional - Phase 10)
 **Why**: Check URLs for malware/phishing
@@ -344,7 +352,7 @@ This document outlines all technology choices for the anon.to platform, covering
 
 ## Asset Management
 
-### NPM/Yarn
+### NPM
 **Why**: JavaScript package manager
 - Install frontend dependencies
 - Scripts for build automation
@@ -359,6 +367,20 @@ This document outlines all technology choices for the anon.to platform, covering
 - Versioning for cache busting
 - Source maps for debugging
 - Hot Module Replacement (HMR) for development
+
+### Axios 1.13.2
+**Why**: HTTP client for JavaScript
+- Promise-based requests
+- CSRF token handling
+- Response interceptors
+- Included with Laravel by default
+
+### Concurrently 9.2
+**Why**: Run multiple development servers in parallel
+- Single command to start all services (server, queue, logs, vite)
+- Color-coded output for each process
+- Kill all processes together
+- Used in `composer run dev` script
 
 ---
 
@@ -409,10 +431,11 @@ These are actively used in the current implementation:
 **Frontend**: Livewire 3, Volt 1, Flux UI 2 (free), Tailwind CSS 4, Alpine.js
 **Authentication**: Fortify 1 (email verification, 2FA, password reset)
 **Testing**: Pest 4 (212+ tests), PHPUnit 12, Pint 1
-**Development**: Sail 1, Vite, GitHub (version control)
+**Development**: Sail 1, Vite 7, GitHub (version control), Concurrently 9
 **Security**: Bcrypt password hashing, SHA256 IP hashing, CSRF protection, SSRF prevention
 **Privacy**: Production logging disabled (`LOG_CHANNEL=null`)
-**QR Codes**: chillerlan/php-qrcode (PNG, SVG, PDF generation)
+**QR Codes**: chillerlan/php-qrcode 5.0 (PNG, SVG, PDF generation)
+**PDF Generation**: dompdf/dompdf 3.1
 
 ### 📦 Installed But Not Yet Utilized
 These are installed/configured but not actively used:
@@ -460,7 +483,7 @@ All technologies are actively maintained with long-term support commitments. Lar
 ### 2. Privacy-First
 Every technology choice supports our privacy mission:
 - No tracking pixels or analytics SDKs
-- Self-hosted components where possible (QR codes, no external APIs)
+- Self-hosted components where possible (QR codes, PDF generation - no external APIs)
 - Minimal third-party dependencies
 - Data sovereignty (we control the stack)
 - Production logging completely disabled
@@ -505,9 +528,11 @@ Based on the user's tech stack preferences documented in `/Users/abi/.claude/CLA
 ### Recent Changes (November 2025)
 
 **Added:**
-- ✅ QR Code Generator (chillerlan/php-qrcode) - Phase 5.5 complete
+- ✅ QR Code Generator (chillerlan/php-qrcode 5.0) - Phase 5.5 complete
+- ✅ PDF Generation (dompdf/dompdf 3.1) for QR code downloads
 - ✅ Multi-format downloads (PNG, SVG, PDF)
 - ✅ SHA256 IP hashing throughout application
+- ✅ Concurrently 9.2 for parallel development servers
 
 **Removed:**
 - ❌ Prism.js syntax highlighting (intentionally removed for simplicity)
@@ -565,6 +590,12 @@ Based on the user's tech stack preferences documented in `/Users/abi/.claude/CLA
 - Generated in-memory and streamed to user
 - No storage of QR code content or history
 
+### PDF Generation
+- Pure PHP implementation via dompdf
+- All processing happens server-side in-memory
+- No external API calls or third-party services
+- User content never leaves the server
+
 ### Notes Storage
 - Plain text only (no syntax highlighting to reduce XSS risk)
 - Content encrypted when password-protected
@@ -573,14 +604,15 @@ Based on the user's tech stack preferences documented in `/Users/abi/.claude/CLA
 
 ---
 
-**Version**: 3.0
+**Version**: 3.1
 **Last Updated**: 2025-11-08
 **Status**: Reflects Phase 1-5.5 implementation (Core + Notes + QR Codes)
 **Key Changes**:
-- Added QR code generator implementation details
-- Updated syntax highlighting removal rationale
-- Added SHA256 IP hashing documentation
-- Updated production logging status
-- Documented privacy-first technology decisions
-- Updated implementation status for all technologies
+- Updated Tailwind CSS version to 4.1.17 (was 4.1.11)
+- Updated Vite version to 7.2.2 (was 7.2)
+- Added Axios 1.13.2 documentation
+- Added Concurrently 9.2 documentation
+- Added dompdf/dompdf 3.1 documentation
+- Enhanced privacy-first technology decisions section
+- Updated implementation status to reflect actual package versions
 **Next Review**: When adding new major dependencies

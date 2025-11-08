@@ -76,4 +76,20 @@ class NotePolicy
         // Only the owner can permanently delete their note
         return $note->user_id === $user->id;
     }
+
+    /**
+     * Determine whether the admin can force view any note.
+     */
+    public function forceView(User $user, Note $note): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the admin can force delete any note.
+     */
+    public function adminDelete(User $user, Note $note): bool
+    {
+        return $user->is_admin;
+    }
 }

@@ -20,54 +20,46 @@
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8">
                 <form wire:submit.prevent="createNote" class="space-y-6">
                     {{-- Content Input --}}
-                    <div>
-                        <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Content <span class="text-red-500">*</span>
-                        </label>
-                        <textarea
+                    <flux:field>
+                        <flux:label>Content <span class="text-red-500">*</span></flux:label>
+                        <flux:textarea
                             wire:model.defer="content"
-                            id="content"
+                            name="content"
                             rows="12"
                             placeholder="Paste your code or text here..."
-                            class="block w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition font-mono"
+                            class="font-mono"
                             style="font-family: 'Fira Code', 'Monaco', 'Courier New', monospace;"
-                        ></textarea>
+                        />
                         <div class="mt-1 flex items-center justify-between">
-                            <p class="char-count">{{ mb_strlen($content) }} characters</p>
+                            <flux:description>{{ mb_strlen($content) }} characters</flux:description>
                             @error('content')
-                                <p class="text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <flux:error>{{ $message }}</flux:error>
                             @enderror
                         </div>
-                    </div>
+                    </flux:field>
 
                     {{-- Title Input --}}
-                    <div>
-                        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Title (Optional)
-                        </label>
-                        <input
+                    <flux:field>
+                        <flux:label>Title (Optional)</flux:label>
+                        <flux:input
                             wire:model.defer="title"
                             type="text"
-                            id="title"
+                            name="title"
                             placeholder="Optional title for your note"
-                            class="block w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition"
-                        >
+                        />
                         @error('title')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            <flux:error>{{ $message }}</flux:error>
                         @enderror
-                    </div>
+                    </flux:field>
 
                     {{-- Expiration and View Limit Row --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {{-- Expiration Select --}}
-                        <div>
-                            <label for="expires_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Expires in
-                            </label>
-                            <select
+                        <flux:field>
+                            <flux:label>Expires in</flux:label>
+                            <flux:select
                                 wire:model.defer="expires_at"
-                                id="expires_at"
-                                class="block w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition"
+                                name="expires_at"
                             >
                                 <option value="10-minutes">10 minutes</option>
                                 <option value="1-hour">1 hour</option>
@@ -77,88 +69,79 @@
                                 @auth
                                     <option value="never">Never</option>
                                 @endauth
-                            </select>
-                        </div>
+                            </flux:select>
+                        </flux:field>
 
                         {{-- Burn After Reading --}}
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Burn after reading
-                            </label>
+                        <flux:field>
+                            <flux:label>Burn after reading</flux:label>
                             <div class="flex items-center gap-3">
-                                <input
+                                <flux:checkbox
                                     wire:model.live="enable_burn_after_reading"
-                                    type="checkbox"
-                                    id="enable_burn_after_reading"
-                                    class="w-5 h-5 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700"
-                                >
-                                <input
+                                    name="enable_burn_after_reading"
+                                />
+                                <flux:input
                                     wire:model.defer="view_limit"
                                     type="number"
-                                    id="view_limit"
+                                    name="view_limit"
                                     placeholder="Views"
                                     min="1"
                                     max="100"
                                     :disabled="!$enable_burn_after_reading"
-                                    class="flex-1 px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
+                                    class="flex-1"
+                                />
                             </div>
                             @error('view_limit')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <flux:error>{{ $message }}</flux:error>
                             @enderror
-                        </div>
+                        </flux:field>
                     </div>
 
                     {{-- Password Protection --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Password protection (Optional)
-                        </label>
+                    <flux:fieldset>
+                        <flux:legend>Password protection (Optional)</flux:legend>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <input
+                            <flux:field>
+                                <flux:input
                                     wire:model.defer="password"
                                     type="password"
-                                    id="password"
+                                    name="password"
                                     placeholder="Password"
-                                    class="block w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition"
-                                >
+                                />
                                 @error('password')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <flux:error>{{ $message }}</flux:error>
                                 @enderror
-                            </div>
-                            <div>
-                                <input
+                            </flux:field>
+                            <flux:field>
+                                <flux:input
                                     wire:model.defer="password_confirmation"
                                     type="password"
-                                    id="password_confirmation"
+                                    name="password_confirmation"
                                     placeholder="Confirm password"
-                                    class="block w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition"
-                                >
+                                />
                                 @error('password_confirmation')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <flux:error>{{ $message }}</flux:error>
                                 @enderror
-                            </div>
+                            </flux:field>
                         </div>
-                    </div>
+                    </flux:fieldset>
 
                     {{-- Error Messages --}}
                     @if($errorMessage)
                         <div class="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                             <p class="text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                                <flux:icon.exclamation-circle variant="mini" />
                                 {{ $errorMessage }}
                             </p>
                         </div>
                     @endif
 
                     {{-- Submit Button --}}
-                    <button
+                    <flux:button
                         type="submit"
+                        variant="primary"
+                        class="w-full"
                         wire:loading.attr="disabled"
-                        class="w-full flex items-center justify-center px-6 py-4 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-lg hover:shadow-xl"
                     >
                         <span wire:loading.remove wire:target="createNote">Create Note</span>
                         <span wire:loading wire:target="createNote" class="flex items-center gap-2">
@@ -168,50 +151,41 @@
                             </svg>
                             Creating...
                         </span>
-                    </button>
+                    </flux:button>
                 </form>
 
                 {{-- Success Result --}}
                 @if($shortUrl)
                     <div class="mt-6 p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg" x-data="{ copied: @entangle('copied') }">
                         <div class="flex items-center gap-2 mb-3">
-                            <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <flux:icon.check-circle class="w-5 h-5 text-green-600 dark:text-green-400" variant="solid" />
                             <h3 class="text-sm font-semibold text-green-900 dark:text-green-100">Your note is ready!</h3>
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <input
+                            <flux:input
                                 type="text"
                                 readonly
                                 value="{{ $shortUrl }}"
                                 id="note-url"
-                                class="flex-1 px-4 py-3 text-base font-mono bg-white dark:bg-gray-800 border border-green-300 dark:border-green-700 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
-                            >
-                            <button
+                                class="flex-1 font-mono"
+                            />
+                            <flux:button
                                 type="button"
+                                variant="primary"
                                 @click="$clipboard.copy('{{ $shortUrl }}').then((success) => { if (success) { copied = true; $wire.markAsCopied(); setTimeout(() => copied = false, 2000); } })"
-                                class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition flex items-center gap-2 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                             >
-                                <svg x-show="!copied" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                                <svg x-show="copied" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
+                                <flux:icon.clipboard x-show="!copied" variant="mini" />
+                                <flux:icon.check x-show="copied" x-cloak variant="mini" />
                                 <span x-show="!copied">Copy</span>
                                 <span x-show="copied" x-cloak>Copied!</span>
-                            </button>
+                            </flux:button>
                         </div>
 
                         <div class="mt-4 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                            <a href="/n/{{ $hash }}" target="_blank" class="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
+                            <flux:link href="/n/{{ $hash }}" target="_blank" icon="arrow-top-right-on-square">
                                 View note
-                            </a>
+                            </flux:link>
                         </div>
                     </div>
                 @endif
