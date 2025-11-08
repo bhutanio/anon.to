@@ -45,8 +45,8 @@ describe('Link Anonymization Integration Tests', function () {
         expect(Link::count())->toBe($linksBefore);
     });
 
-    test('navigation appears consistently across guest pages', function () {
-        // Homepage
+    test('navigation appears consistently across pages with navigation', function () {
+        // Homepage - has full navigation
         $homeResponse = get('/');
         $homeResponse->assertOk()
             ->assertSee('anon.to', false)
@@ -55,22 +55,14 @@ describe('Link Anonymization Integration Tests', function () {
             ->assertSee('Light', false)
             ->assertSee('Dark', false);
 
-        // Redirect warning page (direct anonymization)
+        // Direct anonymization - uses homepage layout with navigation
         $warningResponse = get('/?url=https://example.com');
         $warningResponse->assertOk()
             ->assertSee('anon.to', false)
             ->assertSee('Sign In', false)
             ->assertSee('Sign Up', false);
 
-        // Redirect warning page (saved link)
-        $link = Link::factory()
-            ->withUrl('https://test.com')
-            ->create();
-        $linkResponse = get("/{$link->hash}");
-        $linkResponse->assertOk()
-            ->assertSee('anon.to', false)
-            ->assertSee('Sign In', false)
-            ->assertSee('Sign Up', false);
+        // Note: Redirect warning page for saved links (/{hash}) uses minimal layout without navigation
     });
 
     test('navigation shows correct links for authenticated users', function () {
@@ -141,13 +133,12 @@ describe('Link Anonymization Integration Tests', function () {
         expect($directHtml)->not->toMatch('/\d+\s+visit/i');
     });
 
-    test('navigation renders placeholder features with coming soon tooltip', function () {
+    test('navigation renders active features', function () {
         $response = get('/');
 
         $response->assertOk()
             ->assertSee('QR Code', false)
-            ->assertSee('Notes', false)
-            ->assertSee('Coming Soon', false);
+            ->assertSee('Notes', false);
     });
 
     test('invalid url parameter shows error while maintaining navigation', function () {

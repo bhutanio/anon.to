@@ -14,6 +14,9 @@ Route::get('/n/{hash}', App\Livewire\Notes\View::class)
     ->where('hash', '[a-zA-Z0-9]{8}')
     ->name('notes.view');
 
+// QR code generation route
+Route::get('/qr', App\Livewire\QrCode\Create::class)->name('qr.create');
+
 Route::get('dashboard', App\Livewire\Dashboard\Index::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
