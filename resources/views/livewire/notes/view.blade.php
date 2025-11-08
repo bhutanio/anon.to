@@ -147,11 +147,6 @@
 
                         {{-- Right Side: Badges --}}
                         <div class="flex flex-wrap items-center gap-2">
-                            {{-- Language Badge --}}
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400">
-                                {{ ucfirst($note->syntax ?? 'plaintext') }}
-                            </span>
-
                             {{-- Password Protected Badge --}}
                             @if($note->password_hash && !$isOwner)
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
@@ -205,27 +200,11 @@
                         <span x-show="copied" x-cloak>Copied!</span>
                     </button>
 
-                    <button
-                        wire:click="toggleRaw"
-                        class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition"
-                    >
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        {{ $showRaw ? 'View Highlighted' : 'View Raw' }}
-                    </button>
                 </div>
 
                 {{-- Note Content --}}
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-                    @if($showRaw)
-                        {{-- Raw Text View --}}
-                        <pre class="p-6 text-sm font-mono text-gray-900 dark:text-gray-100 whitespace-pre-wrap break-words overflow-x-auto">{{ $note->content }}</pre>
-                    @else
-                        {{-- Syntax Highlighted View --}}
-                        <pre class="!my-0"><code class="language-{{ $note->syntax ?? 'plaintext' }}">{{ $note->content }}</code></pre>
-                    @endif
+                    <pre class="p-6 text-sm font-mono text-gray-900 dark:text-gray-100 whitespace-pre-wrap break-words overflow-x-auto">{{ $note->content }}</pre>
                 </div>
 
                 {{-- Note Info --}}
@@ -244,15 +223,4 @@
     </footer>
 </div>
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Re-highlight code after Livewire updates
-        Prism.highlightAll();
-    });
-
-    document.addEventListener('livewire:update', function() {
-        Prism.highlightAll();
-    });
-</script>
-@endpush
+{{-- Syntax highlighting disabled --}}

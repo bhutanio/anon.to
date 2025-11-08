@@ -186,7 +186,7 @@ users (1) ----< (N) api_tokens (Sanctum)
 ---
 
 #### 4. notes
-**Purpose**: Anonymous pastebin-style text/code sharing
+**Purpose**: Anonymous pastebin-style plain text sharing
 
 | Column | Type | Attributes | Description |
 |--------|------|------------|-------------|
@@ -195,7 +195,6 @@ users (1) ----< (N) api_tokens (Sanctum)
 | title | varchar(255) | nullable | Optional note title |
 | content | longtext | | Note content (10MB max) |
 | content_hash | varchar(64) | index | SHA256 for duplicate detection |
-| syntax | varchar(50) | nullable | Language for highlighting |
 | char_count | integer | default: 0 | Character count |
 | line_count | integer | default: 0 | Line count |
 | expires_at | timestamp | nullable | Auto-delete after this time |
@@ -207,7 +206,6 @@ users (1) ----< (N) api_tokens (Sanctum)
 | is_active | boolean | default: true | Active/disabled flag |
 | is_reported | boolean | default: false | Has pending reports |
 | is_public | boolean | default: true | Show in public listing |
-| is_code | boolean | default: false | Contains code (vs plain text) |
 | user_id | bigint unsigned | nullable, FK | Creator (null = anonymous) |
 | forked_from_id | bigint unsigned | nullable, FK | Parent note if forked |
 | ip_address | varchar(45) | nullable | Creator IP (hashed) |
@@ -220,7 +218,6 @@ users (1) ----< (N) api_tokens (Sanctum)
 - UNIQUE (hash)
 - INDEX (content_hash) - Duplicate detection
 - INDEX (user_id)
-- INDEX (syntax) - Language filtering
 - INDEX (expires_at)
 - INDEX (created_at)
 - INDEX (is_active, is_reported)
@@ -887,25 +884,12 @@ $download = function () {
             </flux:callout>
         @endif
 
-        {{-- Syntax highlighted content --}}
+        {{-- Plain text content --}}
         <flux:card class="overflow-x-auto">
-            @if($note->syntax)
-                <pre><code class="language-{{ $note->syntax }}">{{ $note->content }}</code></pre>
-            @else
-                <pre class="whitespace-pre-wrap">{{ $note->content }}</pre>
-            @endif
+            <pre class="whitespace-pre-wrap">{{ $note->content }}</pre>
         </flux:card>
     @endif
 </div>
-
-@script
-<script>
-    // Initialize Prism.js for syntax highlighting
-    if (typeof Prism !== 'undefined') {
-        Prism.highlightAll();
-    }
-</script>
-@endscript
 @endvolt
 ```
 
@@ -1158,9 +1142,8 @@ Create a note
 Request:
 ```json
 {
-  "content": "console.log('Hello');",
-  "title": "My Script", // optional
-  "syntax": "javascript", // optional
+  "content": "This is my plain text note",
+  "title": "My Note", // optional
   "expires_at": "1h", // 10m, 1h, 1d, 1w, 1m, never
   "password": "secret123", // optional
   "view_limit": 5 // optional
@@ -1501,9 +1484,9 @@ DB::select("SELECT * FROM links WHERE hash = '$userInput'");
 {!! $userContent !!} // Raw HTML (avoid!)
 ```
 
-**For Syntax Highlighting**:
-- Use trusted library (Prism.js)
-- Escape content before highlighting
+**For Plain Text Notes**:
+- Always escape user content
+- No raw HTML rendering
 - Content Security Policy headers
 
 ### 8. Content Security Policy
@@ -1512,7 +1495,7 @@ DB::select("SELECT * FROM links WHERE hash = '$userInput'");
 // In middleware
 response()->header('Content-Security-Policy', implode('; ', [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' cdn.jsdelivr.net", // For Prism.js
+    "script-src 'self' 'unsafe-inline'",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self' data:",
@@ -1978,12 +1961,6 @@ return [
     'max_note_size' => env('MAX_NOTE_SIZE', 10485760), // 10MB
     'default_cache_ttl' => env('CACHE_TTL', 86400), // 24 hours
     'excluded_words' => [...], // From old helpers.php
-    'syntax_languages' => [
-        'markup', 'css', 'javascript', 'php', 'python', 'ruby', 'go',
-        'rust', 'java', 'c', 'cpp', 'csharp', 'sql', 'bash', 'json',
-        'yaml', 'xml', 'markdown', 'typescript', 'jsx', 'tsx', 'swift',
-        // ... 50+ languages
-    ],
 ];
 ```
 
@@ -2006,7 +1983,6 @@ return [
 {
   "devDependencies": {
     "@tailwindcss/forms": "^0.5",
-    "prismjs": "^1.29",
     "vite": "^5.0"
   }
 }

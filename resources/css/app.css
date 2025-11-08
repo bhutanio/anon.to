@@ -65,26 +65,8 @@ select:focus[data-flux-control] {
     @apply size-4;
 } */
 
-/* Prism.js Syntax Highlighting */
-@import 'prism-themes/themes/prism-material-light.css';
-
-@layer theme {
-    .dark {
-        @import 'prism-themes/themes/prism-material-dark.css';
-    }
-}
-
-/* Custom Prism styles for better integration */
-pre[class*="language-"] {
-    @apply rounded-lg shadow-sm my-4;
-    font-family: 'Fira Code', 'Monaco', 'Courier New', monospace;
-    font-size: 0.875rem;
-    line-height: 1.5;
-}
-
-code[class*="language-"] {
-    font-family: 'Fira Code', 'Monaco', 'Courier New', monospace;
-}
+/* Syntax highlighting disabled */
+/* Prism.js CSS imports removed */
 
 /* Character count styling */
 .char-count {

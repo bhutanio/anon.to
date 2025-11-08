@@ -14,8 +14,6 @@ class Create extends Component
 
     public ?string $title = null;
 
-    public ?string $syntax = 'plaintext';
-
     public ?string $password = null;
 
     public ?string $password_confirmation = null;
@@ -67,11 +65,6 @@ class Create extends Component
                 'string',
                 'max:1048576', // 1MB
             ],
-            'syntax' => [
-                'nullable',
-                'string',
-                'in:'.implode(',', config('anon.syntax_languages')),
-            ],
             'title' => [
                 'nullable',
                 'string',
@@ -97,7 +90,6 @@ class Create extends Component
         ], [
             'content.required' => 'Please enter some content for your note.',
             'content.max' => 'Content is too large. Maximum size is 1MB.',
-            'syntax.in' => 'The selected programming language is not supported.',
             'password.min' => 'Password must be at least 8 characters.',
             'password.same' => 'Password confirmation does not match.',
             'password_confirmation.required_with' => 'Please confirm your password.',
@@ -112,7 +104,6 @@ class Create extends Component
             // Create the note
             $note = $createNote->execute([
                 'content' => $validated['content'],
-                'syntax' => $validated['syntax'] ?? 'plaintext',
                 'title' => $validated['title'],
                 'password' => $validated['password'],
                 'expires_at' => $expiresAt,
@@ -128,8 +119,7 @@ class Create extends Component
             $this->shortUrl = url('/n/'.$this->hash);
 
             // Clear the input
-            $this->reset(['content', 'title', 'syntax', 'password', 'password_confirmation', 'view_limit', 'enable_burn_after_reading']);
-            $this->syntax = 'plaintext';
+            $this->reset(['content', 'title', 'password', 'password_confirmation', 'view_limit', 'enable_burn_after_reading']);
             $this->expires_at = '1-month';
         } catch (\InvalidArgumentException $e) {
             $this->errorMessage = $e->getMessage();
@@ -176,10 +166,7 @@ class Create extends Component
 
     public function render()
     {
-        $syntaxLanguages = config('anon.syntax_languages');
-
-        return view('livewire.notes.create', [
-            'syntaxLanguages' => $syntaxLanguages,
-        ])->layout('components.layouts.guest');
+        return view('livewire.notes.create')
+            ->layout('components.layouts.guest');
     }
 }

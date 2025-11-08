@@ -12,7 +12,7 @@
                     <span class="text-indigo-600 dark:text-indigo-400">Securely</span>
                 </h2>
                 <p class="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
-                    Create password-protected notes with syntax highlighting. Burn-after-reading and expiration options available.
+                    Create password-protected notes. Burn-after-reading and expiration options available.
                 </p>
             </div>
 
@@ -40,44 +40,21 @@
                         </div>
                     </div>
 
-                    {{-- Title and Syntax Row --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {{-- Title Input --}}
-                        <div>
-                            <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Title (Optional)
-                            </label>
-                            <input
-                                wire:model.defer="title"
-                                type="text"
-                                id="title"
-                                placeholder="Optional title for your note"
-                                class="block w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition"
-                            >
-                            @error('title')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- Syntax Language Select --}}
-                        <div>
-                            <label for="syntax" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Language
-                            </label>
-                            <select
-                                wire:model.defer="syntax"
-                                id="syntax"
-                                class="block w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition"
-                            >
-                                <option value="plaintext">Plain Text</option>
-                                @foreach($syntaxLanguages as $lang)
-                                    <option value="{{ $lang }}">{{ ucfirst($lang) }}</option>
-                                @endforeach
-                            </select>
-                            @error('syntax')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    {{-- Title Input --}}
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Title (Optional)
+                        </label>
+                        <input
+                            wire:model.defer="title"
+                            type="text"
+                            id="title"
+                            placeholder="Optional title for your note"
+                            class="block w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition"
+                        >
+                        @error('title')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Expiration and View Limit Row --}}
@@ -241,7 +218,7 @@
             </div>
 
             {{-- Features --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div class="text-center">
                     <div class="inline-flex items-center justify-center w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg mb-3">
                         <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,16 +227,6 @@
                     </div>
                     <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-1">Password Protected</h3>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Secure your notes with password protection</p>
-                </div>
-
-                <div class="text-center">
-                    <div class="inline-flex items-center justify-center w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg mb-3">
-                        <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                        </svg>
-                    </div>
-                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-1">Syntax Highlighting</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Beautiful code highlighting for 60+ languages</p>
                 </div>
 
                 <div class="text-center">

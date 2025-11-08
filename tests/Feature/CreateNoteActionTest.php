@@ -18,7 +18,6 @@ beforeEach(function () {
 test('creates note with valid content', function () {
     $data = [
         'content' => 'Hello World',
-        'syntax' => 'plaintext',
         'title' => null,
         'password' => null,
         'expires_at' => null,
@@ -30,7 +29,6 @@ test('creates note with valid content', function () {
 
     expect($note)->toBeInstanceOf(Note::class)
         ->content->toBe('Hello World')
-        ->syntax->toBe('plaintext')
         ->hash->toHaveLength(8)
         ->is_active->toBeTrue()
         ->views->toBe(0)
@@ -41,7 +39,6 @@ test('creates note with valid content', function () {
 test('creates note with password and hashes it', function () {
     $data = [
         'content' => 'Secret content',
-        'syntax' => 'plaintext',
         'title' => null,
         'password' => 'mysecretpass',
         'expires_at' => null,
@@ -61,7 +58,6 @@ test('creates note with all optional fields', function () {
 
     $data = [
         'content' => "<?php\necho 'Hello';\nreturn true;",
-        'syntax' => 'php',
         'title' => 'My Test Note',
         'password' => 'testpass123',
         'expires_at' => $expiresAt,
@@ -72,18 +68,15 @@ test('creates note with all optional fields', function () {
     $note = $this->action->execute($data);
 
     expect($note->title)->toBe('My Test Note');
-    expect($note->syntax)->toBe('php');
     expect($note->user_id)->toBe($user->id);
     expect($note->view_limit)->toBe(10);
     expect($note->line_count)->toBe(3);
-    expect($note->is_code)->toBeTrue();
     expect($note->expires_at)->not->toBeNull();
 });
 
 test('generates unique 8-character hash', function () {
     $data = [
         'content' => 'Test content',
-        'syntax' => 'plaintext',
         'title' => null,
         'password' => null,
         'expires_at' => null,
@@ -105,7 +98,6 @@ test('stores SHA256 content hash', function () {
 
     $data = [
         'content' => $content,
-        'syntax' => 'plaintext',
         'title' => null,
         'password' => null,
         'expires_at' => null,
@@ -121,7 +113,6 @@ test('stores SHA256 content hash', function () {
 test('caches note after creation', function () {
     $data = [
         'content' => 'Cached content',
-        'syntax' => 'plaintext',
         'title' => null,
         'password' => null,
         'expires_at' => null,
@@ -143,7 +134,6 @@ test('returns existing note for duplicate content from same user', function () {
 
     $data = [
         'content' => $content,
-        'syntax' => 'plaintext',
         'title' => null,
         'password' => null,
         'expires_at' => null,
@@ -164,7 +154,6 @@ test('returns existing note for duplicate content from same user', function () {
 test('throws exception for empty content', function () {
     $data = [
         'content' => '',
-        'syntax' => 'plaintext',
         'title' => null,
         'password' => null,
         'expires_at' => null,

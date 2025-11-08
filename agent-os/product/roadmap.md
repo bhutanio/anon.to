@@ -86,9 +86,7 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
 
 **Note Creation**
 - ✅ Note creation form (Livewire component)
-- ✅ Syntax highlighting with Prism.js (60+ languages)
-- ✅ Manual language selection dropdown
-- ✅ Plain text mode for non-code content
+- ✅ Plain text only (simple, distraction-free text sharing)
 - ✅ Character/line counter (calculated on creation)
 - ✅ Password protection (bcrypt hashing)
 - ✅ Burn after reading (view limits: 1-100 views)
@@ -99,8 +97,7 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
 - ✅ Automatic caching (24-hour TTL)
 
 **Note Viewing**
-- ✅ Note viewing page with Prism.js syntax highlighting
-- ✅ Raw text view toggle
+- ✅ Note viewing page with clean, readable text display
 - ✅ Copy to clipboard button
 - ✅ Password protection with owner bypass
 - ✅ View counter and burn-after-reading deletion
@@ -111,7 +108,7 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
 
 **Dashboard Integration**
 - ✅ "My Notes" dashboard tab
-- ✅ Notes list with hash, title, language, views, expiration, creation date
+- ✅ Notes list with hash, title, views, expiration, creation date
 - ✅ Row actions: View, Copy URL, Delete
 - ✅ Delete confirmation modal
 - ✅ Empty state display
@@ -127,7 +124,7 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
 - ✅ Owner-only deletion
 - ✅ Immutable notes (no editing in MVP)
 - ✅ Password rate limiting
-- ✅ XSS prevention on code content
+- ✅ XSS prevention on text content
 
 **Testing**
 - ✅ 48 comprehensive tests covering all features:
@@ -140,18 +137,17 @@ This roadmap tracks the development of anon.to's Laravel 12 rebuild. **Phase 1-5
   - NoteValidationTest (13 tests)
 
 #### Success Criteria - All Met
-- ✅ Code renders with syntax highlighting beautifully
+- ✅ Plain text renders cleanly and readably
 - ✅ Password-protected notes unlock reliably (rate limited)
 - ✅ Burn-after-reading deletes immediately on view limit
-- ✅ No XSS vulnerabilities through code injection
+- ✅ No XSS vulnerabilities through text injection
 - ✅ All 48 tests passing
 - ✅ Total test suite: 212 passing tests (3 skipped)
 
 #### Notes for Future Phases
 - ⚠️ Fork/clone functionality not implemented (out of scope for MVP)
-- ⚠️ Line numbers toggle not implemented (Prism.js handles display)
 - ⚠️ Download as .txt not implemented (can be added in polish phase)
-- ⚠️ Auto-detect language not implemented (manual selection only)
+- ⚠️ Syntax highlighting intentionally removed to keep notes simple and privacy-focused
 
 ---
 
@@ -251,7 +247,7 @@ Build comprehensive admin dashboard for moderation
   - Toggle active/inactive
 - [ ] Note management:
   - View all notes (paginated, preview content)
-  - Search by hash, content, language
+  - Search by hash, content
   - Delete notes
 - [ ] User management:
   - View all users

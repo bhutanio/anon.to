@@ -19,7 +19,7 @@ class CreateNote
     /**
      * Create a new note.
      *
-     * @param  array{content: string, syntax: string|null, title: string|null, password: string|null, expires_at: string|null, view_limit: int|null, user_id: int|null}  $data
+     * @param  array{content: string, title: string|null, password: string|null, expires_at: string|null, view_limit: int|null, user_id: int|null}  $data
      *
      * @throws \InvalidArgumentException If validation fails
      * @throws \RuntimeException If hash generation fails
@@ -27,7 +27,6 @@ class CreateNote
     public function execute(array $data): Note
     {
         $content = $data['content'];
-        $syntax = $data['syntax'] ?? null;
         $title = $data['title'] ?? null;
         $password = $data['password'] ?? null;
         $expiresAt = $data['expires_at'] ?? null;
@@ -37,7 +36,6 @@ class CreateNote
         // Step 1: Validate input
         $this->validateNote->execute([
             'content' => $content,
-            'syntax' => $syntax,
             'title' => $title,
         ]);
 
@@ -67,16 +65,12 @@ class CreateNote
         // Step 8: Hash password if provided
         $passwordHash = $password ? Hash::make($password) : null;
 
-        // Step 9: Set is_code based on syntax
-        $isCode = $syntax !== null && $syntax !== 'plaintext';
-
-        // Step 10: Create note record
+        // Step 9: Create note record
         $note = Note::create([
             'hash' => $hash,
             'title' => $title,
             'content' => $content,
             'content_hash' => $contentHash,
-            'syntax' => $syntax,
             'char_count' => $charCount,
             'line_count' => $lineCount,
             'password_hash' => $passwordHash,
@@ -88,7 +82,6 @@ class CreateNote
             'is_active' => true,
             'is_reported' => false,
             'is_public' => true,
-            'is_code' => $isCode,
             'user_id' => $userId,
             'ip_address' => $hashedIp,
             'user_agent' => request()->userAgent(),

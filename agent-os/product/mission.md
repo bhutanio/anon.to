@@ -14,7 +14,7 @@ In an era of pervasive tracking and data harvesting, anon.to provides essential 
 2. **Privacy-Aware Redirects**: Strip referrer headers and provide intermediate warning pages before redirecting users to their destination
 3. **User Authentication** _(optional)_: Higher rate limits and link management for power users
 
-**Coming Soon**: Ephemeral note sharing with syntax highlighting, password protection, and burn-after-reading functionality.
+**Now Available**: Ephemeral note sharing with password protection and burn-after-reading functionality.
 
 ## Core Values
 
@@ -129,12 +129,12 @@ Anonymous-first design with no click tracking, optional registration only for po
 - **Security**: SSRF protection, CSRF tokens, bcrypt hashing, IP address hashing (SHA256)
 - **Settings Management**: Profile, password, 2FA setup, appearance preferences
 - **Link Features**: Duplicate detection (SHA256 URL hash), expiration dates, active/inactive states
-- **Caching**: 24-hour Redis cache for popular links
+- **Notes/Pastebin**: Plain text notes with password protection, burn-after-reading, expiration
+- **Caching**: 24-hour Redis cache for popular links and notes
 - **Dark Mode**: System-wide dark theme support
 - **Mobile Responsive**: Works beautifully on all screen sizes
 
 ### 🚧 In Development (Database Schema Ready)
-- **Notes/Pastebin**: Syntax highlighting, password protection, burn-after-reading
 - **Detailed Analytics**: Geographic data, referrer tracking, visit charts
 - **Reporting System**: User-submitted abuse reports with admin moderation
 - **Admin Panel**: User management, content moderation, allow/block lists

@@ -74,13 +74,12 @@ This document outlines all technology choices for the anon.to platform, covering
 - Included with Livewire 3 (no separate install)
 - Plugins: persist, intersect, collapse, focus
 
-### Prism.js
-**Why**: Syntax highlighting for code snippets in notes
-- Supports 50+ programming languages
-- Lightweight and performant
-- Customizable themes for light/dark mode
-- Line numbers and copy button support
-- Safe rendering with proper escaping
+### ~~Prism.js~~ (Removed)
+**Removed**: Syntax highlighting removed from notes to keep the platform simple and privacy-focused
+- Notes now display plain text only
+- Reduces complexity and potential XSS vectors
+- Faster rendering and smaller bundle size
+- Aligns with minimalist, distraction-free design philosophy
 
 ---
 
@@ -459,9 +458,9 @@ Based on the user's tech stack preferences, anon.to aligns perfectly with standa
 These are actively used in the current implementation:
 
 **Backend**: Laravel 12, PHP 8.4, Eloquent ORM, Redis caching
-**Frontend**: Livewire 3, Volt 1, Flux UI 2 (free), Tailwind CSS 4, Alpine.js
+**Frontend**: Livewire 3, Volt 1, Flux UI 2 (free), Tailwind CSS 4, Alpine.js (no Prism.js)
 **Authentication**: Fortify 1 (email verification, 2FA, password reset)
-**Testing**: Pest 4 (20 test files), PHPUnit 12, Pint 1
+**Testing**: Pest 4 (212 tests), PHPUnit 12, Pint 1
 **Development**: Sail 1, Vite, GitHub (version control)
 **Security**: Bcrypt password hashing, CSRF protection, SSRF prevention
 
@@ -477,7 +476,6 @@ These are installed/configured but not actively used:
 ### 🚧 Planned Technologies
 These will be added in future phases:
 
-**Prism.js**: For Phase 5 (syntax highlighting in notes)
 **Chart.js/ApexCharts**: For Phase 8 (analytics dashboard)
 **hCaptcha/reCAPTCHA**: For Phase 13 (security hardening)
 **Safe Browsing API**: For Phase 10 (malware URL detection)
@@ -485,8 +483,8 @@ These will be added in future phases:
 **Supervisor**: For Phase 16 (production queue workers)
 
 ### Current Database Usage
-- ✅ **Active Tables**: links, users, sessions, personal_access_tokens
-- 📦 **Schema Ready**: notes, reports, allow_lists, link_analytics
+- ✅ **Active Tables**: links, notes, users, sessions, personal_access_tokens
+- 📦 **Schema Ready**: reports, allow_lists, link_analytics
 - ⚠️ **Partial**: link_analytics table exists but only basic visit counting active
 
 ---

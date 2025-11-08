@@ -9,16 +9,15 @@ class ValidateNote
     /**
      * Validate note data for creation.
      *
-     * Checks content, syntax, and title fields.
+     * Checks content and title fields.
      *
-     * @param  array{content: string, syntax: string|null, title: string|null}  $data  The note data to validate
+     * @param  array{content: string, title: string|null}  $data  The note data to validate
      *
      * @throws \InvalidArgumentException If validation fails
      */
     public function execute(array $data): void
     {
         $content = $data['content'] ?? null;
-        $syntax = $data['syntax'] ?? null;
         $title = $data['title'] ?? null;
 
         // Validate content is not empty
@@ -34,18 +33,6 @@ class ValidateNote
         // Validate content length (max 1MB = 1048576 bytes)
         if (strlen($content) > 1048576) {
             throw new \InvalidArgumentException('Content cannot exceed 1MB (1048576 bytes)');
-        }
-
-        // Validate syntax if provided
-        if ($syntax !== null) {
-            if (! is_string($syntax)) {
-                throw new \InvalidArgumentException('Syntax must be a string');
-            }
-
-            $validLanguages = config('anon.syntax_languages', []);
-            if (! in_array($syntax, $validLanguages)) {
-                throw new \InvalidArgumentException('Invalid syntax language. Must be one of the supported languages.');
-            }
         }
 
         // Validate title if provided

@@ -29,7 +29,6 @@ class View extends Component
 
     public ?string $passwordError = null;
 
-    public bool $showRaw = false;
 
     public int $attemptsRemaining = 5;
 
@@ -167,13 +166,6 @@ class View extends Component
         $this->attemptsRemaining = max(0, 5 - $attempts);
     }
 
-    /**
-     * Toggle raw view mode.
-     */
-    public function toggleRaw(): void
-    {
-        $this->showRaw = ! $this->showRaw;
-    }
 
     /**
      * Copy the note content to clipboard (handled by JavaScript).

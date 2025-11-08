@@ -120,7 +120,6 @@
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Hash</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Title</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Language</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Views</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Expires</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Created</th>
@@ -139,13 +138,6 @@
                                             <div class="max-w-xs truncate text-sm text-zinc-900 dark:text-zinc-100">
                                                 {{ $note->title ?: '(Untitled)' }}
                                             </div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-6 py-4">
-                                            @if($note->syntax)
-                                                <flux:badge size="sm" color="indigo">{{ strtoupper($note->syntax) }}</flux:badge>
-                                            @else
-                                                <flux:badge size="sm" color="zinc">PLAIN</flux:badge>
-                                            @endif
                                         </td>
                                         <td class="whitespace-nowrap px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">
                                             {{ $note->views }}

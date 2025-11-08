@@ -15,15 +15,13 @@ beforeEach(function () {
 test('user can view a public note', function () {
     $note = Note::factory()->create([
         'content' => 'Test note content',
-        'syntax' => 'plaintext',
         'title' => 'Test Note',
     ]);
 
     $page = visit("/n/{$note->hash}");
 
     $page->assertSee('Test Note')
-        ->assertSee('Test note content')
-        ->assertSee('Plain Text');
+        ->assertSee('Test note content');
 });
 
 test('password-protected note shows password prompt', function () {
@@ -114,15 +112,12 @@ test('copy to clipboard button works', function () {
         ->waitForText('Copied!');
 });
 
-test('view raw toggle switches between highlighted and plain', function () {
+test('note content displays as plain text', function () {
     $note = Note::factory()->create([
         'content' => '<?php echo "Hello";',
-        'syntax' => 'php',
     ]);
 
     $page = visit("/n/{$note->hash}");
 
-    $page->assertSee('View Raw')
-        ->click('View Raw')
-        ->waitForText('View Highlighted');
+    $page->assertSee('<?php echo "Hello";');
 });

@@ -17,7 +17,6 @@ test('user can create a note with basic content', function () {
 
     $page->assertSee('Share Code Securely')
         ->fill('content', 'This is a test note')
-        ->select('syntax', 'plaintext')
         ->click('Create Note')
         ->waitForText('Your note is ready!')
         ->assertSee('/n/');
@@ -26,7 +25,6 @@ test('user can create a note with basic content', function () {
     expect(Note::count())->toBe(1);
     $note = Note::first();
     expect($note->content)->toBe('This is a test note');
-    expect($note->syntax)->toBe('plaintext');
 });
 
 test('user can create a password-protected note', function () {

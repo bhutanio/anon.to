@@ -61,10 +61,7 @@ Build a modern, privacy-focused platform that combines URL anonymization and eph
 #### Note Creation
 - **No registration required**: Anonymous paste functionality
 - **Large text support**: Up to 10MB per note
-- **Syntax highlighting**: Auto-detect or manual selection
-  - Languages: JavaScript, Python, PHP, HTML, CSS, SQL, JSON, XML, Bash, Go, Rust, Java, C++, and 50+ more
-  - Auto-detection based on content patterns
-- **Plain text mode**: For non-code content
+- **Plain text only**: Simple, distraction-free text sharing
 - **Character/line counter**: Real-time feedback while typing
 
 #### Expiration Options
@@ -90,18 +87,14 @@ Build a modern, privacy-focused platform that combines URL anonymization and eph
 
 #### Note Viewing
 - **Clean interface**: Distraction-free reading
-- **Line numbers**: Toggle on/off
-- **Raw text view**: View unformatted content
-- **Download**: Save as .txt file with original formatting
+- **Plain text display**: Simple, readable text formatting
 - **Copy button**: One-click clipboard copy
-- **Embed**: iframe embed code for registered users
 - **Fork/Clone**: Create new note from existing (preserves content, new hash)
 
 #### Note Management (Registered Users)
 - **My Notes dashboard**: View all created notes
 - **Search content**: Full-text search through notes
-- **Filter by language**: Find all Python notes, etc.
-- **Favorite notes**: Star important notes
+- **Filter by date**: Sort and filter by creation date, expiration
 - **Note statistics**: Views, created date, expiration countdown
 
 ### 3. User System
@@ -246,11 +239,10 @@ GET    /api/v1/analytics/{hash} - Get detailed analytics
 - Copy and share
 
 **Story 2: Create Temporary Note**
-> "As a developer, I want to share a code snippet that auto-deletes after 1 hour, so sensitive logs don't persist."
+> "As a user, I want to share a text note that auto-deletes after 1 hour, so sensitive information doesn't persist."
 
 - Visit /notes/create
-- Paste code snippet
-- Select "PHP" syntax
+- Paste text content
 - Choose "1 hour" expiration
 - Click "Create Note"
 - Share link with colleague
@@ -424,7 +416,6 @@ Report received → Admin notification → Review content → Take action → Up
 
 ### Phase 2: Enhancement (Weeks 4-5)
 **Must Have:**
-- ✅ Syntax highlighting (Prism.js)
 - ✅ Password protection for notes
 - ✅ Burn after reading
 - ✅ Admin dashboard with moderation

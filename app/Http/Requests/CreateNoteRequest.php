@@ -30,11 +30,6 @@ class CreateNoteRequest extends FormRequest
                 'string',
                 'max:1048576', // 1MB in bytes
             ],
-            'syntax' => [
-                'nullable',
-                'string',
-                'in:'.implode(',', config('anon.syntax_languages')),
-            ],
             'title' => [
                 'nullable',
                 'string',
@@ -97,7 +92,6 @@ class CreateNoteRequest extends FormRequest
         return [
             'content.required' => 'Please enter some content for your note.',
             'content.max' => 'Content is too large. Maximum size is 1MB.',
-            'syntax.in' => 'The selected programming language is not supported.',
             'title.max' => 'Title cannot exceed 255 characters.',
             'password.min' => 'Password must be at least 8 characters.',
             'password.max' => 'Password cannot exceed 255 characters.',
@@ -120,7 +114,6 @@ class CreateNoteRequest extends FormRequest
     {
         return [
             'content' => 'note content',
-            'syntax' => 'programming language',
             'title' => 'title',
             'password' => 'password',
             'password_confirmation' => 'password confirmation',

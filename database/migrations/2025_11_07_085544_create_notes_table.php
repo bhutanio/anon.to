@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->longText('content');
             $table->string('content_hash', 64)->index();
-            $table->string('syntax', 50)->nullable();
             $table->integer('char_count')->default(0);
             $table->integer('line_count')->default(0);
             $table->timestamp('expires_at')->nullable();
@@ -29,7 +28,6 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->boolean('is_reported')->default(false);
             $table->boolean('is_public')->default(true);
-            $table->boolean('is_code')->default(false);
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('forked_from_id')->nullable()->constrained('notes')->nullOnDelete();
             $table->string('ip_address', 64)->nullable(); // SHA256 hash length
@@ -38,7 +36,6 @@ return new class extends Migration
 
             // Additional indexes
             $table->index('user_id');
-            $table->index('syntax');
             $table->index('expires_at');
             $table->index('created_at');
             $table->index(['is_active', 'is_reported']);
