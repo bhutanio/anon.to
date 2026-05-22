@@ -13,6 +13,13 @@ new #[Layout('layouts.public')] #[Title('Anonymous URL Shortener and Redirect')]
     public string $shortUrl = '';
     public string $captchaToken = '';
 
+    public function mount(): void
+    {
+        if (! config('services.turnstile.site_key')) {
+            $this->captchaToken = 'no-turnstile';
+        }
+    }
+
     /**
      * Shorten a URL.
      */
@@ -50,7 +57,7 @@ new #[Layout('layouts.public')] #[Title('Anonymous URL Shortener and Redirect')]
         $link = Link::findOrCreateByUrl($this->url, auth()->id());
 
         $this->shortUrl = url('/' . $link->hash);
-        $this->captchaToken = '';
+        $this->captchaToken = config('services.turnstile.site_key') ? '' : 'no-turnstile';
         $this->dispatch('turnstile-reset');
     }
 }; ?>

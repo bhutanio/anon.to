@@ -48,9 +48,7 @@
         <div x-ref="turnstileWidget"></div>
     </div>
 @else
-    @if (isset($__livewire))
-        <div x-data x-init="$wire.set('captchaToken', 'no-turnstile')"></div>
-    @else
+    @unless (isset($__livewire))
         <input type="hidden" name="cf-turnstile-response" value="no-turnstile">
-    @endif
+    @endunless
 @endif

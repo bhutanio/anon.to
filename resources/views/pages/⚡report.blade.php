@@ -15,6 +15,13 @@ new #[Layout('layouts.public')] #[Title('Report a Link')] class extends Componen
     public string $captchaToken = '';
     public bool $submitted = false;
 
+    public function mount(): void
+    {
+        if (! config('services.turnstile.site_key')) {
+            $this->captchaToken = 'no-turnstile';
+        }
+    }
+
     /**
      * Submit an abuse report.
      */
